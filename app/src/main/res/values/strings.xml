@@ -10,7 +10,10 @@
     <string name="error_incorrect_password">Senha incorreta</string>
     <string name="error_field_required">Campo obrigatório</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
-    <string name="title_activity_main">Agenda do Dia</string>
+    <string name="title_activity_main">Meus Compromissos</string>
+    <string name="title_activity_agenda">Agenda de Visitas</string>
+    <string name="title_activity_medico">Médicos</string>
+    <string name="title_activity_configuracao">Configurações</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

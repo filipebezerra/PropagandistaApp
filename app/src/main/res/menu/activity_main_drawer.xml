@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_camara" android:icon="@android:drawable/ic_menu_camera"
-            android:title="Import" />
-        <item android:id="@+id/nav_gallery" android:icon="@android:drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item android:id="@+id/nav_slideshow" android:icon="@android:drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+        <item android:id="@+id/nav_agenda" android:icon="@android:drawable/ic_menu_agenda"
+            android:title="Agenda" />
+        <item android:id="@+id/nav_medico" android:icon="@android:drawable/ic_menu_myplaces"
+            android:title="Médicos" />
         <item android:id="@+id/nav_config" android:icon="@android:drawable/ic_menu_manage"
             android:title="Configurações" />
+        <item android:id="@+id/nav_sair" android:icon="@android:drawable/ic_lock_lock"
+            android:title="Sair" />
     </group>
 </menu>
