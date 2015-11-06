@@ -1,4 +1,4 @@
-package com.libertsolutions.washington.apppropagandista;
+package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -29,6 +29,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.libertsolutions.washington.apppropagandista.Dao.UsuarioDAO;
+import com.libertsolutions.washington.apppropagandista.Model.Usuario;
+import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.Tela;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,15 +90,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+        //Click Botão Acessar
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent it = new Intent(LoginActivity.this, MainActivity.class);
-                LoginActivity.this.startActivity(it);
-                attemptLogin();
+                if(!attemptLogin()) {
+                    Tela.AbrirTela(LoginActivity.this,MainActivity.class);
+                }
             }
         });
+
+        //Click Botão Novo Usuário
+        Button btnNovoUsuario = (Button) findViewById(R.id.btnCadUsuario);
+        btnNovoUsuario.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tela.AbrirTela(LoginActivity.this,UsuarioActivity.class);
+            }
+        });
+
+        //Recupera Parametros
+        recuperaParamentros();
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -152,11 +172,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
+    private boolean attemptLogin() {
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -168,9 +184,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         boolean cancel = false;
         View focusView = null;
 
+        //Valida Login e Senha
+        if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password) && !Acesso(email,password))
+        {
+            mEmailView.setError(getString(R.string.error_incorrect_autenticacao));
+            focusView = mEmailView;
+            mPasswordView.setError(getString(R.string.error_incorrect_autenticacao));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }else if(TextUtils.isEmpty(password))
+        {
+            mPasswordView.setError(getString(R.string.error_field_required));
             focusView = mPasswordView;
             cancel = true;
         }
@@ -197,6 +228,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
+        return cancel;
     }
 
     private boolean isEmailValid(String email) {
@@ -382,6 +414,31 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
+        }
+    }
+
+    //Função para Validar Acesso
+    public boolean Acesso(String email,String senha)
+    {
+        boolean valido = false;
+        UsuarioDAO userDao = new UsuarioDAO(this);
+        Usuario user = userDao.Consultar(email);
+        if (user.getSenha().equals(senha))
+        {
+            valido = true;
+        }
+        return valido;
+    }
+
+    //Recupera Parâmetros da Tela
+    public void recuperaParamentros()
+    {
+        //Recupera parâmetros
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if(bundle!=null)
+        {
+            mEmailView.setText(bundle.getString("email"));
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.libertsolutions.washington.apppropagandista;
+package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package Util;
+package com.libertsolutions.washington.apppropagandista.Util;
 
 import android.app.Activity;
 import android.content.Intent;

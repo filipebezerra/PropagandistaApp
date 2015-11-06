@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
     <application
         android:allowBackup="true"
@@ -16,7 +18,7 @@
 
         <!-- Splash Screen -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".Controller.SplashActivity"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,33 +29,42 @@
 
         <!-- Tela de Login -->
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/app_name" >
+            android:name=".Controller.LoginActivity"
+            android:label="@string/app_login" >
         </activity>
 
         <!-- Tela Inicial -->
         <activity
-            android:name=".MainActivity"
+            android:name=".Controller.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
 
         <!-- Tela Agenda -->
-        <activity android:name=".AgendaActivity"
+        <activity
+            android:name=".Controller.AgendaActivity"
             android:label="@string/title_activity_agenda"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".Controller.MainActivity" >
         </activity>
 
         <!-- Tela Medico -->
-        <activity android:name=".MedicoActivity"
+        <activity
+            android:name=".Controller.MedicoActivity"
             android:label="@string/title_activity_medico"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".Controller.MainActivity" >
         </activity>
 
         <!-- Tela Configurações -->
-        <activity android:name=".ConfiguracaoActivity"
+        <activity
+            android:name=".Controller.ConfiguracaoActivity"
             android:label="@string/title_activity_configuracao"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".Controller.MainActivity" >
+        </activity>
+
+        <!-- Tela Cadastro de Usuário -->
+        <activity android:name=".Controller.UsuarioActivity"
+            android:parentActivityName=".Controller.LoginActivity"
+            android:label="@string/title_activity_usuario">
         </activity>
     </application>
 
