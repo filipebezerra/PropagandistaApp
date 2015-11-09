@@ -1,8 +1,12 @@
 package com.libertsolutions.washington.apppropagandista.Util;
 
 import android.preference.PreferenceActivity;
+import android.util.Log;
 
 import com.google.gson.GsonBuilder;
+import com.libertsolutions.washington.apppropagandista.Controller.MainActivity;
+import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
+
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpDelete;
@@ -95,8 +99,8 @@ public class JSONHttpClient {
         HttpGet httpGet = new HttpGet(url);
         try {
 
-            httpGet.setHeader("Accept", "application/json");
-            httpGet.setHeader("Accept-Encoding", "gzip");
+            //httpGet.setHeader("Accept", "application/json");
+            //httpGet.setHeader("Accept-Encoding", "gzip");
 
             HttpResponse httpResponse = defaultHttpClient.execute(httpGet);
             HttpEntity httpEntity = httpResponse.getEntity();
@@ -113,12 +117,9 @@ public class JSONHttpClient {
 
             }
 
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (Exception  e) {
+            //Mensagem.MensagemAlerta(n,e.getMessage());
+            Log.e("DEVMEDIA", "Falha ao acessar Web service", e);
         }
         return null;
     }

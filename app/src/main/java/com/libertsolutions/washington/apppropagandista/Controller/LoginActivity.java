@@ -31,13 +31,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.libertsolutions.washington.apppropagandista.Dao.UsuarioDAO;
+import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.Model.Usuario;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.JSONHttpClient;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
+import com.libertsolutions.washington.apppropagandista.contants.ServiceUrl;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -420,6 +426,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     //Função para Validar Acesso
     public boolean Acesso(String email,String senha)
     {
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        JSONHttpClient jsonHttpClient = new JSONHttpClient();
+        nameValuePairs.add(new BasicNameValuePair("cpf","04084850195"));
+        Propagandista[] propagandistas = jsonHttpClient.Get(ServiceUrl.PROPAGANDISTA, nameValuePairs, Propagandista[].class);
+        if (propagandistas.length > 0) {
+
+            for (Propagandista propagandista : propagandistas) {
+                HashMap<String, String> mapProduct = new HashMap<String, String>();
+                mapProduct.put(Propagandista.prop_nome, String.valueOf(propagandista.getNome()));
+                mapProduct.put(Propagandista.pro_email, propagandista.getEmail());
+            }
+
+        } else {
+            //Intent intent = new Intent(getApplicationContext(), NewProductActivity.class);
+            //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            //startActivity(intent);
+        }
+
+
         boolean valido = false;
         UsuarioDAO userDao = new UsuarioDAO(this);
         Usuario user = userDao.Consultar(email);

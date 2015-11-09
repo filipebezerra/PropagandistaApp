@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Blocskin</string>
+    <string name="app_name">Blocskin Propagandista</string>
     <string name="app_login">Acesso Restrito</string>
     <!-- Strings related to login -->
     <string name="prompt_email">E-mail</string>
