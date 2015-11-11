@@ -53,6 +53,7 @@
             android:parentActivityName=".Controller.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -76,17 +77,24 @@
         </activity>
 
         <!-- Tela de Pesquisa -->
-        <activity android:name=".SearchResultsActivity" >
+        <activity android:name=".Controller.MedicoSearchActivity" >
 
             <!-- to identify this activity as "searchable" -->
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
+        </activity>
+
+        <!-- Botão Cadastrar Médico -->
+        <activity android:name=".Medico_Cadastrar"
+            android:label="@string/title_activity_novomedico"
+            android:parentActivityName=".Controller.MedicoActivity">
         </activity>
     </application>
 

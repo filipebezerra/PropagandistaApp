@@ -7,9 +7,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import com.libertsolutions.washington.apppropagandista.Medico_Cadastrar;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
+import com.libertsolutions.washington.apppropagandista.Util.Tela;
 
 public class MedicoActivity extends ActionBarActivity {
     @Override
@@ -37,5 +40,18 @@ public class MedicoActivity extends ActionBarActivity {
                 searchManager.getSearchableInfo(getComponentName()));
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_novo:
+                Tela.AbrirTela(MedicoActivity.this, Medico_Cadastrar.class);
+                //open Activity,Fragments or other action
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

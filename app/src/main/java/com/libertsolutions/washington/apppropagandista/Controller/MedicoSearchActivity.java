@@ -1,4 +1,4 @@
-package com.libertsolutions.washington.apppropagandista;
+package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -9,12 +9,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.SearchView;
 
-public class SearchResultsActivity extends ActionBarActivity {
+import com.libertsolutions.washington.apppropagandista.R;
+
+public class MedicoSearchActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_results);
+        setContentView(R.layout.activity_medico_search);
         handleIntent(getIntent());
     }
 

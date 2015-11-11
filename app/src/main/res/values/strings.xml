@@ -18,6 +18,7 @@
     <string name="title_activity_medico">Médicos</string>
     <string name="title_activity_configuracao">Configurações</string>
     <string name="title_activity_usuario">Novo Usuário</string>
+    <string name="title_activity_novomedico">Novo Cadastro</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -183,4 +184,5 @@
     <!-- Textos Botões -->
     <string name="btnSalvar">Salvar</string>
     <string name="title_activity_item">item</string>
+    <string name="action_novo">Cadastrar</string>
 </resources>
