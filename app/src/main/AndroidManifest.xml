@@ -5,7 +5,6 @@
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
 
@@ -52,6 +51,14 @@
             android:name=".Controller.MedicoActivity"
             android:label="@string/title_activity_medico"
             android:parentActivityName=".Controller.MainActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchResultsActivity" />
         </activity>
 
         <!-- Tela Configurações -->
@@ -62,9 +69,24 @@
         </activity>
 
         <!-- Tela Cadastro de Usuário -->
-        <activity android:name=".Controller.UsuarioActivity"
-            android:parentActivityName=".Controller.LoginActivity"
-            android:label="@string/title_activity_usuario">
+        <activity
+            android:name=".Controller.UsuarioActivity"
+            android:label="@string/title_activity_usuario"
+            android:parentActivityName=".Controller.LoginActivity" >
+        </activity>
+
+        <!-- Tela de Pesquisa -->
+        <activity android:name=".SearchResultsActivity" >
+
+            <!-- to identify this activity as "searchable" -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
     </application>
 

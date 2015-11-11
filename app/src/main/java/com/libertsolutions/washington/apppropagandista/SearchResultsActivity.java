@@ -1,34 +1,27 @@
-package com.libertsolutions.washington.apppropagandista.Controller;
+package com.libertsolutions.washington.apppropagandista;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.os.Bundle;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.SearchView;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.SearchView;
 
-import com.libertsolutions.washington.apppropagandista.R;
-import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
+public class SearchResultsActivity extends ActionBarActivity {
 
-public class MedicoActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try{
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_medico);
-        }catch (Exception erro)
-        {
-            Mensagem.MensagemAlerta(this,erro.getMessage());
-        }
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search_results);
+        handleIntent(getIntent());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        // Inflate menu to add items to action bar if it is present.
         inflater.inflate(R.menu.search_menu, menu);
-        // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
@@ -37,5 +30,18 @@ public class MedicoActivity extends ActionBarActivity {
                 searchManager.getSearchableInfo(getComponentName()));
 
         return true;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            //use the query to search
+        }
     }
 }

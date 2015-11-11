@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 
@@ -53,7 +52,7 @@ public class MainActivity extends AppCompatActivity
             Tela.AbrirTela(MainActivity.this,AgendaActivity.class);
             //Menu Médicos
         } else if (id == R.id.nav_medico) {
-            Tela.AbrirTela(MainActivity.this,ConfiguracaoActivity.class);
+            Tela.AbrirTela(MainActivity.this,MedicoActivity.class);
         } else if (id == R.id.nav_config) {
             Tela.AbrirTela(MainActivity.this,ConfiguracaoActivity.class);
         }else if (id == R.id.nav_sair) {

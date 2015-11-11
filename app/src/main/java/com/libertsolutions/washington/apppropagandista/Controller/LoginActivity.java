@@ -101,9 +101,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!attemptLogin()) {
+                //if(!attemptLogin()) {
                     Tela.AbrirTela(LoginActivity.this,MainActivity.class);
-                }
+                //}
             }
         });
 
@@ -426,25 +426,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     //Função para Validar Acesso
     public boolean Acesso(String email,String senha)
     {
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-        JSONHttpClient jsonHttpClient = new JSONHttpClient();
-        nameValuePairs.add(new BasicNameValuePair("cpf","04084850195"));
-        Propagandista[] propagandistas = jsonHttpClient.Get(ServiceUrl.PROPAGANDISTA, nameValuePairs, Propagandista[].class);
-        if (propagandistas.length > 0) {
-
-            for (Propagandista propagandista : propagandistas) {
-                HashMap<String, String> mapProduct = new HashMap<String, String>();
-                mapProduct.put(Propagandista.prop_nome, String.valueOf(propagandista.getNome()));
-                mapProduct.put(Propagandista.pro_email, propagandista.getEmail());
-            }
-
-        } else {
-            //Intent intent = new Intent(getApplicationContext(), NewProductActivity.class);
-            //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            //startActivity(intent);
-        }
-
-
         boolean valido = false;
         UsuarioDAO userDao = new UsuarioDAO(this);
         Usuario user = userDao.Consultar(email);

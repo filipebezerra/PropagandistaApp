@@ -172,6 +172,8 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
 
+    <string name="pesquisar">Pesquisar</string>
+
     <!-- Textos Campos -->
     <string name="txtNome">Nome</string>
     <string name="txtEmail">E-mail</string>
@@ -180,4 +182,5 @@
 
     <!-- Textos Botões -->
     <string name="btnSalvar">Salvar</string>
+    <string name="title_activity_item">item</string>
 </resources>
