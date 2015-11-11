@@ -5,6 +5,35 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.libertsolutions.washington.apppropagandista.Medico_Cadastrar">
+    tools:context="com.libertsolutions.washington.apppropagandista.Controller.Medico_Cadastrar">
 
+    <!-- Layout -->
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText android:id="@+id/txtSenha" android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeActionId="@+id/txtSenha"
+                android:hint="@string/txtSenha"
+                android:imeOptions="actionUnspecified"
+                android:inputType="textPassword"
+                android:maxLines="1" android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+    </ScrollView>
+
+    <!-- Rodapé -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+
+            <Button android:id="@+id/btnSalvar"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="Salvar"
+                android:layout_alignParentBottom="true" />
+    </RelativeLayout>
 </RelativeLayout>

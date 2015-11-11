@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.libertsolutions.washington.apppropagandista.Medico_Cadastrar;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
