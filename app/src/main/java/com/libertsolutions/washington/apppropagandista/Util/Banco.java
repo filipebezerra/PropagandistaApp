@@ -1,7 +1,6 @@
 package com.libertsolutions.washington.apppropagandista.Util;
 
 import android.content.Context;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -57,12 +56,14 @@ public class Banco extends SQLiteOpenHelper  {
         try {
             //executa os scripts de criação do banco
             db.execSQL(Usuario());
+            db.execSQL(Medico());
         }catch (Exception error)
         {
             Mensagem.MensagemAlerta(context,error.getMessage());
         }
     }
-    //cria a tabela Usuári
+
+    //cria a tabela Usuário
     private String Usuario()   {
         return "CREATE TABLE IF NOT EXISTS Usuario (id_usuario INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "nome text not null,"+
@@ -71,9 +72,22 @@ public class Banco extends SQLiteOpenHelper  {
                 "senha text not null)";
     }
 
+    //cria a tabela Médico
+    private String Medico()   {
+        return "CREATE TABLE IF NOT EXISTS Medico (id_medico INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "nome text not null,"+
+                "dtAniversario text,"+
+                "secretaria text," +
+                "telefone text," +
+                "email text," +
+                "crm text," +
+                "especialidade text," +
+                "status integer)";
+    }
+
     //este método faz a atualização do banco
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL(Medico());
     }
 }

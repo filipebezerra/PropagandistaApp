@@ -180,6 +180,11 @@
     <string name="txtEmail">E-mail</string>
     <string name="txtSenha">Senha</string>
     <string name="txtCpf">CPF</string>
+    <string name="txtDtAniversario">Dt.Aniversário</string>
+    <string name="txtSecretaria">Secretária</string>
+    <string name="txtTelefone">Telefone</string>
+    <string name="txtCrm">Crm</string>
+    <string name="txtEspecialidade">Especialidade Médica</string>
 
     <!-- Textos Botões -->
     <string name="btnSalvar">Salvar</string>

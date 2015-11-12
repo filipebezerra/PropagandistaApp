@@ -1,24 +1,46 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.media.MediaCodecList;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ListView;
 
+import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
+import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
+import com.libertsolutions.washington.apppropagandista.Util.PersonalAdpater;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class MedicoActivity extends ActionBarActivity {
+    ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<HashMap<String, String>>();
+    PersonalAdpater arrayAdapter;
+    ListView grdMedicos;
+    ProgressDialog pDialog;
+    private MedicoDAO medicoDb;
+    int start = 0;
+    int limit = 10;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_medico);
+
+            this.medicoDb = new MedicoDAO(this);
         }catch (Exception erro)
         {
             Mensagem.MensagemAlerta(this,erro.getMessage());
@@ -51,6 +73,110 @@ public class MedicoActivity extends ActionBarActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        try {
+            CarregaGrid();
+        }
+        catch (Exception erro)
+        {
+            Mensagem.MensagemAlerta("Erro Start Produtos", erro.getMessage(), MedicoActivity.this);
+        }
+    }
+
+    //Carrega Grid
+    public void CarregaGrid()
+    {
+        start = 0;
+        arrayAdapter = null;
+        grdMedicos = (ListView)findViewById(R.id.lstMedicos);
+        lstMedicos = new ArrayList<HashMap<String, String>>();
+
+        //Preenche Grid com dados iniciais
+        PreencheGrid(start,limit);
+        start += 10;
+
+        grdMedicos.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                new loadMoreListView().execute();
+            }
+        });
+    }
+
+    //Metódo para preencher Grid
+    private void PreencheGrid(int start,int limit)
+    {
+        try
+        {
+            List<Medico> lista = new ArrayList<Medico>();
+            lista = medicoDb.Listar(String.valueOf(start),String.valueOf(limit));
+            //Cria array com quantidade de colunas da ListView
+            String[] columnTags = new String[] {"col1", "col2","col3"};
+
+            //Recupera id das colunas do layout list_itens_ped
+            int[] columnIds = new int[] {R.id.column1, R.id.column2,R.id.column3};
+            for (int i = 0; i < lista.size();i++)
+            {
+                Medico medico = lista.get(i);
+                HashMap<String, String> map = new HashMap<String, String>();
+                map.put(columnTags[0], "Nome: "+medico.getNome());  //Código
+                map.put(columnTags[1], "Telefone: " + medico.getTelefone());  //Nome
+                map.put(columnTags[2], "Secretária: " + medico.getSecretaria());  //Preço Venda
+                //Adiciona dados no Arraylist
+                lstMedicos.add(map);
+            }
+
+            int currentPosition = grdMedicos.getFirstVisiblePosition();
+            //Função para realizar adptação necessária para inserir dados no ListView
+            arrayAdapter = new PersonalAdpater(this, lstMedicos, R.layout.cols_3,columnTags , columnIds);
+
+            //Adiciona Array no ListView
+            grdMedicos.setAdapter(arrayAdapter);
+            if(start > 1)
+                grdMedicos.setSelectionFromTop(currentPosition + 1, 0);
+        }catch (Exception error) {
+            Mensagem.MensagemAlerta("Preenche Grid", error.getMessage(), MedicoActivity.this);
+
+        }
+    }
+
+    private class loadMoreListView extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            // Showing progress dialog before sending http request
+            ProgressDialog pDialog = new ProgressDialog(
+                    MedicoActivity.this);
+            pDialog.setMessage("Carregando...");
+            pDialog.setIndeterminate(true);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        }
+
+        protected Void doInBackground(Void... unused) {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    if(start > 1)
+                    {
+                        // increment current page
+                        PreencheGrid(start,limit);
+                        start += 10;
+                    }
+                }
+            });
+
+            return (null);
+        }
+
+
+        protected void onPostExecute(Void unused) {
+            // closing progress dialog
+            pDialog.dismiss();
         }
     }
 }

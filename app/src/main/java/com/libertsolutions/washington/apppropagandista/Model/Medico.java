@@ -1,6 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import java.security.Timestamp;
+import java.util.Date;
 
 /**
  * Created by washington on 04/11/2015.
@@ -8,12 +9,13 @@ import java.security.Timestamp;
 public class Medico {
     private Integer id_medico;
     private String nome;
-    private Timestamp dtAniversario;
+    private Date dtAniversario;
     private String secretaria;
     private String telefone;
     private String email;
     private String crm;
     private String especialidade;
+    private int status;
 
     //Metódos Set's
     public void setId_medico(int id_medico) {
@@ -24,7 +26,7 @@ public class Medico {
         this.nome = nome;
     }
 
-    public void setDtAniversario(Timestamp dtAniversario) {
+    public void setDtAniversario(Date dtAniversario) {
         this.dtAniversario = dtAniversario;
     }
 
@@ -48,6 +50,10 @@ public class Medico {
         this.especialidade = especialidade;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     //Metódos Get's
     public int getId_medico() {
         return id_medico;
@@ -57,7 +63,7 @@ public class Medico {
         return nome;
     }
 
-    public Timestamp getDtAniversario() {
+    public Date getDtAniversario() {
         return dtAniversario;
     }
 
@@ -79,5 +85,9 @@ public class Medico {
 
     public String getEspecialidade() {
         return especialidade;
+    }
+
+    public int getStatus() {
+        return status;
     }
 }
