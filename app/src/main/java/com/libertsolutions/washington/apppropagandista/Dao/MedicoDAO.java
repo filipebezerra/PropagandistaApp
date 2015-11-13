@@ -123,7 +123,7 @@ public class MedicoDAO {
             //Abre Conexão
             cnn.AbrirConexao();
 
-            Cursor cursor = cnn.db().query("Medico",campos,null,null,null,null,null,start+","+limit);
+            Cursor cursor = cnn.db().query("Medico",campos,null,null,null,null,"nome",start+","+limit);
 
             while(cursor.moveToNext()){
                 medico = new Medico();
