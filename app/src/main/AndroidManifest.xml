@@ -92,8 +92,14 @@
         </activity>
 
         <!-- Botão Cadastrar Médico -->
-        <activity android:name=".Controller.Medico_Cadastrar"
+        <activity
+            android:name=".Controller.Medico_Cadastrar"
             android:label="@string/title_activity_novomedico"
+            android:parentActivityName=".Controller.MedicoActivity" >
+        </activity>
+
+        <!-- Botão Detalhes do Médico -->
+        <activity android:name=".Controller.medico_details"
             android:parentActivityName=".Controller.MedicoActivity">
         </activity>
     </application>

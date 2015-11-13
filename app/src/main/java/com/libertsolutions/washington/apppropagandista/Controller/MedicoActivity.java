@@ -3,6 +3,7 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -10,6 +11,9 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
@@ -18,7 +22,6 @@ import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListene
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PersonalAdpater;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +30,7 @@ public class MedicoActivity extends ActionBarActivity {
     ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<HashMap<String, String>>();
     PersonalAdpater arrayAdapter;
     ListView grdMedicos;
+    private boolean isLoadMore = false;
     ProgressDialog pDialog;
     private MedicoDAO medicoDb;
     int start = 0;
@@ -98,10 +102,34 @@ public class MedicoActivity extends ActionBarActivity {
         PreencheGrid(start,limit);
         start += 10;
 
+        //Evento Click na Grid
+        grdMedicos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HashMap<String, Object> obj = (HashMap<String, Object>)grdMedicos.getAdapter().getItem(position);
+                Bundle param = new Bundle();
+                param.putString("id",obj.get("id").toString());
+                Tela.AbrirTela(MedicoActivity.this,medico_details.class,param);
+            }
+        });
+
+        //Evento Scrool aparelho
         grdMedicos.setOnScrollListener(new EndlessScrollListener() {
+            public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
+                int lastInScreen = firstVisibleItem + visibleItemCount;
+                if((lastInScreen == totalItemCount)){
+                    if(isLoadMore == false)
+                    {
+                        isLoadMore = true;
+                        new loadMoreListView().execute();
+                    }
+                }
+            }
+
+
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                new loadMoreListView().execute();
+                //new loadMoreListView().execute();
             }
         });
     }
@@ -114,17 +142,18 @@ public class MedicoActivity extends ActionBarActivity {
             List<Medico> lista = new ArrayList<Medico>();
             lista = medicoDb.Listar(String.valueOf(start),String.valueOf(limit));
             //Cria array com quantidade de colunas da ListView
-            String[] columnTags = new String[] {"col1", "col2","col3"};
+            String[] columnTags = new String[] {"id","col1", "col2","col3"};
 
             //Recupera id das colunas do layout list_itens_ped
-            int[] columnIds = new int[] {R.id.column1, R.id.column2,R.id.column3};
+            int[] columnIds = new int[] {R.id.id,R.id.column1, R.id.column2,R.id.column3};
             for (int i = 0; i < lista.size();i++)
             {
                 Medico medico = lista.get(i);
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put(columnTags[0], "Nome: "+medico.getNome());  //Código
-                map.put(columnTags[1], "Telefone: " + medico.getTelefone());  //Nome
-                map.put(columnTags[2], "Secretária: " + medico.getSecretaria());  //Preço Venda
+                map.put(columnTags[0],String.valueOf(medico.getId_medico()));  //Id
+                map.put(columnTags[1],medico.getNome());  //Nome
+                map.put(columnTags[2], "Telefone: " + medico.getTelefone());  //Telefone
+                map.put(columnTags[3], "Secretária: " + medico.getSecretaria());  //Secretária
                 //Adiciona dados no Arraylist
                 lstMedicos.add(map);
             }
@@ -161,9 +190,9 @@ public class MedicoActivity extends ActionBarActivity {
                 public void run() {
                     if(start > 1)
                     {
+                        start += 10;
                         // increment current page
                         PreencheGrid(start,limit);
-                        start += 10;
                     }
                 }
             });

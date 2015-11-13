@@ -8,12 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
-import com.libertsolutions.washington.apppropagandista.Dao.UsuarioDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
-import com.libertsolutions.washington.apppropagandista.Model.Usuario;
 import com.libertsolutions.washington.apppropagandista.R;
-import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
-import com.libertsolutions.washington.apppropagandista.Util.Tela;
 
 import java.util.Date;
 
@@ -32,7 +28,7 @@ public class Medico_Cadastrar extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_medico__cadastrar);
+        setContentView(R.layout.activity_medico_cadastrar);
         this.medicoDb = new MedicoDAO(this);
 
         //Recupera Campos

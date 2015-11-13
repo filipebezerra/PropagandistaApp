@@ -9,13 +9,20 @@ android:orientation="horizontal">
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="5sp">
+
+    <TextView android:id="@+id/id"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"/>
+
     <TextView android:id="@+id/column1"
         android:gravity="left"
         android:textSize="@dimen/activity_list"
         android:layout_weight="1"
         android:textColor="#001940"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textStyle="bold" />
 
     <TextView android:id="@+id/column2"
         android:gravity="left"
