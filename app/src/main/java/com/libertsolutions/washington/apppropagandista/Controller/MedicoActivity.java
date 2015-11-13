@@ -3,7 +3,6 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.media.MediaCodecList;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -12,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ListView;
-
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
@@ -41,6 +39,7 @@ public class MedicoActivity extends ActionBarActivity {
             setContentView(R.layout.activity_medico);
 
             this.medicoDb = new MedicoDAO(this);
+            //CarregaGrid();
         }catch (Exception erro)
         {
             Mensagem.MensagemAlerta(this,erro.getMessage());
@@ -103,7 +102,7 @@ public class MedicoActivity extends ActionBarActivity {
         grdMedicos.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                new loadMoreListView().execute();
+                //new loadMoreListView().execute();
             }
         });
     }
@@ -142,41 +141,6 @@ public class MedicoActivity extends ActionBarActivity {
         }catch (Exception error) {
             Mensagem.MensagemAlerta("Preenche Grid", error.getMessage(), MedicoActivity.this);
 
-        }
-    }
-
-    private class loadMoreListView extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            // Showing progress dialog before sending http request
-            ProgressDialog pDialog = new ProgressDialog(
-                    MedicoActivity.this);
-            pDialog.setMessage("Carregando...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
-        }
-
-        protected Void doInBackground(Void... unused) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    if(start > 1)
-                    {
-                        // increment current page
-                        PreencheGrid(start,limit);
-                        start += 10;
-                    }
-                }
-            });
-
-            return (null);
-        }
-
-
-        protected void onPostExecute(Void unused) {
-            // closing progress dialog
-            pDialog.dismiss();
         }
     }
 }

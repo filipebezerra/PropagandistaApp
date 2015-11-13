@@ -1,5 +1,6 @@
 package com.libertsolutions.washington.apppropagandista.Dao;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -32,21 +33,54 @@ public class MedicoDAO {
     //Metódo Incluir
     public void Incluir(Medico medico)
     {
-        String sql = "";
+        ContentValues valores;
+        long resultado;
         try{
             //Abre Conexão
             cnn.AbrirConexao();
-            sql = "insert into Medico (nome,dtAniversario,secretaria,telefone,email,crm,especialidade,status) ";
-            sql += "values (?,?,?,?,?,?,?,?)";
-            cnn.db().execSQL(sql,new String[]{medico.getNome(),medico.getDtAniversario().toString(),medico.getSecretaria(),
-                    medico.getTelefone(),medico.getEmail(),medico.getCrm(),medico.getEspecialidade(),"1"});
-
+            valores = new ContentValues();
+            valores.put("nome",medico.getNome());
+            valores.put("dtAniversario",medico.getDtAniversario().toString());
+            valores.put("secretaria",medico.getSecretaria());
+            valores.put("telefone",medico.getTelefone());
+            valores.put("email",medico.getEmail());
+            valores.put("crm",medico.getCrm());
+            valores.put("especialidade",medico.getEspecialidade());
+            valores.put("status",1);
+            resultado = cnn.db().insert("Medico",null,valores);
         }catch (Exception error)
         {
             Mensagem.MensagemAlerta(context,error.getMessage());
         }finally {
             cnn.close();
         }
+    }
+
+    //Metódo Alterar
+    public void Alterar(Medico medico)
+    {
+        ContentValues valores;
+        String where;
+        try{
+            where = "id_medico = "+medico.getId_medico();
+            //Abre Conexão
+            cnn.AbrirConexao();
+            valores = new ContentValues();
+            valores.put("nome",medico.getNome());
+            valores.put("dtAniversario",medico.getDtAniversario().toString());
+            valores.put("secretaria",medico.getSecretaria());
+            valores.put("telefone",medico.getTelefone());
+            valores.put("email",medico.getEmail());
+            valores.put("crm",medico.getCrm());
+            valores.put("especialidade",medico.getEspecialidade());
+            cnn.db().update("Medico",valores,where,null);
+        }catch (Exception error)
+        {
+            Mensagem.MensagemAlerta(context,error.getMessage());
+        }finally {
+            cnn.close();
+        }
+
     }
 
     //Metódo Consultar
@@ -83,26 +117,25 @@ public class MedicoDAO {
     public ArrayList<Medico> Listar(String start,String limit)
     {
         Medico medico;
-        String sql;
+        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","status"};
         ArrayList<Medico> list = new ArrayList<Medico>();
         try {
             //Abre Conexão
             cnn.AbrirConexao();
 
-            Cursor cursor = cnn.db().rawQuery("select id_medico,nome,dtAniversario,secretaria,telefone,email,crm,especialidade,status " +
-                    "from Medico order by nome desc LIMIT ?,?", new String[]{start,limit});
+            Cursor cursor = cnn.db().query("Medico",campos,null,null,null,null,null,start+","+limit);
 
             while(cursor.moveToNext()){
                 medico = new Medico();
                 medico.setId_medico(Integer.parseInt(cursor.getString(0)));
                 medico.setNome(cursor.getString(1));
-                //medico.setDtAniversario(cursor.getDouble(2));
+                medico.setDtAniversario(new Date());
                 medico.setSecretaria(cursor.getString(3));
                 medico.setTelefone(cursor.getString(4));
                 medico.setEmail(cursor.getString(5));
                 medico.setCrm(cursor.getString(6));
                 medico.setEspecialidade(cursor.getString(7));
-                medico.setStatus(Integer.parseInt(cursor.getString(8)));
+                medico.setStatus(cursor.getInt(8));
                 list.add(medico);
             }
 

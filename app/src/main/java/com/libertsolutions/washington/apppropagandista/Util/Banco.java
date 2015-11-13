@@ -88,6 +88,5 @@ public class Banco extends SQLiteOpenHelper  {
     //este método faz a atualização do banco
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(Medico());
     }
 }
