@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.Mask;
 
 import java.util.Date;
 
@@ -52,6 +53,10 @@ public class Medico_Cadastrar extends AppCompatActivity {
                 }
             }
         });
+
+        //Mascara
+        txtTelefone.addTextChangedListener(Mask.insert("(##)####-#####", txtTelefone));
+        txtDtAniversario.addTextChangedListener(Mask.insert("##/##/####", txtDtAniversario));
     }
 
     //Metódo Recuperar Campos

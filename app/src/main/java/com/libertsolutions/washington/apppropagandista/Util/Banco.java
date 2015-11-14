@@ -55,8 +55,9 @@ public class Banco extends SQLiteOpenHelper  {
     public void onCreate(SQLiteDatabase db) {
         try {
             //executa os scripts de criação do banco
-            db.execSQL(Usuario());
-            db.execSQL(Medico());
+            db.execSQL(Usuario());//Script Tabela Usuário
+            db.execSQL(Medico());//Script Tabela Médico
+            db.execSQL(Agenda());//Script Tabela Agenda
         }catch (Exception error)
         {
             Mensagem.MensagemAlerta(context,error.getMessage());
@@ -83,6 +84,16 @@ public class Banco extends SQLiteOpenHelper  {
                 "crm text," +
                 "especialidade text," +
                 "status integer)";
+    }
+
+    //cria a tabela Agenda
+    private String Agenda()   {
+        return "CREATE TABLE IF NOT EXISTS Agenda (id_agenda INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "data text not null,"+
+                "id_medico integer not null,"+
+                "obs text,"+
+                "status integer,"+
+                "FOREIGN KEY(id_medico) REFERENCES Medico(id_medico)";
     }
 
     //este método faz a atualização do banco

@@ -35,6 +35,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.Model.Usuario;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.JSONHttpClient;
+import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 import com.libertsolutions.washington.apppropagandista.contants.ServiceUrl;
 
@@ -80,47 +81,52 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        try {
+            // Set up the login form.
+            mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+            //populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
+            mPasswordView = (EditText) findViewById(R.id.password);
+            mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                    if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                        attemptLogin();
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        //Click Botão Acessar
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //if(!attemptLogin()) {
-                    Tela.AbrirTela(LoginActivity.this,MainActivity.class);
-                //}
-            }
-        });
+            //Click Botão Acessar
+            Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+            mEmailSignInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //if(!attemptLogin()) {
+                    Tela.AbrirTela(LoginActivity.this, MainActivity.class);
+                    //}
+                }
+            });
 
-        //Click Botão Novo Usuário
-        Button btnNovoUsuario = (Button) findViewById(R.id.btnCadUsuario);
-        btnNovoUsuario.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Tela.AbrirTela(LoginActivity.this,UsuarioActivity.class);
-            }
-        });
+            //Click Botão Novo Usuário
+            Button btnNovoUsuario = (Button) findViewById(R.id.btnCadUsuario);
+            btnNovoUsuario.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Tela.AbrirTela(LoginActivity.this, UsuarioActivity.class);
+                }
+            });
 
-        //Recupera Parametros
-        recuperaParamentros();
+            //Recupera Parametros
+            recuperaParamentros();
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+            mLoginFormView = findViewById(R.id.login_form);
+            mProgressView = findViewById(R.id.login_progress);
+        }catch (Exception erro)
+        {
+            Mensagem.MensagemAlerta(this,erro.getMessage());
+        }
     }
 
     private void populateAutoComplete() {

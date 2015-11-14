@@ -11,7 +11,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 
-public class medico_details extends AppCompatActivity {
+public class Medico_details extends AppCompatActivity {
     //Atributos
     private MedicoDAO medicoDb;
     private EditText txtNome;
@@ -57,13 +57,15 @@ public class medico_details extends AppCompatActivity {
         try {
             medicoDb = new MedicoDAO(this);
             Medico medico = medicoDb.Consultar(id);
-            this.txtNome.setText(medico.getNome().toString());
-            this.txtDtAniversario.setText(medico.getDtAniversario().toString().toString());
-            this.txtSecretaria.setText(medico.getSecretaria().toString());
-            this.txtTelefone.setText(medico.getTelefone().toString());
-            this.txtEmail.setText(medico.getEmail().toString());
-            this.txtCrm.setText(medico.getCrm().toString());
-            this.txtEspecialidade.setText(medico.getEspecialidade().toString());
+            this.txtNome.setText(medico.getNome());
+            if(medico.getDtAniversario() != null)
+                this.txtDtAniversario.setText(medico.getDtAniversario().toString());
+
+            this.txtSecretaria.setText(medico.getSecretaria());
+            this.txtTelefone.setText(medico.getTelefone());
+            this.txtEmail.setText(medico.getEmail());
+            this.txtCrm.setText(medico.getCrm());
+            this.txtEspecialidade.setText(medico.getEspecialidade());
         }catch (Exception erro)
         {
             Mensagem.MensagemAlerta(this,erro.getMessage());
