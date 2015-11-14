@@ -19,6 +19,8 @@
     <string name="title_activity_configuracao">Configurações</string>
     <string name="title_activity_usuario">Novo Usuário</string>
     <string name="title_activity_novomedico">Novo Cadastro</string>
+    <string name="title_medico_details">Dados do Médico</string>
+    <string name="title_agenda_cadastrar">Novo Compromisso</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -185,6 +187,7 @@
     <string name="txtTelefone">Telefone</string>
     <string name="txtCrm">Crm</string>
     <string name="txtEspecialidade">Especialidade Médica</string>
+    <string name="txtData">Data</string>
 
     <!-- Textos Botões -->
     <string name="btnSalvar">Salvar</string>

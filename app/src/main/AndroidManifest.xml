@@ -85,16 +85,24 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <!-- Botão Cadastrar Médico -->
+        <!-- Tela Cadastrar Médico -->
         <activity
             android:name=".Controller.Medico_Cadastrar"
             android:label="@string/title_activity_novomedico"
             android:parentActivityName=".Controller.MedicoActivity" >
         </activity>
 
-        <!-- Botão Detalhes do Médico -->
-        <activity android:name=".Controller.medico_details"
-            android:parentActivityName=".Controller.MedicoActivity">
+        <!-- Tela Detalhes do Médico -->
+        <activity
+            android:name=".Controller.Medico_details"
+            android:label="@string/title_medico_details"
+            android:parentActivityName=".Controller.MedicoActivity" >
+        </activity>
+
+        <!-- Tela Cadastrar Agenda -->
+        <activity android:name=".Controller.Agenda_cadastrar"
+            android:label="@string/title_agenda_cadastrar"
+            android:parentActivityName=".Controller.AgendaActivity">
         </activity>
     </application>
 

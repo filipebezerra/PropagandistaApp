@@ -3,7 +3,6 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -109,7 +108,7 @@ public class MedicoActivity extends ActionBarActivity {
                 HashMap<String, Object> obj = (HashMap<String, Object>)grdMedicos.getAdapter().getItem(position);
                 Bundle param = new Bundle();
                 param.putString("id",obj.get("id").toString());
-                Tela.AbrirTela(MedicoActivity.this,medico_details.class,param);
+                Tela.AbrirTela(MedicoActivity.this,Medico_details.class,param);
             }
         });
 
