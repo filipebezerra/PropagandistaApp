@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by washington on 21/09/14.
  */
 public class PersonalAdpater extends SimpleAdapter {
-    private int[] colors = new int[] {Color.parseColor("#FFFFFF"), Color.parseColor("#E6E6E6") };
+    private int[] colors = new int[] {Color.parseColor("#FFFFFF"), Color.parseColor("#FFFFFF") };
 
     public PersonalAdpater(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
         super(context, data, resource, from, to);
