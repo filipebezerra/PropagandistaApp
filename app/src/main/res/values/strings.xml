@@ -188,6 +188,9 @@
     <string name="txtCrm">Crm</string>
     <string name="txtEspecialidade">Especialidade Médica</string>
     <string name="txtData">Data</string>
+    <string name="txtHora">Hora</string>
+    <string name="txtObs">Observação</string>
+    <string name="txtMedico">Médico</string>
 
     <!-- Textos Botões -->
     <string name="btnSalvar">Salvar</string>

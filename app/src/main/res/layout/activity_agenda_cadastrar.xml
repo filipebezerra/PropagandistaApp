@@ -38,20 +38,20 @@
 
                 <EditText android:id="@+id/txtHora" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeActionId="@+id/txtDtAniversario"
-                    android:hint="@string/txtDtAniversario"
+                    android:imeActionId="@+id/txtData"
+                    android:hint="@string/txtHora"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="date"
+                    android:inputType="time"
                     android:maxLines="1" android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText android:id="@+id/txtSecretaria" android:layout_width="match_parent"
+                <EditText android:id="@+id/txtMedico" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeActionId="@+id/txtSecretaria"
-                    android:hint="@string/txtSecretaria"
+                    android:imeActionId="@+id/txtMedico"
+                    android:hint="@string/txtMedico"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPersonName"
                     android:maxLines="1" android:singleLine="true" />
@@ -60,53 +60,17 @@
             <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText android:id="@+id/txtTelefone" android:layout_width="match_parent"
+                <EditText android:id="@+id/txtObs" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeActionId="@+id/txtTelefone"
-                    android:hint="@string/txtTelefone"
+                    android:imeActionId="@+id/txtObs"
+                    android:hint="@string/txtObs"
                     android:imeOptions="actionUnspecified"
-                    android:inputType="phone"
-                    android:maxLines="1" android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
-            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText android:id="@+id/txtEmail" android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeActionId="@+id/txtEmail"
-                    android:hint="@string/txtEmail"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1" android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText android:id="@+id/txtCrm" android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeActionId="@+id/txtCrm"
-                    android:hint="@string/txtCrm"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="number"
-                    android:maxLines="1" android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText android:id="@+id/txtEspecialidade" android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:imeActionId="@+id/txtEspecialidade"
-                    android:hint="@string/txtEspecialidade"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textAutoComplete"
+                    android:inputType="textAutoCorrect"
                     android:maxLines="1" android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Rodapé -->
     <!--Botões Rodapé-->
     <LinearLayout
         android:layout_width="fill_parent"
