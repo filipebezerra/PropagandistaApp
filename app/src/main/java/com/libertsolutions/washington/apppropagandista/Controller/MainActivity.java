@@ -8,16 +8,26 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    @Bind(R.id.user_name) TextView mUserNameView;
+    @Bind(R.id.user_email) TextView mUserEmailView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -29,6 +39,12 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        final Propagandista userLogged = PreferencesUtils.getUserLogged(this);
+        if (userLogged != null) {
+            mUserNameView.setText(userLogged.getNome());
+            mUserEmailView.setText(userLogged.getUsuario().getEmail());
+        }
     }
 
     @Override
@@ -56,6 +72,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_config) {
             Tela.AbrirTela(MainActivity.this,ConfiguracaoActivity.class);
         }else if (id == R.id.nav_sair) {
+            PreferencesUtils.logoutUser(this);
             this.finish();
         }
 
