@@ -7,7 +7,8 @@ import java.security.Timestamp;
  */
 public class Agenda {
     private Integer id_agenda;
-    private Timestamp data;
+    private String data;
+    private String hora;
     private String obs;
     private Medico id_medico;
     private Integer status;
@@ -17,8 +18,11 @@ public class Agenda {
         return id_agenda;
     }
 
-    public Timestamp getData() {
+    public String getData() {
         return data;
+    }
+    public String getHora() {
+        return hora;
     }
 
     public String getObs() {
@@ -38,8 +42,12 @@ public class Agenda {
         this.id_agenda = id_agenda;
     }
 
-    public void setData(Timestamp data) {
+    public void setData(String data) {
         this.data = data;
+    }
+
+    public void setHora(String hora) {
+        this.data = hora;
     }
 
     public void setObs(String obs) {

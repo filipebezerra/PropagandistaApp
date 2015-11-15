@@ -101,9 +101,15 @@
         </activity>
 
         <!-- Tela Cadastrar Agenda -->
-        <activity android:name=".Controller.Agenda_cadastrar"
+        <activity
+            android:name=".Controller.Agenda_cadastrar"
             android:label="@string/title_agenda_cadastrar"
-            android:parentActivityName=".Controller.AgendaActivity">
+            android:parentActivityName=".Controller.AgendaActivity" >
+        </activity>
+
+        <!-- Tela Consultar Médicos Cadastrados -->
+        <activity android:name=".Controller.ConsultarMedicoActivity"
+            android:parentActivityName=".Controller.Agenda_cadastrar">
         </activity>
     </application>
 

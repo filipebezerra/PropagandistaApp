@@ -40,11 +40,11 @@ public class Medico_Cadastrar extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(!validaTela()) {
-                    Medico user = getDados();
+                    Medico medico = getDados();
                     try
                     {
                         //Salva dados no banco
-                        medicoDb.Incluir(user);
+                        medicoDb.Incluir(medico);
                     }catch (Exception error)
                     {
                     }finally {
