@@ -47,7 +47,7 @@ public class Agenda {
     }
 
     public void setHora(String hora) {
-        this.data = hora;
+        this.hora = hora;
     }
 
     public void setObs(String obs) {

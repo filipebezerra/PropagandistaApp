@@ -90,10 +90,11 @@ public class Banco extends SQLiteOpenHelper  {
     private String Agenda()   {
         return "CREATE TABLE IF NOT EXISTS Agenda (id_agenda INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "data text not null,"+
+                "hora text not null,"+
                 "id_medico integer not null,"+
                 "obs text,"+
                 "status integer,"+
-                "FOREIGN KEY(id_medico) REFERENCES Medico(id_medico)";
+                "FOREIGN KEY(id_medico) REFERENCES Medico(id_medico))";
     }
 
     //este método faz a atualização do banco

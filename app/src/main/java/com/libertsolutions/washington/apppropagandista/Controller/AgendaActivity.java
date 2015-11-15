@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class AgendaActivity extends AppCompatActivity {
-    ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<HashMap<String, String>>();
+    ArrayList<HashMap<String, String>> lstAgenda = new ArrayList<HashMap<String, String>>();
     PersonalAdpater arrayAdapter;
     ListView grdAgenda;
     private boolean isLoadMore = false;
@@ -97,7 +97,7 @@ public class AgendaActivity extends AppCompatActivity {
         start = 0;
         arrayAdapter = null;
         grdAgenda = (ListView)findViewById(R.id.lstAgenda);
-        lstMedicos = new ArrayList<HashMap<String, String>>();
+        lstAgenda = new ArrayList<HashMap<String, String>>();
 
         //Preenche Grid com dados iniciais
         PreencheGrid(start,limit);
@@ -156,12 +156,12 @@ public class AgendaActivity extends AppCompatActivity {
                 map.put(columnTags[2], "Data: " + agenda.getData().toString());  //Data e Horário
                 map.put(columnTags[3], "Obs: " + agenda.getObs());  //Observação
                 //Adiciona dados no Arraylist
-                lstMedicos.add(map);
+                lstAgenda.add(map);
             }
 
             int currentPosition = grdAgenda.getFirstVisiblePosition();
             //Função para realizar adptação necessária para inserir dados no ListView
-            arrayAdapter = new PersonalAdpater(this, lstMedicos, R.layout.cols_3,columnTags , columnIds);
+            arrayAdapter = new PersonalAdpater(this, lstAgenda, R.layout.cols_3,columnTags , columnIds);
 
             //Adiciona Array no ListView
             grdAgenda.setAdapter(arrayAdapter);

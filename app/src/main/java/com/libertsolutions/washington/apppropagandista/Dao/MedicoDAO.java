@@ -87,11 +87,11 @@ public class MedicoDAO {
     public Medico Consultar(Integer id_medico)
     {
         Medico medico = new Medico();
+        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","status"};
         try{
             //Abre Conexão
             cnn.AbrirConexao();
-            Cursor cursor = cnn.db().rawQuery("select id_medico,nome,dtAniversario,secretaria,telefone,email,crm,especialidade,status " +
-                    "from Medico where id_medico = '"+id_medico.toString()+"'",null);
+            Cursor cursor = cnn.db().query("Medico",campos,"id_medico = "+id_medico,null,null,null,null);
             if(cursor != null) {
                 if (cursor.moveToFirst()) {
                     medico.setId_medico(cursor.getInt(0));

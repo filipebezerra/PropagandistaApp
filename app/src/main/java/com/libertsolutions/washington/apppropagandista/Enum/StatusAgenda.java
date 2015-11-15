@@ -6,7 +6,7 @@ package com.libertsolutions.washington.apppropagandista.Enum;
 public enum  StatusAgenda {
     Pendente(1),EmAtendimento(2),Finalizado(3);
 
-    private final int codigo;
+    public int codigo;
 
     StatusAgenda(int codigo) { this.codigo = codigo; }
 

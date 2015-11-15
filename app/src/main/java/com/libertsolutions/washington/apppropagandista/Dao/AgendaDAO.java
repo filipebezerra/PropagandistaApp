@@ -40,10 +40,11 @@ public class AgendaDAO {
             //Abre Conexão
             cnn.AbrirConexao();
             valores = new ContentValues();
-            valores.put("data",agenda.getData().toString());
+            valores.put("data",agenda.getData());
+            valores.put("hora",agenda.getHora());
             valores.put("obs",agenda.getObs());
             valores.put("id_medico",agenda.getId_medico().getId_medico());
-            valores.put("status",Integer.valueOf(StatusAgenda.Pendente.toString()));
+            valores.put("status",StatusAgenda.Pendente.codigo);
             resultado = cnn.db().insert("Agenda",null,valores);
         }catch (Exception error)
         {
@@ -63,7 +64,8 @@ public class AgendaDAO {
             //Abre Conexão
             cnn.AbrirConexao();
             valores = new ContentValues();
-            valores.put("data",agenda.getData().toString());
+            valores.put("data",agenda.getData());
+            valores.put("hora",agenda.getHora());
             valores.put("obs",agenda.getObs());
             valores.put("id_medico", agenda.getId_medico().getId_medico());
             valores.put("status",agenda.getStatus());
@@ -81,18 +83,19 @@ public class AgendaDAO {
     public Agenda Consultar(Integer id_agenda)
     {
         Agenda agenda = new Agenda();
+        String[] campos = {"id_agenda","data","hora","id_medico","obs","status"};
         try{
             //Abre Conexão
             cnn.AbrirConexao();
-            Cursor cursor = cnn.db().rawQuery("select id_agenda,data,id_medico,obs,status " +
-                    "from Agenda where id_agenda = '"+id_agenda.toString()+"'",null);
+            Cursor cursor = cnn.db().query("Agenda",campos,"id_agenda = "+id_agenda,null,null,null,null);
             if(cursor != null) {
                 if (cursor.moveToFirst()) {
                     agenda.setId_agenda(cursor.getInt(0));
-                    //medico.setDtAniversario(Date.parse(cursor.getString(1).toString()));
-                    agenda.setId_medico(new MedicoDAO(context).Consultar(cursor.getInt(2)));
-                    agenda.setObs(cursor.getString(3));
-                    agenda.setStatus(Integer.parseInt(cursor.getString(4)));
+                    agenda.setData(cursor.getString(1));
+                    agenda.setHora(cursor.getString(2));
+                    agenda.setId_medico(new MedicoDAO(context).Consultar(cursor.getInt(3)));
+                    agenda.setObs(cursor.getString(4));
+                    agenda.setStatus(Integer.parseInt(cursor.getString(5)));
                 }
             }
         }catch (Exception error)
@@ -108,21 +111,22 @@ public class AgendaDAO {
     public ArrayList<Agenda> Listar(String start,String limit)
     {
         Agenda agenda;
-        String[] campos = {"id_agenda","data","id_medico","obs","status"};
+        String[] campos = {"id_agenda","data","hora","id_medico","obs","status"};
         ArrayList<Agenda> list = new ArrayList<Agenda>();
         try {
             //Abre Conexão
             cnn.AbrirConexao();
 
-            Cursor cursor = cnn.db().query("Agenda",campos,null,null,null,null,"data,status",start+","+limit);
+            Cursor cursor = cnn.db().query("Agenda",campos,null,null,null,null,"data",start+","+limit);
 
             while(cursor.moveToNext()){
                 agenda = new Agenda();
                 agenda.setId_agenda(cursor.getInt(0));
-                //medico.setDtAniversario(Date.parse(cursor.getString(1).toString()));
-                agenda.setId_medico(new MedicoDAO(context).Consultar(cursor.getInt(2)));
-                agenda.setObs(cursor.getString(3));
-                agenda.setStatus(Integer.parseInt(cursor.getString(4)));
+                agenda.setData(cursor.getString(1));
+                agenda.setHora(cursor.getString(2));
+                agenda.setId_medico(new MedicoDAO(context).Consultar(cursor.getInt(3)));
+                agenda.setObs(cursor.getString(4));
+                agenda.setStatus(Integer.parseInt(cursor.getString(5)));
                 list.add(agenda);
             }
 
@@ -133,7 +137,7 @@ public class AgendaDAO {
 
         }catch (Exception error)
         {
-            //Mensagem.MensagemAlerta("Listar Cond.Pgto.", error.getMessage());
+            Mensagem.MensagemAlerta(context, error.getMessage());
         }
         return list;
     }
