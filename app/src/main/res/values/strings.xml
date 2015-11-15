@@ -27,6 +27,7 @@
 
     <string name="action_settings">Configurações</string>
     <string name="title_activity_configuracoes">Configurações</string>
+    <string name="title_consultar_medico">Seleione o Médico</string>
 
     <!-- Strings related to Settings -->
 

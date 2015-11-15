@@ -40,14 +40,15 @@ public class Agenda_cadastrar extends AppCompatActivity {
 
         //Recupera Campos
         getCampos();
+
+        //Chama Funções para Campos Data e Hora
         setDateTimeField();
 
-        //Metódo selecionar médico
-        txtMedico.setOnTouchListener(new View.OnTouchListener() {
+        txtMedico.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Tela.AbrirTela(Agenda_cadastrar.this,ConsultarMedicoActivity.class);
-                return false;
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus)
+                    Tela.AbrirTela(Agenda_cadastrar.this, ConsultarMedicoActivity.class,1);
             }
         });
 
@@ -88,15 +89,21 @@ public class Agenda_cadastrar extends AppCompatActivity {
                 }
             }
         });
+    }
 
-        //Recupera parâmetros
-        Intent intent = getIntent();
-        Bundle bundle = intent.getExtras();
-        if(bundle!=null)
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode > 0)
         {
-            txtIdMedico.setText(bundle.getInt("id_medico"));
-            txtMedico.setText(bundle.getString("nome"));
+            switch (requestCode) {
+                case 1://Médico
+                    txtIdMedico.setText(data.getExtras().getString("id_medico"));
+                    txtMedico.setText(data.getExtras().getString("nome"));
+                    txtData.setFocusable(true);
+                    break;
+            }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     //Metódo para mostrar data e hora
@@ -197,7 +204,4 @@ public class Agenda_cadastrar extends AppCompatActivity {
         }
         return cancel;
     }
-
-    //Get Médicos
-
 }

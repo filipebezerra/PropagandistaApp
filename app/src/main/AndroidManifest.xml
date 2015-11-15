@@ -109,6 +109,7 @@
 
         <!-- Tela Consultar Médicos Cadastrados -->
         <activity android:name=".Controller.ConsultarMedicoActivity"
+            android:label="@string/title_consultar_medico"
             android:parentActivityName=".Controller.Agenda_cadastrar">
         </activity>
     </application>

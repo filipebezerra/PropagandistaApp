@@ -77,8 +77,13 @@ public class Medico_Cadastrar extends AppCompatActivity {
     {
         Medico  medico = new Medico();
         medico.setNome(this.txtNome.getText().toString());
-        medico.setDtAniversario(new Date());
+
         if(TextUtils.isEmpty(txtDtAniversario.getText().toString()))
+            medico.setDtAniversario("");
+        else
+            medico.setDtAniversario(this.txtDtAniversario.getText().toString());
+
+        if(TextUtils.isEmpty(txtSecretaria.getText().toString()))
             medico.setSecretaria("");
         else
             medico.setSecretaria(this.txtSecretaria.getText().toString());
@@ -98,7 +103,7 @@ public class Medico_Cadastrar extends AppCompatActivity {
         else
             medico.setCrm(this.txtCrm.getText().toString());
 
-        if(TextUtils.isEmpty(txtCrm.getText().toString()))
+        if(TextUtils.isEmpty(txtEspecialidade.getText().toString()))
             medico.setEspecialidade("");
         else
             medico.setEspecialidade(this.txtEspecialidade.getText().toString());

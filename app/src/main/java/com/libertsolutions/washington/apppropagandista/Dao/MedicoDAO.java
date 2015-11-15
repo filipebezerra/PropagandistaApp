@@ -67,7 +67,7 @@ public class MedicoDAO {
             cnn.AbrirConexao();
             valores = new ContentValues();
             valores.put("nome",medico.getNome());
-            valores.put("dtAniversario",medico.getDtAniversario().toString());
+            valores.put("dtAniversario",medico.getDtAniversario());
             valores.put("secretaria",medico.getSecretaria());
             valores.put("telefone",medico.getTelefone());
             valores.put("email",medico.getEmail());
@@ -90,18 +90,19 @@ public class MedicoDAO {
         try{
             //Abre Conexão
             cnn.AbrirConexao();
-            Cursor cursor = cnn.db().rawQuery("select nome,dtAniversario,secretaria,telefone,email,crm,especialidade,status " +
+            Cursor cursor = cnn.db().rawQuery("select id_medico,nome,dtAniversario,secretaria,telefone,email,crm,especialidade,status " +
                     "from Medico where id_medico = '"+id_medico.toString()+"'",null);
             if(cursor != null) {
                 if (cursor.moveToFirst()) {
-                    medico.setNome(cursor.getString(0));
-                    //medico.setDtAniversario(Date.parse(cursor.getString(1).toString()));
-                    medico.setTelefone(cursor.getString(2));
-                    medico.setEmail(cursor.getString(3));
-                    medico.setCrm(cursor.getString(4));
-                    medico.setEmail(cursor.getString(5));
-                    medico.setEspecialidade(cursor.getString(6));
-                    medico.setStatus(Integer.parseInt(cursor.getString(7)));
+                    medico.setId_medico(cursor.getInt(0));
+                    medico.setNome(cursor.getString(1));
+                    medico.setDtAniversario(cursor.getString(2).toString());
+                    medico.setTelefone(cursor.getString(3));
+                    medico.setEmail(cursor.getString(4));
+                    medico.setCrm(cursor.getString(5));
+                    medico.setEmail(cursor.getString(6));
+                    medico.setEspecialidade(cursor.getString(7));
+                    medico.setStatus(Integer.parseInt(cursor.getString(8)));
                 }
             }
         }catch (Exception error)
@@ -129,7 +130,7 @@ public class MedicoDAO {
                 medico = new Medico();
                 medico.setId_medico(Integer.parseInt(cursor.getString(0)));
                 medico.setNome(cursor.getString(1));
-                medico.setDtAniversario(new Date());
+                medico.setDtAniversario(cursor.getString(2));
                 medico.setSecretaria(cursor.getString(3));
                 medico.setTelefone(cursor.getString(4));
                 medico.setEmail(cursor.getString(5));

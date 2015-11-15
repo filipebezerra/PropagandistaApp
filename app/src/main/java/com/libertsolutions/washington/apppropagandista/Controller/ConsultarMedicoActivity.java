@@ -3,6 +3,7 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -109,12 +110,18 @@ public class ConsultarMedicoActivity extends ActionBarActivity {
         grdMedicos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HashMap<String, Object> obj = (HashMap<String, Object>) grdMedicos.getAdapter().getItem(position);
-                Medico medico = medicoDb.Consultar(Integer.parseInt(obj.get("id").toString()));
-                Bundle param = new Bundle();
-                param.putInt("id_medico", medico.getId_medico());
-                param.putString("nome", medico.getNome());
-                onBackPressed();
+                try {
+                    HashMap<String, Object> obj = (HashMap<String, Object>) grdMedicos.getAdapter().getItem(position);
+                    Medico medico = medicoDb.Consultar(Integer.parseInt(obj.get("id").toString()));
+                    Intent param = new Intent();
+                    param.putExtra("id_medico", medico.getId_medico().toString());
+                    param.putExtra("nome", medico.getNome());
+                    setResult(1,param);
+                    onBackPressed();
+                }catch (Exception erro)
+                {
+                    Mensagem.MensagemAlerta(ConsultarMedicoActivity.this,erro.getMessage());
+                }
             }
         });
 
