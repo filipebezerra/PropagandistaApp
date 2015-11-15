@@ -1,12 +1,13 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.libertsolutions.washington.apppropagandista.R;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends Activity {
     // Splash screen timer
     private static int SPLASH_TIME_OUT = 3000;
 

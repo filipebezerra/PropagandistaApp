@@ -3,7 +3,9 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -15,8 +17,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
-import com.libertsolutions.washington.apppropagandista.Model.Agenda;
+import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
+import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
@@ -27,13 +29,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AgendaActivity extends AppCompatActivity {
-    ArrayList<HashMap<String, String>> lstAgenda = new ArrayList<HashMap<String, String>>();
+public class ConsultarMedicoActivity extends ActionBarActivity {
+    ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<HashMap<String, String>>();
     PersonalAdpater arrayAdapter;
-    ListView grdAgenda;
+    ListView grdMedicos;
     private boolean isLoadMore = false;
     ProgressDialog pDialog;
-    private AgendaDAO agendaDb;
+    private MedicoDAO medicoDb;
     int start = 0;
     int limit = 20;
 
@@ -41,9 +43,10 @@ public class AgendaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         try{
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_agenda);
+            setContentView(R.layout.activity_consultar_medico);
 
-            this.agendaDb = new AgendaDAO(this);
+            this.medicoDb = new MedicoDAO(this);
+
         }catch (Exception erro)
         {
             Mensagem.MensagemAlerta(this, erro.getMessage());
@@ -71,7 +74,7 @@ public class AgendaActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.action_novo:
-                Tela.AbrirTela(AgendaActivity.this, Agenda_cadastrar.class);
+                Tela.AbrirTela(ConsultarMedicoActivity.this, Medico_Cadastrar.class);
                 //open Activity,Fragments or other action
                 return true;
             default:
@@ -87,7 +90,7 @@ public class AgendaActivity extends AppCompatActivity {
         }
         catch (Exception erro)
         {
-            Mensagem.MensagemAlerta("Erro Start Produtos", erro.getMessage(), AgendaActivity.this);
+            Mensagem.MensagemAlerta("Erro Start Produtos", erro.getMessage(), ConsultarMedicoActivity.this);
         }
     }
 
@@ -96,26 +99,34 @@ public class AgendaActivity extends AppCompatActivity {
     {
         start = 0;
         arrayAdapter = null;
-        grdAgenda = (ListView)findViewById(R.id.lstAgenda);
-        lstAgenda = new ArrayList<HashMap<String, String>>();
+        grdMedicos = (ListView)findViewById(R.id.lstMedicos);
+        lstMedicos = new ArrayList<HashMap<String, String>>();
 
         //Preenche Grid com dados iniciais
         PreencheGrid(start,limit);
         start += 10;
 
         //Evento Click na Grid
-        grdAgenda.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        grdMedicos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                HashMap<String, Object> obj = (HashMap<String, Object>)grdAgenda.getAdapter().getItem(position);
-                Bundle param = new Bundle();
-                param.putString("id",obj.get("id").toString());
-                Tela.AbrirTela(AgendaActivity.this,Agenda_cadastrar.class,param);
+                try {
+                    HashMap<String, Object> obj = (HashMap<String, Object>) grdMedicos.getAdapter().getItem(position);
+                    Medico medico = medicoDb.Consultar(Integer.parseInt(obj.get("id").toString()));
+                    Intent param = new Intent();
+                    param.putExtra("id_medico", medico.getId_medico().toString());
+                    param.putExtra("nome", medico.getNome());
+                    setResult(1,param);
+                    onBackPressed();
+                }catch (Exception erro)
+                {
+                    Mensagem.MensagemAlerta(ConsultarMedicoActivity.this,erro.getMessage());
+                }
             }
         });
 
         //Evento Scrool aparelho
-        grdAgenda.setOnScrollListener(new EndlessScrollListener() {
+        grdMedicos.setOnScrollListener(new EndlessScrollListener() {
             public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
                 int lastInScreen = firstVisibleItem + visibleItemCount;
                 if((lastInScreen == totalItemCount)){
@@ -140,8 +151,8 @@ public class AgendaActivity extends AppCompatActivity {
     {
         try
         {
-            List<Agenda> lista = new ArrayList<Agenda>();
-            lista = agendaDb.Listar(String.valueOf(start),String.valueOf(limit));
+            List<Medico> lista = new ArrayList<Medico>();
+            lista = medicoDb.Listar(String.valueOf(start),String.valueOf(limit));
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] {"id","col1", "col2","col3"};
 
@@ -149,26 +160,26 @@ public class AgendaActivity extends AppCompatActivity {
             int[] columnIds = new int[] {R.id.id,R.id.column1, R.id.column2,R.id.column3};
             for (int i = 0; i < lista.size();i++)
             {
-                Agenda agenda = lista.get(i);
+                Medico medico = lista.get(i);
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put(columnTags[0],String.valueOf(agenda.getId_agenda()));  //Id
-                map.put(columnTags[1],agenda.getId_medico().getNome());  //Médico
-                map.put(columnTags[2], "Data: " + agenda.getData().toString());  //Data e Horário
-                map.put(columnTags[3], "Obs: " + agenda.getObs());  //Observação
+                map.put(columnTags[0],String.valueOf(medico.getId_medico()));  //Id
+                map.put(columnTags[1],medico.getNome());  //Nome
+                map.put(columnTags[2], "Telefone: " + medico.getTelefone());  //Telefone
+                map.put(columnTags[3], "Secretária: " + medico.getSecretaria());  //Secretária
                 //Adiciona dados no Arraylist
-                lstAgenda.add(map);
+                lstMedicos.add(map);
             }
 
-            int currentPosition = grdAgenda.getFirstVisiblePosition();
+            int currentPosition = grdMedicos.getFirstVisiblePosition();
             //Função para realizar adptação necessária para inserir dados no ListView
-            arrayAdapter = new PersonalAdpater(this, lstAgenda, R.layout.cols_3,columnTags , columnIds);
+            arrayAdapter = new PersonalAdpater(this, lstMedicos, R.layout.cols_3,columnTags , columnIds);
 
             //Adiciona Array no ListView
-            grdAgenda.setAdapter(arrayAdapter);
+            grdMedicos.setAdapter(arrayAdapter);
             if(start > 1)
-                grdAgenda.setSelectionFromTop(currentPosition + 1, 0);
+                grdMedicos.setSelectionFromTop(currentPosition + 1, 0);
         }catch (Exception error) {
-            Mensagem.MensagemAlerta("Preenche Grid", error.getMessage(), AgendaActivity.this);
+            Mensagem.MensagemAlerta("Preenche Grid", error.getMessage(), ConsultarMedicoActivity.this);
 
         }
     }
@@ -179,7 +190,7 @@ public class AgendaActivity extends AppCompatActivity {
         protected void onPreExecute() {
             // Showing progress dialog before sending http request
             pDialog = new ProgressDialog(
-                    AgendaActivity.this);
+                    ConsultarMedicoActivity.this);
             pDialog.setMessage("Carregando...");
             pDialog.setIndeterminate(true);
             pDialog.setCancelable(false);

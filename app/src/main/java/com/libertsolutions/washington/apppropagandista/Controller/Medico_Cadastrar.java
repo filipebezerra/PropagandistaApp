@@ -1,24 +1,33 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TimePicker;
 
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mask;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class Medico_Cadastrar extends AppCompatActivity {
     //Atributos
     private MedicoDAO medicoDb;
     private EditText txtNome;
     private EditText txtDtAniversario;
+    DatePickerDialog dataAniversario;
     private EditText txtSecretaria;
     private EditText txtTelefone;
     private EditText txtEmail;
@@ -35,16 +44,28 @@ public class Medico_Cadastrar extends AppCompatActivity {
         //Recupera Campos
         getCampos();
 
+        //Chama Funções para Campos Data
+        setDateTimeField();
+
+        //Selecionar Data Aniversário
+        txtDtAniversario.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                dataAniversario.show();
+                return false;
+            }
+        });
+
         //Click Botão Salvar
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!validaTela()) {
-                    Medico user = getDados();
+                    Medico medico = getDados();
                     try
                     {
                         //Salva dados no banco
-                        medicoDb.Incluir(user);
+                        medicoDb.Incluir(medico);
                     }catch (Exception error)
                     {
                     }finally {
@@ -57,6 +78,22 @@ public class Medico_Cadastrar extends AppCompatActivity {
         //Mascara
         txtTelefone.addTextChangedListener(Mask.insert("(##)####-#####", txtTelefone));
         txtDtAniversario.addTextChangedListener(Mask.insert("##/##/####", txtDtAniversario));
+    }
+
+    //Metódo para mostrar data
+    private void setDateTimeField() {
+        //Dialog Data
+        Calendar newCalendar = Calendar.getInstance();
+        dataAniversario = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+                txtDtAniversario.setText(dateFormatter.format(newDate.getTime()));
+            }
+
+        },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
     }
 
     //Metódo Recuperar Campos
@@ -77,8 +114,13 @@ public class Medico_Cadastrar extends AppCompatActivity {
     {
         Medico  medico = new Medico();
         medico.setNome(this.txtNome.getText().toString());
-        medico.setDtAniversario(new Date());
+
         if(TextUtils.isEmpty(txtDtAniversario.getText().toString()))
+            medico.setDtAniversario("");
+        else
+            medico.setDtAniversario(this.txtDtAniversario.getText().toString());
+
+        if(TextUtils.isEmpty(txtSecretaria.getText().toString()))
             medico.setSecretaria("");
         else
             medico.setSecretaria(this.txtSecretaria.getText().toString());
@@ -98,7 +140,7 @@ public class Medico_Cadastrar extends AppCompatActivity {
         else
             medico.setCrm(this.txtCrm.getText().toString());
 
-        if(TextUtils.isEmpty(txtCrm.getText().toString()))
+        if(TextUtils.isEmpty(txtEspecialidade.getText().toString()))
             medico.setEspecialidade("");
         else
             medico.setEspecialidade(this.txtEspecialidade.getText().toString());

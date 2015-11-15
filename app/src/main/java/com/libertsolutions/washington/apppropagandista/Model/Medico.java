@@ -9,7 +9,7 @@ import java.util.Date;
 public class Medico {
     private Integer id_medico;
     private String nome;
-    private Date dtAniversario;
+    private String dtAniversario;
     private String secretaria;
     private String telefone;
     private String email;
@@ -18,7 +18,7 @@ public class Medico {
     private int status;
 
     //Metódos Set's
-    public void setId_medico(int id_medico) {
+    public void setId_medico(Integer id_medico) {
         this.id_medico = id_medico;
     }
 
@@ -26,7 +26,7 @@ public class Medico {
         this.nome = nome;
     }
 
-    public void setDtAniversario(Date dtAniversario) {
+    public void setDtAniversario(String dtAniversario) {
         this.dtAniversario = dtAniversario;
     }
 
@@ -55,7 +55,7 @@ public class Medico {
     }
 
     //Metódos Get's
-    public int getId_medico() {
+    public Integer getId_medico() {
         return id_medico;
     }
 
@@ -63,7 +63,7 @@ public class Medico {
         return nome;
     }
 
-    public Date getDtAniversario() {
+    public String getDtAniversario() {
         return dtAniversario;
     }
 
