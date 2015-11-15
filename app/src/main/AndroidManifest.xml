@@ -115,6 +115,15 @@
             android:label="@string/title_agenda_cadastrar"
             android:parentActivityName=".Controller.AgendaActivity"
             ></activity>
+
+        <activity android:name=".Controller.ConsultarMedicoActivity"
+            android:label="@string/title_consultar_medico"
+            android:parentActivityName=".Controller.Agenda_cadastrar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controller.Agenda_cadastrar"
+                />
+        </activity>
     </application>
 
 </manifest>
