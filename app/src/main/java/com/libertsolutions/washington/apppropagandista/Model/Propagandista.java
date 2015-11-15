@@ -1,48 +1,43 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by washington on 08/11/2015.
  */
 public class Propagandista {
-    private int id_propagandista;
+    @Expose
     private String nome;
-    private String cpf;
-    private String email;
 
-    //Metódos Set's
-    public void setId_propagandista(int id_propagandista) {
-        this.id_propagandista = id_propagandista;
+    @Expose
+    private String cpf;
+
+    @SerializedName("Usuario")
+    @Expose
+    private Usuario usuario;
+
+    public String getNome() {
+        return nome;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    //Metódos Get's
-    public int getId_propagandista() {
-        return id_propagandista;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
     public String getCpf() {
         return cpf;
     }
 
-    public String getEmail() {
-        return email;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
-    public static final String prop_nome = "nome";
-    public static final String pro_email = "email";
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 }

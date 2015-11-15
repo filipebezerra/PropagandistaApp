@@ -1,5 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by washington on 04/11/2015.
  */
@@ -7,6 +9,7 @@ public class Usuario {
     private Integer id_usuario;
     private String nome;
     private String cpf;
+    @Expose
     private String email;
     private String senha;
 
