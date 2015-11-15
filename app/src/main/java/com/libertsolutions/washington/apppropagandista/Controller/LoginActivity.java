@@ -103,7 +103,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailSignInButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //if(!attemptLogin()) {
+                    //JSONHttpClient jsonHttpClient = new JSONHttpClient();
+                    //List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                    //nameValuePairs.add(new BasicNameValuePair("cpf", "04084850195"));
+                    //Propagandista[] propagandista = jsonHttpClient.Get(ServiceUrl.PROPAGANDISTA, nameValuePairs, Propagandista[].class);
                     Tela.AbrirTela(LoginActivity.this, MainActivity.class);
                     //}
                 }

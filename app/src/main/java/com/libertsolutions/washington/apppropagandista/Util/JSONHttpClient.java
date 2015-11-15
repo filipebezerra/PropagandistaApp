@@ -117,9 +117,12 @@ public class JSONHttpClient {
 
             }
 
-        } catch (Exception  e) {
-            //Mensagem.MensagemAlerta(n,e.getMessage());
-            Log.e("DEVMEDIA", "Falha ao acessar Web service", e);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
