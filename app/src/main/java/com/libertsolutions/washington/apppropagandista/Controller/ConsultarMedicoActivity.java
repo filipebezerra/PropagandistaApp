@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -22,7 +21,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
-import com.libertsolutions.washington.apppropagandista.Util.PersonalAdpater;
+import com.libertsolutions.washington.apppropagandista.Util.PersonalAdapter;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ import java.util.List;
 
 public class ConsultarMedicoActivity extends ActionBarActivity {
     ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<HashMap<String, String>>();
-    PersonalAdpater arrayAdapter;
+    PersonalAdapter arrayAdapter;
     ListView grdMedicos;
     private boolean isLoadMore = false;
     ProgressDialog pDialog;
@@ -172,7 +171,7 @@ public class ConsultarMedicoActivity extends ActionBarActivity {
 
             int currentPosition = grdMedicos.getFirstVisiblePosition();
             //Função para realizar adptação necessária para inserir dados no ListView
-            arrayAdapter = new PersonalAdpater(this, lstMedicos, R.layout.cols_3,columnTags , columnIds);
+            arrayAdapter = new PersonalAdapter(this, lstMedicos, R.layout.cols_3,columnTags , columnIds);
 
             //Adiciona Array no ListView
             grdMedicos.setAdapter(arrayAdapter);

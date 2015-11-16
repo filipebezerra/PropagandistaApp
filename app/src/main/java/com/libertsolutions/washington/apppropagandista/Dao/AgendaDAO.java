@@ -3,19 +3,18 @@ package com.libertsolutions.washington.apppropagandista.Dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-
 import com.libertsolutions.washington.apppropagandista.Enum.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Util.Banco;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
-
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by washington on 14/11/2015.
  */
 public class AgendaDAO {
+    private static final String TABLE_NAME = "Agenda";
+    private static final String[] COLUMNS = {"id_agenda","data","hora","id_medico","obs","status"};
     private Banco cnn;
     private Context context;
 
@@ -45,7 +44,7 @@ public class AgendaDAO {
             valores.put("obs",agenda.getObs());
             valores.put("id_medico",agenda.getId_medico().getId_medico());
             valores.put("status",StatusAgenda.Pendente.codigo);
-            resultado = cnn.db().insert("Agenda",null,valores);
+            resultado = cnn.db().insert(TABLE_NAME,null,valores);
         }catch (Exception error)
         {
             Mensagem.MensagemAlerta(context,error.getMessage());
@@ -69,7 +68,7 @@ public class AgendaDAO {
             valores.put("obs",agenda.getObs());
             valores.put("id_medico", agenda.getId_medico().getId_medico());
             valores.put("status",agenda.getStatus());
-            cnn.db().update("Agenda",valores,where,null);
+            cnn.db().update(TABLE_NAME,valores,where,null);
         }catch (Exception error)
         {
             Mensagem.MensagemAlerta(context,error.getMessage());
@@ -83,11 +82,10 @@ public class AgendaDAO {
     public Agenda Consultar(Integer id_agenda)
     {
         Agenda agenda = new Agenda();
-        String[] campos = {"id_agenda","data","hora","id_medico","obs","status"};
         try{
             //Abre Conexão
             cnn.AbrirConexao();
-            Cursor cursor = cnn.db().query("Agenda",campos,"id_agenda = "+id_agenda,null,null,null,null);
+            Cursor cursor = cnn.db().query(TABLE_NAME,COLUMNS,"id_agenda = "+id_agenda,null,null,null,null);
             if(cursor != null) {
                 if (cursor.moveToFirst()) {
                     agenda.setId_agenda(cursor.getInt(0));
@@ -111,13 +109,20 @@ public class AgendaDAO {
     public ArrayList<Agenda> Listar(String start,String limit)
     {
         Agenda agenda;
-        String[] campos = {"id_agenda","data","hora","id_medico","obs","status"};
         ArrayList<Agenda> list = new ArrayList<Agenda>();
         try {
             //Abre Conexão
             cnn.AbrirConexao();
 
-            Cursor cursor = cnn.db().query("Agenda",campos,null,null,null,null,"data",start+","+limit);
+            Cursor cursor = cnn.db().query(
+                    TABLE_NAME,
+                    COLUMNS,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "data, hora",
+                    start+","+limit);
 
             while(cursor.moveToNext()){
                 agenda = new Agenda();
@@ -132,6 +137,47 @@ public class AgendaDAO {
 
             if (cursor != null && !cursor.isClosed())
             {
+                cursor.close();
+            }
+
+        }catch (Exception error)
+        {
+            Mensagem.MensagemAlerta(context, error.getMessage());
+        }
+        return list;
+    }
+
+    public ArrayList<Agenda> Listar(String start,String limit, String filter, String...args)
+    {
+        Agenda agenda;
+        ArrayList<Agenda> list = new ArrayList<>();
+        try {
+            //Abre Conexão
+            cnn.AbrirConexao();
+
+            Cursor cursor = cnn.db().query(
+                    TABLE_NAME,
+                    COLUMNS,
+                    filter,
+                    args,
+                    null,
+                    null,
+                    "data, hora",
+                    start+","+limit);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    agenda = new Agenda();
+                    agenda.setId_agenda(cursor.getInt(0));
+                    agenda.setData(cursor.getString(1));
+                    agenda.setHora(cursor.getString(2));
+                    agenda.setId_medico(new MedicoDAO(context).Consultar(cursor.getInt(3)));
+                    agenda.setObs(cursor.getString(4));
+                    agenda.setStatus(Integer.parseInt(cursor.getString(5)));
+                    list.add(agenda);
+                }
+                while (cursor.moveToNext());
+
                 cursor.close();
             }
 

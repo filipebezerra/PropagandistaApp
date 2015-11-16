@@ -20,7 +20,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
-import com.libertsolutions.washington.apppropagandista.Util.PersonalAdpater;
+import com.libertsolutions.washington.apppropagandista.Util.PersonalAdapter;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import java.util.List;
 
 public class AgendaActivity extends AppCompatActivity {
     ArrayList<HashMap<String, String>> lstAgenda = new ArrayList<HashMap<String, String>>();
-    PersonalAdpater arrayAdapter;
+    PersonalAdapter arrayAdapter;
     ListView grdAgenda;
     private boolean isLoadMore = false;
     ProgressDialog pDialog;
@@ -161,7 +161,7 @@ public class AgendaActivity extends AppCompatActivity {
 
             int currentPosition = grdAgenda.getFirstVisiblePosition();
             //Função para realizar adptação necessária para inserir dados no ListView
-            arrayAdapter = new PersonalAdpater(this, lstAgenda, R.layout.cols_3,columnTags , columnIds);
+            arrayAdapter = new PersonalAdapter(this, lstAgenda, R.layout.cols_3,columnTags , columnIds);
 
             //Adiciona Array no ListView
             grdAgenda.setAdapter(arrayAdapter);
