@@ -16,6 +16,7 @@ import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mask;
+import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -69,6 +70,7 @@ public class Medico_Cadastrar extends AppCompatActivity {
                     }catch (Exception error)
                     {
                     }finally {
+                        Mensagem.MensagemAlerta(Medico_Cadastrar.this, "Dados incluidos com sucesso!");
                         onBackPressed();
                     }
                 }
@@ -171,10 +173,5 @@ public class Medico_Cadastrar extends AppCompatActivity {
             focusView.requestFocus();
         }
         return cancel;
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
     }
 }
