@@ -12,9 +12,10 @@ public class Visita {
     private String dtFim;
     private String horaFim;
     private Double longFinal;
-    private Double latFinal;
+        private Double latFinal;
     private String detalhes;
     private Agenda agenda;
+    private Integer status;
 
     //Metódos Get's
     public Integer getId_visita() {
@@ -61,6 +62,10 @@ public class Visita {
         return agenda;
     }
 
+    public Integer getStatus() {
+        return status;
+    }
+
     //Metódos Set's
 
     public void setId_visita(Integer id_visita) {
@@ -105,5 +110,9 @@ public class Visita {
 
     public void setAgenda(Agenda agenda) {
         this.agenda = agenda;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }
