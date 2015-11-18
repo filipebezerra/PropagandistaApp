@@ -43,6 +43,7 @@ public class VisitaDAO {
             valores.put("longInicial",visita.getLongInicial());
             valores.put("latInicial",visita.getLatInicial());
             valores.put("id_agenda",visita.getAgenda().getId_agenda());
+            valores.put("status",1);
             resultado = cnn.db().insert("Visita",null,valores);
         }catch (Exception error)
         {
@@ -70,7 +71,8 @@ public class VisitaDAO {
             valores.put("horaFim",visita.getHoraFim());
             valores.put("longFinal", visita.getLongFinal());
             valores.put("latFinal",visita.getLatFinal());
-            valores.put("detalhes",visita.getDetalhes());
+            valores.put("detalhes", visita.getDetalhes());
+            valores.put("status",visita.getStatus());
             cnn.db().update("Visita",valores,where,null);
         }catch (Exception error)
         {
@@ -85,7 +87,7 @@ public class VisitaDAO {
     public Visita Consultar(Integer id_visita)
     {
         Visita visita = new Visita();
-        String[] campos = {"id_visita","dtInicio","horaInicio","longInicial","latInicial","dtFim","horaFim","longFinal","latFinal","detalhes"};
+        String[] campos = {"id_visita","dtInicio","horaInicio","longInicial","latInicial","dtFim","horaFim","longFinal","latFinal","detalhes","status"};
         try{
             //Abre Conexão
             cnn.AbrirConexao();
@@ -102,6 +104,7 @@ public class VisitaDAO {
                     visita.setLongFinal(cursor.getDouble(7));
                     visita.setLatFinal(cursor.getDouble(8));
                     visita.setDetalhes(cursor.getString(9));
+                    visita.setStatus(cursor.getInt(10));
                 }
             }
         }catch (Exception error)
@@ -117,7 +120,7 @@ public class VisitaDAO {
     public ArrayList<Visita> Listar(String start,String limit)
     {
         Visita visita;
-        String[] campos = {"id_visita","dtInicio","horaInicio","longInicial","latInicial","dtFim","horaFim","longFinal","latFinal","detalhes"};
+        String[] campos = {"id_visita","dtInicio","horaInicio","longInicial","latInicial","dtFim","horaFim","longFinal","latFinal","detalhes","status"};
         ArrayList<Visita> list = new ArrayList<Visita>();
         try {
             //Abre Conexão
@@ -137,6 +140,7 @@ public class VisitaDAO {
                 visita.setLongFinal(cursor.getDouble(7));
                 visita.setLatFinal(cursor.getDouble(8));
                 visita.setDetalhes(cursor.getString(9));
+                visita.setStatus(cursor.getInt(10));
                 list.add(visita);
             }
 
