@@ -110,6 +110,7 @@ public class Banco extends SQLiteOpenHelper  {
                 "longFinal real,"+
                 "latFinal real,"+
                 "detalhes text,"+
+                "status integer,"+
                 "FOREIGN KEY(id_agenda) REFERENCES Agenda(id_agenda))";
     }
 
