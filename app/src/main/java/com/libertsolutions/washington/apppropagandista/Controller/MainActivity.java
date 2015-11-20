@@ -34,8 +34,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    @Bind(R.id.user_name) TextView mUserNameView;
-    @Bind(R.id.user_email) TextView mUserEmailView;
     @Bind(R.id.lstPrincipal) ListView mListView;
 
     ArrayList<HashMap<String, String>> lstAgenda = new ArrayList<HashMap<String, String>>();
@@ -66,8 +64,10 @@ public class MainActivity extends AppCompatActivity
 
         final Propagandista userLogged = PreferencesUtils.getUserLogged(this);
         if (userLogged != null) {
-            mUserNameView.setText(userLogged.getNome());
-            mUserEmailView.setText(userLogged.getUsuario().getEmail());
+            ButterKnife.<TextView>findById(navigationView.getHeaderView(0), R.id.user_name)
+                    .setText(userLogged.getNome());
+            ButterKnife.<TextView>findById(navigationView.getHeaderView(0), R.id.user_email)
+                    .setText(userLogged.getUsuario().getEmail());
         }
 
         this.agendaDb = new AgendaDAO(this);
