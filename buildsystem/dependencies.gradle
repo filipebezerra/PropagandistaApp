@@ -1,0 +1,26 @@
+repositories {
+    maven { url "https://jitpack.io" }
+    maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+ext {
+    supportLibsVersion = '23.1.1'
+    butterKnifeVersion = '7.0.1'
+    materialDialogsVersion = '0.8.5.0@aar'
+    gsonVersion = '2.4'
+
+    libs = [
+            supportDesign                   :   "com.android.support:design:${supportLibsVersion}",
+            support_v4                      :   "com.android.support:support-v4:${supportLibsVersion}",
+            supportPreference_v7            :   "com.android.support:preference-v7:${supportLibsVersion}",
+            butterKnife                     :   "com.jakewharton:butterknife:${butterKnifeVersion}",
+            materialDialogs                 :   "com.github.afollestad.material-dialogs:core:${materialDialogsVersion}",
+            gson                            :   "com.google.code.gson:gson:${gsonVersion}",
+    ]
+
+    junitVersion = '4.12'
+
+    unitTests = [
+            junit                           :   "junit:junit:${junitVersion}",
+    ]
+}
