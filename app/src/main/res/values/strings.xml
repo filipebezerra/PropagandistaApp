@@ -197,4 +197,5 @@
     <string name="btnSalvar">Salvar</string>
     <string name="title_activity_item">item</string>
     <string name="action_novo">Cadastrar</string>
+    <string name="title_activity_detalhes_visita">Detalhes da Visita</string>
 </resources>

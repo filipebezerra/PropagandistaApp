@@ -1,6 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -127,9 +128,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HashMap<String, Object> obj = (HashMap<String, Object>)mListView.getAdapter().getItem(position);
-                Bundle param = new Bundle();
-                param.putString("id",obj.get("id").toString());
-                //Todo: Navegar para tela Visita
+                final Bundle extras = new Bundle();
+                extras.putString("id", obj.get("id").toString());
+                final Intent launcherIntent = DetalhesVisitaActivity.getLauncherIntent(
+                        MainActivity.this);
+                launcherIntent.putExtras(extras);
+                startActivity(launcherIntent);
             }
         });
 

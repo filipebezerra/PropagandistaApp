@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.libertsolutions.washington.apppropagandista"
-    >
+    package="com.libertsolutions.washington.apppropagandista" >
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -15,14 +14,12 @@
         android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        >
+        android:theme="@style/AppTheme" >
 
         <!-- Splash Screen -->
         <activity
             android:name=".Controller.SplashActivity"
-            android:screenOrientation="portrait"
-            >
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,54 +30,47 @@
         <!-- Tela de Login -->
         <activity
             android:name=".Controller.LoginActivity"
-            android:label="@string/app_login"
             android:configChanges="keyboard|keyboardHidden|screenSize|orientation"
+            android:label="@string/app_login"
             android:noHistory="true"
-            android:windowSoftInputMode="adjustResize"
-            />
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- Tela Inicial -->
         <activity
             android:name=".Controller.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"
-            ></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <!-- Tela Agenda -->
         <activity
             android:name=".Controller.AgendaActivity"
             android:label="@string/title_activity_agenda"
-            android:parentActivityName=".Controller.MainActivity"
-            ></activity>
+            android:parentActivityName=".Controller.MainActivity" />
 
         <!-- Tela Medico -->
         <activity
             android:name=".Controller.MedicoActivity"
             android:label="@string/title_activity_medico"
-            android:parentActivityName=".Controller.MainActivity"
-            >
+            android:parentActivityName=".Controller.MainActivity" >
             <meta-data
                 android:name="android.app.default_searchable"
-                android:value=".SearchResultsActivity"
-                />
+                android:value=".SearchResultsActivity" />
         </activity>
 
         <!-- Tela Configurações -->
         <activity
             android:name=".Controller.ConfiguracaoActivity"
             android:label="@string/title_activity_configuracao"
-            android:parentActivityName=".Controller.MainActivity"
-            ></activity>
+            android:parentActivityName=".Controller.MainActivity" />
 
         <!-- Tela Cadastro de Usuário -->
         <activity
             android:name=".Controller.UsuarioActivity"
             android:label="@string/title_activity_usuario"
-            android:parentActivityName=".Controller.LoginActivity"
-            ></activity>
+            android:parentActivityName=".Controller.LoginActivity" />
 
         <!-- Tela de Pesquisa -->
-        <activity android:name=".Controller.MedicoSearchActivity">
+        <activity android:name=".Controller.MedicoSearchActivity" >
 
             <!-- to identify this activity as "searchable" -->
             <intent-filter>
@@ -91,38 +81,42 @@
 
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@xml/searchable"
-                />
+                android:resource="@xml/searchable" />
         </activity>
 
         <!-- Tela Cadastrar Médico -->
         <activity
             android:name=".Controller.Medico_Cadastrar"
             android:label="@string/title_activity_novomedico"
-            android:parentActivityName=".Controller.MedicoActivity"
-            ></activity>
+            android:parentActivityName=".Controller.MedicoActivity" />
 
         <!-- Tela Detalhes do Médico -->
         <activity
             android:name=".Controller.Medico_details"
             android:label="@string/title_medico_details"
-            android:parentActivityName=".Controller.MedicoActivity"
-            ></activity>
+            android:parentActivityName=".Controller.MedicoActivity" />
 
         <!-- Tela Cadastrar Agenda -->
         <activity
             android:name=".Controller.Agenda_cadastrar"
             android:label="@string/title_agenda_cadastrar"
-            android:parentActivityName=".Controller.AgendaActivity"
-            ></activity>
-
-        <activity android:name=".Controller.ConsultarMedicoActivity"
+            android:parentActivityName=".Controller.AgendaActivity" />
+        <activity
+            android:name=".Controller.ConsultarMedicoActivity"
             android:label="@string/title_consultar_medico"
-            android:parentActivityName=".Controller.Agenda_cadastrar">
+            android:parentActivityName=".Controller.Agenda_cadastrar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Controller.Agenda_cadastrar"
-                />
+                android:value=".Controller.Agenda_cadastrar" />
+        </activity>
+        <activity
+            android:name=".Controller.DetalhesVisitaActivity"
+            android:label="@string/title_activity_detalhes_visita"
+            android:parentActivityName=".Controller.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.libertsolutions.washington.apppropagandista.Controller.MainActivity" />
         </activity>
     </application>
 
