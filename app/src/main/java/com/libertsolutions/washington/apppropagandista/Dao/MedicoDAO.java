@@ -151,21 +151,4 @@ public class MedicoDAO {
         }
         return list;
     }
-
-    //Metódo Para validar se existe usuários cadastrados
-    public boolean Existe()
-    {
-        boolean valido = false;
-        Cursor cursor = cnn.db().rawQuery("select count(*) as possui from Medico",null);
-        //Verifica se não retornou nulo a consulta
-        if(cursor != null)
-        {
-            //Verifica se existe produto no banco de dados
-            if (cursor.moveToFirst()) {
-                if(cursor.getInt(0) > 0)
-                    valido = true;
-            }
-        }
-        return valido;
-    }
 }
