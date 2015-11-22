@@ -108,11 +108,6 @@
             />
 
         <!-- Tela Detalhes do Médico -->
-        <activity
-            android:name=".Controller.Medico_details"
-            android:label="@string/title_medico_details"
-            android:parentActivityName=".Controller.MedicoActivity"
-            />
 
         <!-- Tela Cadastrar Agenda -->
         <activity

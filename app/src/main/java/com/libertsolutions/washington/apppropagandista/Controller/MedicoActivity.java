@@ -108,7 +108,7 @@ public class MedicoActivity extends ActionBarActivity {
                 HashMap<String, Object> obj = (HashMap<String, Object>)grdMedicos.getAdapter().getItem(position);
                 Bundle param = new Bundle();
                 param.putString("id",obj.get("id").toString());
-                Tela.AbrirTela(MedicoActivity.this,Medico_details.class,param);
+                Tela.AbrirTela(MedicoActivity.this,Medico_Details.class,param);
             }
         });
 
