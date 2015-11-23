@@ -1,7 +1,5 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
-import java.security.Timestamp;
-
 /**
  * Created by washington on 04/11/2015.
  */
