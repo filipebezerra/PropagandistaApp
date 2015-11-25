@@ -1,44 +1,46 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mask;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class Medico_Cadastrar extends AppCompatActivity {
+import butterknife.Bind;
+
+public class Medico_Details extends AppCompatActivity {
     //Atributos
-    private MedicoDAO medicoDb;
-    private EditText txtNome;
-    private EditText txtDtAniversario;
+    MedicoDAO medicoDb;
+    @Bind(R.id.txtId) EditText txtId;
+    @Bind(R.id.txtNome) EditText txtNome;
+    @Bind(R.id.txtDtAniversario) EditText txtDtAniversario;
     DatePickerDialog dataAniversario;
-    private EditText txtSecretaria;
-    private EditText txtTelefone;
-    private EditText txtEmail;
-    private EditText txtCrm;
-    private EditText txtEspecialidade;
-    private Button btnSalvar;
+    @Bind(R.id.txtSecretaria) EditText txtSecretaria;
+    @Bind(R.id.txtTelefone) EditText txtTelefone;
+    @Bind(R.id.txtEmail) EditText txtEmail;
+    @Bind(R.id.txtCrm) EditText txtCrm;
+    @Bind(R.id.txtEspecialidade) EditText txtEspecialidade;
+    @Bind(R.id.btnSalvar) Button btnSalvar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_medico_cadastrar);
-        this.medicoDb = new MedicoDAO(this);
-
-        //Recupera Campos
-        getCampos();
+        setContentView(R.layout.activity_medico_details);
 
         //Chama Funções para Campos Data
         setDateTimeField();
@@ -65,7 +67,7 @@ public class Medico_Cadastrar extends AppCompatActivity {
                     }catch (Exception error)
                     {
                     }finally {
-                        Mensagem.MensagemAlerta(Medico_Cadastrar.this, "Dados incluidos com sucesso!");
+                        Mensagem.MensagemAlerta(Medico_Details.this, "Dados incluidos com sucesso!");
                         onBackPressed();
                     }
                 }
@@ -93,17 +95,20 @@ public class Medico_Cadastrar extends AppCompatActivity {
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    //Metódo Recuperar Campos
-    public void getCampos()
+    //Preenche Tela
+    public void preencheTela(Integer idMedico)
     {
-        this.txtNome = (EditText)findViewById(R.id.txtNome);
-        this.txtDtAniversario = (EditText)findViewById(R.id.txtDtAniversario);
-        this.txtSecretaria = (EditText)findViewById(R.id.txtSecretaria);
-        this.txtTelefone = (EditText)findViewById(R.id.txtTelefone);
-        this.txtEmail = (EditText)findViewById(R.id.txtEmail);
-        this.txtCrm = (EditText)findViewById(R.id.txtCrm);
-        this.txtEspecialidade = (EditText)findViewById(R.id.txtEspecialidade);
-        this.btnSalvar = (Button)findViewById(R.id.btnSalvar);
+        Medico medico = new Medico();
+        medicoDb = new MedicoDAO(this);
+        medico = medicoDb.Consultar(idMedico);
+        txtId.setText(medico.getId_medico());
+        txtNome.setText(medico.getNome());
+        txtDtAniversario.setText(medico.getDtAniversario());
+        txtSecretaria.setText(medico.getSecretaria());
+        txtTelefone.setText(medico.getSecretaria());
+        txtEmail.setText(medico.getEmail());
+        txtCrm.setText(medico.getCrm());
+        txtEspecialidade.setText(medico.getEspecialidade());
     }
 
     //Metódo Preenche Objeto
