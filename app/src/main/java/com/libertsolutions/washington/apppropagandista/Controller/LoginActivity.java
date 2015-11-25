@@ -1,6 +1,9 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,7 +20,6 @@ import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
-import com.libertsolutions.washington.apppropagandista.Util.Tela;
 import com.libertsolutions.washington.apppropagandista.network.call.LoginAsyncTaskCall;
 import com.libertsolutions.washington.apppropagandista.network.listener.AsyncListener;
 
@@ -38,11 +40,6 @@ public class LoginActivity extends AppCompatActivity implements AsyncListener<Pr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-
-        if (PreferencesUtils.isUserLogged(this)) {
-            Tela.AbrirTela(LoginActivity.this, MainActivity.class);
-            finish();
-        }
     }
 
     @OnEditorAction(R.id.cpf)
@@ -103,7 +100,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncListener<Pr
     public void onSuccess(Propagandista result) {
         dismissDialog();
         PreferencesUtils.setUserLogged(this, result);
-        Tela.AbrirTela(LoginActivity.this, MainActivity.class);
+        finish();
     }
 
     @Override
@@ -129,6 +126,10 @@ public class LoginActivity extends AppCompatActivity implements AsyncListener<Pr
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
+    }
+
+    public static Intent getLauncherIntent(@NonNull Context context) {
+        return new Intent(context, LoginActivity.class);
     }
 }
 

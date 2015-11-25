@@ -19,6 +19,8 @@ public class PreferencesUtils {
     private static final String USER_LOGGED_KEY = "user-logged";
     private static final String USER_NAME_KEY = "user-name";
     private static final String USER_EMAIL_KEY = "user-email";
+    private static final String PREF_SERVER_URL = "pref_url";
+    private static final String PREF_AUTH_KEY = "pref_auth_key";
 
     public static boolean isUserLogged(@NonNull Context context) {
         final SharedPreferences preferences = PreferenceManager
@@ -70,5 +72,27 @@ public class PreferencesUtils {
             editor.putString(USER_EMAIL_KEY, null);
             SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
         }
+    }
+
+    public static String getSyncUrlSettings(@NonNull Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+
+        if (!preferences.contains(PREF_SERVER_URL)) {
+            return null;
+        }
+
+        return preferences.getString(PREF_SERVER_URL, null);
+    }
+
+    public static String getSyncAuthKeySettings(@NonNull Context context) {
+        final SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+
+        if (!preferences.contains(PREF_AUTH_KEY)) {
+            return null;
+        }
+
+        return preferences.getString(PREF_AUTH_KEY, null);
     }
 }

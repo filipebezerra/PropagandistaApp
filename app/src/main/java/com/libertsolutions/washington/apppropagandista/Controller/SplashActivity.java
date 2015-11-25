@@ -1,11 +1,9 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.Navigator;
 
 public class SplashActivity extends Activity {
     // Splash screen timer
@@ -27,8 +25,7 @@ public class SplashActivity extends Activity {
             public void run() {
                 // This method will be executed once the timer is over
                 // Start your app main activity
-                Intent i = new Intent(SplashActivity.this, LoginActivity.class);
-                startActivity(i);
+                Navigator.navigateToMain(SplashActivity.this);
 
                 // close this activity
                 finish();

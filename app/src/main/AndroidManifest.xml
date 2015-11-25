@@ -75,7 +75,12 @@
             android:label="@string/title_activity_configuracao"
             android:parentActivityName=".Controller.MainActivity"
             android:screenOrientation="portrait"
-            />
+            >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".Controller.MainActivity"
+                />
+        </activity>
 
         <!-- Tela Cadastro de Usuário -->
         <activity
