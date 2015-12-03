@@ -1,6 +1,5 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +22,7 @@ import java.util.Locale;
 
 import butterknife.Bind;
 
-public class Medico_Details extends AppCompatActivity {
+public class DetalhesMedicoActivity extends AppCompatActivity {
     //Atributos
     MedicoDAO medicoDb;
     @Bind(R.id.txtId) EditText txtId;
@@ -40,7 +39,7 @@ public class Medico_Details extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_medico_details);
+        setContentView(R.layout.activity_detalhes_medico);
 
         //Chama Funções para Campos Data
         setDateTimeField();
@@ -67,7 +66,7 @@ public class Medico_Details extends AppCompatActivity {
                     }catch (Exception error)
                     {
                     }finally {
-                        Mensagem.MensagemAlerta(Medico_Details.this, "Dados incluidos com sucesso!");
+                        Mensagem.MensagemAlerta(DetalhesMedicoActivity.this, "Dados incluidos com sucesso!");
                         onBackPressed();
                     }
                 }
