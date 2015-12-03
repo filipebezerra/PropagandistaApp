@@ -73,7 +73,7 @@ public class ConsultarMedicoActivity extends ActionBarActivity {
         switch (item.getItemId()) {
 
             case R.id.action_novo:
-                Tela.AbrirTela(ConsultarMedicoActivity.this, Medico_Cadastrar.class);
+                Tela.AbrirTela(ConsultarMedicoActivity.this, CadastroMedicoActivity.class);
                 //open Activity,Fragments or other action
                 return true;
             default:

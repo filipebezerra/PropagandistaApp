@@ -107,7 +107,7 @@
 
         <!-- Tela Cadastrar Médico -->
         <activity
-            android:name=".Controller.Medico_Cadastrar"
+            android:name=".Controller.CadastroMedicoActivity"
             android:label="@string/title_activity_novomedico"
             android:parentActivityName=".Controller.MedicoActivity"
             />

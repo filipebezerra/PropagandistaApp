@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class Medico_Cadastrar extends AppCompatActivity {
+public class CadastroMedicoActivity extends AppCompatActivity {
     //Atributos
     private MedicoDAO medicoDb;
     private EditText txtNome;
@@ -34,7 +34,7 @@ public class Medico_Cadastrar extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_medico_cadastrar);
+        setContentView(R.layout.activity_cadastro_medico);
         this.medicoDb = new MedicoDAO(this);
 
         //Recupera Campos
@@ -65,7 +65,7 @@ public class Medico_Cadastrar extends AppCompatActivity {
                     }catch (Exception error)
                     {
                     }finally {
-                        Mensagem.MensagemAlerta(Medico_Cadastrar.this, "Dados incluidos com sucesso!");
+                        Mensagem.MensagemAlerta(CadastroMedicoActivity.this, "Dados incluidos com sucesso!");
                         onBackPressed();
                     }
                 }
