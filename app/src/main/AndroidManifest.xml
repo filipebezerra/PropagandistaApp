@@ -114,7 +114,7 @@
 
         <!-- Tela Detalhes do Médico -->
         <activity
-            android:name=".Controller.Medico_details"
+            android:name=".Controller.Medico_Details"
             android:label="@string/title_medico_details"
             android:parentActivityName=".Controller.MedicoActivity"
             />
