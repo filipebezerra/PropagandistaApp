@@ -121,18 +121,18 @@
 
         <!-- Tela Cadastrar Agenda -->
         <activity
-            android:name=".Controller.NovoCompromissoActivity"
+            android:name=".Controller.CadastroCompromissoActivity"
             android:label="@string/title_agenda_cadastrar"
             android:parentActivityName=".Controller.AgendaActivity"
             />
         <activity
             android:name=".Controller.ConsultarMedicoActivity"
             android:label="@string/title_consultar_medico"
-            android:parentActivityName=".Controller.NovoCompromissoActivity"
+            android:parentActivityName=".Controller.CadastroCompromissoActivity"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Controller.NovoCompromissoActivity"
+                android:value=".Controller.CadastroCompromissoActivity"
                 />
         </activity>
         <activity

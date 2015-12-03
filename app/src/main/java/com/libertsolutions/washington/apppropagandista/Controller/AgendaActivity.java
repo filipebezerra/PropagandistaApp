@@ -71,7 +71,7 @@ public class AgendaActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.action_novo:
-                Tela.AbrirTela(AgendaActivity.this, NovoCompromissoActivity.class);
+                Tela.AbrirTela(AgendaActivity.this, CadastroCompromissoActivity.class);
                 //open Activity,Fragments or other action
                 return true;
             default:
@@ -110,7 +110,7 @@ public class AgendaActivity extends AppCompatActivity {
                 HashMap<String, Object> obj = (HashMap<String, Object>)grdAgenda.getAdapter().getItem(position);
                 Bundle param = new Bundle();
                 param.putString("id",obj.get("id").toString());
-                Tela.AbrirTela(AgendaActivity.this,NovoCompromissoActivity.class,param);
+                Tela.AbrirTela(AgendaActivity.this,CadastroCompromissoActivity.class,param);
             }
         });
 

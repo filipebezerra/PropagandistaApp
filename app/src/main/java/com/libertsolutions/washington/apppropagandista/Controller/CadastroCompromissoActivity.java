@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class NovoCompromissoActivity extends AppCompatActivity {
+public class CadastroCompromissoActivity extends AppCompatActivity {
     private AgendaDAO agendaDb;
     EditText txtData;
     EditText txtHora;
@@ -36,7 +36,7 @@ public class NovoCompromissoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_novo_compromisso);
+        setContentView(R.layout.activity_cadastro_compromisso);
 
         //Recupera Campos
         getCampos();
@@ -48,7 +48,7 @@ public class NovoCompromissoActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus)
-                    Tela.AbrirTela(NovoCompromissoActivity.this, ConsultarMedicoActivity.class,1);
+                    Tela.AbrirTela(CadastroCompromissoActivity.this, ConsultarMedicoActivity.class,1);
             }
         });
 
