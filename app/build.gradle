@@ -34,7 +34,12 @@ dependencies {
     compile libs.supportPreference_v7
     compile libs.butterKnife
     compile (libs.materialDialogs) { transitive = true }
-    compile libs.gson
+    compile libs.retrofit
+    compile libs.retrofitGsonConverter
+    compile libs.retrofitRxJavaAdapter
+    compile libs.rxAndroid
+    compile libs.okHttp
+    compile libs.okHttpLoggingInterceptor
 
     testCompile unitTests.junit
 }

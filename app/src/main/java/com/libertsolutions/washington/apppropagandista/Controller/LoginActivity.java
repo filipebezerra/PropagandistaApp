@@ -20,13 +20,17 @@ import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
-import com.libertsolutions.washington.apppropagandista.network.call.LoginAsyncTaskCall;
-import com.libertsolutions.washington.apppropagandista.network.listener.AsyncListener;
+import com.libertsolutions.washington.apppropagandista.api.PropagandistaService;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements AsyncListener<Propagandista> {
+public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     // UI references.
@@ -83,44 +87,50 @@ public class LoginActivity extends AppCompatActivity implements AsyncListener<Pr
         if (focusView != null) {
             focusView.requestFocus();
         } else {
-            new LoginAsyncTaskCall().execute(cpf, this);
+            mProgressDialog = new MaterialDialog.Builder(LoginActivity.this)
+                    .content("Validando seu login, por favor aguarde...")
+                    .progress(true, 0)
+                    .cancelable(false)
+                    .show();
+
+            final PropagandistaService service = createService(PropagandistaService.class, this);
+            if (service != null) {
+                service.getByCpf(cpf)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new LoginSubscriber());
+            }
         }
     }
 
-    @Override
-    public void onBeforeExecute() {
-        mProgressDialog = new MaterialDialog.Builder(LoginActivity.this)
-                .content("Validando seu login, por favor aguarde...")
-                .progress(true, 0)
-                .cancelable(false)
-                .show();
-    }
-
-    @Override
-    public void onSuccess(Propagandista result) {
-        dismissDialog();
-        PreferencesUtils.setUserLogged(this, result);
-        finish();
-    }
-
-    @Override
-    public void onResultNothing() {
-        dismissDialog();
-        Mensagem.MensagemAlerta("Login", "CPF não cadastrado", LoginActivity.this);
-    }
-
-    @Override
-    public void onFailure(Throwable error) {
-        dismissDialog();
-        Log.e(TAG, error.getMessage());
-        if (error.getCause() != null) {
-            Log.e(TAG, error.getCause().getMessage());
+    private class LoginSubscriber extends Subscriber<Propagandista> {
+        @Override
+        public void onCompleted() {
+            // vazio
         }
-        Mensagem.MensagemAlerta(this, error.getMessage());
-    }
 
-    @Override
-    public void onCancel() {}
+        @Override
+        public void onError(Throwable e) {
+            dismissDialog();
+            Log.e(TAG, e.getMessage());
+            if (e.getCause() != null) {
+                Log.e(TAG, e.getCause().getMessage());
+            }
+            Mensagem.MensagemAlerta(LoginActivity.this, e.getMessage());
+        }
+
+        @Override
+        public void onNext(Propagandista propagandista) {
+            dismissDialog();
+
+            if (propagandista != null) {
+                PreferencesUtils.setUserLogged(LoginActivity.this, propagandista);
+                finish();
+            } else {
+                Mensagem.MensagemAlerta("Login", "CPF não cadastrado", LoginActivity.this);
+            }
+        }
+    }
 
     private void dismissDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {

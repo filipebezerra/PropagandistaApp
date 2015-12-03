@@ -6,8 +6,10 @@ repositories {
 ext {
     supportLibsVersion = '23.1.1'
     butterKnifeVersion = '7.0.1'
-    materialDialogsVersion = '0.8.5.0@aar'
-    gsonVersion = '2.4'
+    materialDialogsVersion = '0.8.5.2@aar'
+    retrofitVersion = '2.0.0-beta2'
+    okHttpVersion = '2.6.0'
+    rxAndroidVersion = '1.0.1'
 
     libs = [
             supportDesign                   :   "com.android.support:design:${supportLibsVersion}",
@@ -15,7 +17,12 @@ ext {
             supportPreference_v7            :   "com.android.support:preference-v7:${supportLibsVersion}",
             butterKnife                     :   "com.jakewharton:butterknife:${butterKnifeVersion}",
             materialDialogs                 :   "com.github.afollestad.material-dialogs:core:${materialDialogsVersion}",
-            gson                            :   "com.google.code.gson:gson:${gsonVersion}",
+            retrofit                        :   "com.squareup.retrofit:retrofit:${retrofitVersion}",
+            retrofitGsonConverter           :   "com.squareup.retrofit:converter-gson:${retrofitVersion}",
+            retrofitRxJavaAdapter           :   "com.squareup.retrofit:adapter-rxjava:${retrofitVersion}",
+            rxAndroid                       :   "io.reactivex:rxandroid:${rxAndroidVersion}",
+            okHttp                          :   "com.squareup.okhttp:okhttp:${okHttpVersion}",
+            okHttpLoggingInterceptor        :   "com.squareup.okhttp:logging-interceptor:${okHttpVersion}",
     ]
 
     junitVersion = '4.12'
