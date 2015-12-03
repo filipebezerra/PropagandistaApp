@@ -126,7 +126,7 @@
             android:parentActivityName=".Controller.AgendaActivity"
             />
         <activity
-            android:name=".Controller.ConsultarMedicoActivity"
+            android:name=".Controller.ConsultaMedicoActivity"
             android:label="@string/title_consultar_medico"
             android:parentActivityName=".Controller.CadastroCompromissoActivity"
             >

@@ -5,8 +5,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ConsultarMedicoActivity extends ActionBarActivity {
+public class ConsultaMedicoActivity extends AppCompatActivity {
     ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<HashMap<String, String>>();
     PersonalAdapter arrayAdapter;
     ListView grdMedicos;
@@ -42,7 +42,7 @@ public class ConsultarMedicoActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         try{
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_consultar_medico);
+            setContentView(R.layout.activity_consulta_medico);
 
             this.medicoDb = new MedicoDAO(this);
 
@@ -73,7 +73,7 @@ public class ConsultarMedicoActivity extends ActionBarActivity {
         switch (item.getItemId()) {
 
             case R.id.action_novo:
-                Tela.AbrirTela(ConsultarMedicoActivity.this, CadastroMedicoActivity.class);
+                Tela.AbrirTela(ConsultaMedicoActivity.this, CadastroMedicoActivity.class);
                 //open Activity,Fragments or other action
                 return true;
             default:
@@ -89,7 +89,7 @@ public class ConsultarMedicoActivity extends ActionBarActivity {
         }
         catch (Exception erro)
         {
-            Mensagem.MensagemAlerta("Erro Start Produtos", erro.getMessage(), ConsultarMedicoActivity.this);
+            Mensagem.MensagemAlerta("Erro Start Produtos", erro.getMessage(), ConsultaMedicoActivity.this);
         }
     }
 
@@ -119,7 +119,7 @@ public class ConsultarMedicoActivity extends ActionBarActivity {
                     onBackPressed();
                 }catch (Exception erro)
                 {
-                    Mensagem.MensagemAlerta(ConsultarMedicoActivity.this,erro.getMessage());
+                    Mensagem.MensagemAlerta(ConsultaMedicoActivity.this,erro.getMessage());
                 }
             }
         });
@@ -178,7 +178,7 @@ public class ConsultarMedicoActivity extends ActionBarActivity {
             if(start > 1)
                 grdMedicos.setSelectionFromTop(currentPosition + 1, 0);
         }catch (Exception error) {
-            Mensagem.MensagemAlerta("Preenche Grid", error.getMessage(), ConsultarMedicoActivity.this);
+            Mensagem.MensagemAlerta("Preenche Grid", error.getMessage(), ConsultaMedicoActivity.this);
 
         }
     }
@@ -189,7 +189,7 @@ public class ConsultarMedicoActivity extends ActionBarActivity {
         protected void onPreExecute() {
             // Showing progress dialog before sending http request
             pDialog = new ProgressDialog(
-                    ConsultarMedicoActivity.this);
+                    ConsultaMedicoActivity.this);
             pDialog.setMessage("Carregando...");
             pDialog.setIndeterminate(true);
             pDialog.setCancelable(false);

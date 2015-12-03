@@ -48,7 +48,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus)
-                    Tela.AbrirTela(CadastroCompromissoActivity.this, ConsultarMedicoActivity.class,1);
+                    Tela.AbrirTela(CadastroCompromissoActivity.this, ConsultaMedicoActivity.class,1);
             }
         });
 
