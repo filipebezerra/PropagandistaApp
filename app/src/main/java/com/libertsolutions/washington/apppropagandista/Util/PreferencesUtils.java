@@ -18,6 +18,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Usuario;
 public class PreferencesUtils {
     private static final String USER_LOGGED_KEY = "user-logged";
     private static final String USER_NAME_KEY = "user-name";
+    private static final String USER_CPF_KEY = "user-cpf";
     private static final String USER_EMAIL_KEY = "user-email";
     private static final String PREF_SERVER_URL = "pref_url";
     private static final String PREF_AUTH_KEY = "pref_auth_key";
@@ -41,6 +42,7 @@ public class PreferencesUtils {
         final SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(USER_LOGGED_KEY, true);
         editor.putString(USER_NAME_KEY, propagandista.getNome());
+        editor.putString(USER_CPF_KEY, propagandista.getCpf());
         editor.putString(USER_EMAIL_KEY, propagandista.getUsuario().getEmail());
         SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
     }
@@ -54,6 +56,7 @@ public class PreferencesUtils {
             final Usuario usuario = new Usuario();
             usuario.setEmail(preferences.getString(USER_EMAIL_KEY, ""));
             propagandista.setNome(preferences.getString(USER_NAME_KEY, ""));
+            propagandista.setCpf(preferences.getString(USER_CPF_KEY, ""));
             propagandista.setUsuario(usuario);
 
             return propagandista;
