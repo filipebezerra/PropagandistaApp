@@ -42,7 +42,7 @@ public class PreferencesUtils {
         final SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(USER_LOGGED_KEY, true);
         editor.putString(USER_NAME_KEY, propagandista.getNome());
-        editor.putString(USER_CPF_KEY, propagandista.getCpf());
+        editor.putString(USER_CPF_KEY, propagandista.getCpf().replace("-","").replace(".",""));
         editor.putString(USER_EMAIL_KEY, propagandista.getUsuario().getEmail());
         SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
     }
