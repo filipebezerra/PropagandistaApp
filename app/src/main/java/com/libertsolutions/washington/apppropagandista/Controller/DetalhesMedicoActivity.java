@@ -1,8 +1,10 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.app.DatePickerDialog;
-import android.os.Bundle;
+import android.content.Intent;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,26 +22,28 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import butterknife.Bind;
-
 public class DetalhesMedicoActivity extends AppCompatActivity {
     //Atributos
-    MedicoDAO medicoDb;
-    @Bind(R.id.txtId) EditText txtId;
-    @Bind(R.id.txtNome) EditText txtNome;
-    @Bind(R.id.txtDtAniversario) EditText txtDtAniversario;
+    private MedicoDAO medicoDb;
+    private EditText txtId;
+    private EditText txtNome;
+    private EditText txtDtAniversario;
     DatePickerDialog dataAniversario;
-    @Bind(R.id.txtSecretaria) EditText txtSecretaria;
-    @Bind(R.id.txtTelefone) EditText txtTelefone;
-    @Bind(R.id.txtEmail) EditText txtEmail;
-    @Bind(R.id.txtCrm) EditText txtCrm;
-    @Bind(R.id.txtEspecialidade) EditText txtEspecialidade;
-    @Bind(R.id.btnSalvar) Button btnSalvar;
+    private EditText txtSecretaria;
+    private EditText txtTelefone;
+    private EditText txtEmail;
+    private EditText txtCrm;
+    private EditText txtEspecialidade;
+    private Button btnSalvar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalhes_medico);
+        this.medicoDb = new MedicoDAO(this);
+
+        //Recupera Campos
+        getCampos();
 
         //Chama Funções para Campos Data
         setDateTimeField();
@@ -57,16 +61,14 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         btnSalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!validaTela()) {
+                if (!validaTela()) {
                     Medico medico = getDados();
-                    try
-                    {
+                    try {
                         //Salva dados no banco
-                        medicoDb.Incluir(medico);
-                    }catch (Exception error)
-                    {
-                    }finally {
-                        Mensagem.MensagemAlerta(DetalhesMedicoActivity.this, "Dados incluidos com sucesso!");
+                        medicoDb.Alterar(medico);
+                    } catch (Exception error) {
+                    } finally {
+                        Mensagem.MensagemAlerta(DetalhesMedicoActivity.this, "Dados alterados com sucesso!");
                         onBackPressed();
                     }
                 }
@@ -76,6 +78,19 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         //Mascara
         txtTelefone.addTextChangedListener(Mask.insert("(##)####-#####", txtTelefone));
         txtDtAniversario.addTextChangedListener(Mask.insert("##/##/####", txtDtAniversario));
+
+        //Recupera Parâmetros e Preenche Tela
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        //Edição
+        if(bundle!=null)
+        {
+            if(bundle.getString("id") != "")
+            {
+                Medico medico = medicoDb.Consultar(Integer.parseInt(bundle.getString("id")));
+                PreencheTela(medico);
+            }
+        }
     }
 
     //Metódo para mostrar data
@@ -94,20 +109,18 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    //Preenche Tela
-    public void preencheTela(Integer idMedico)
+    //Metódo Recuperar Campos
+    public void getCampos()
     {
-        Medico medico = new Medico();
-        medicoDb = new MedicoDAO(this);
-        medico = medicoDb.Consultar(idMedico);
-        txtId.setText(medico.getId_medico());
-        txtNome.setText(medico.getNome());
-        txtDtAniversario.setText(medico.getDtAniversario());
-        txtSecretaria.setText(medico.getSecretaria());
-        txtTelefone.setText(medico.getSecretaria());
-        txtEmail.setText(medico.getEmail());
-        txtCrm.setText(medico.getCrm());
-        txtEspecialidade.setText(medico.getEspecialidade());
+        this.txtId = (EditText)findViewById(R.id.txtId);
+        this.txtNome = (EditText)findViewById(R.id.txtNome);
+        this.txtDtAniversario = (EditText)findViewById(R.id.txtDtAniversario);
+        this.txtSecretaria = (EditText)findViewById(R.id.txtSecretaria);
+        this.txtTelefone = (EditText)findViewById(R.id.txtTelefone);
+        this.txtEmail = (EditText)findViewById(R.id.txtEmail);
+        this.txtCrm = (EditText)findViewById(R.id.txtCrm);
+        this.txtEspecialidade = (EditText)findViewById(R.id.txtEspecialidade);
+        this.btnSalvar = (Button)findViewById(R.id.btnSalvar);
     }
 
     //Metódo Preenche Objeto
@@ -116,6 +129,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         Medico  medico = new Medico();
         medico.setNome(this.txtNome.getText().toString());
 
+        medico.setId_medico(Integer.parseInt(txtId.getText().toString()));
         if(TextUtils.isEmpty(txtDtAniversario.getText().toString()))
             medico.setDtAniversario("");
         else
@@ -172,5 +186,18 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
             focusView.requestFocus();
         }
         return cancel;
+    }
+
+    //Preenche Tela
+    private void PreencheTela(Medico medico)
+    {
+        this.txtId.setText(medico.getId_medico().toString());
+        this.txtNome.setText(medico.getNome());
+        this.txtDtAniversario.setText(medico.getDtAniversario());
+        this.txtSecretaria.setText(medico.getSecretaria());
+        this.txtTelefone.setText(medico.getTelefone());
+        this.txtEmail.setText(medico.getEmail());
+        this.txtCrm.setText(medico.getCrm());
+        this.txtEspecialidade.setText(medico.getEspecialidade());
     }
 }
