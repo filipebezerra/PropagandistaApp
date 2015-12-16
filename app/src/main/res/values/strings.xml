@@ -202,4 +202,5 @@
     <string name="pref_url_summary">Endereço do servidor para sincronização dos dados</string>
     <string name="pref_auth_key">Chave de autenticação</string>
     <string name="pref_auth_key_summary">Chave de acesso ao servidor de sincronização</string>
+    <string name="title_activity_sincronizar">Sincronizar Dados</string>
 </resources>

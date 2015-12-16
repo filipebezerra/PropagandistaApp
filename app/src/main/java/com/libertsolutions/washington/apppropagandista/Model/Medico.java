@@ -1,25 +1,48 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
-import java.security.Timestamp;
-import java.util.Date;
+import com.google.gson.annotations.Expose;
 
 /**
  * Created by washington on 04/11/2015.
  */
 public class Medico {
+    @Expose(serialize = false)
     private Integer id_medico;
+
+    @Expose
+    private Integer id_unico;
+
+    @Expose
     private String nome;
+
+    @Expose
     private String dtAniversario;
+
+    @Expose
     private String secretaria;
+
+    @Expose
     private String telefone;
+
+    @Expose
     private String email;
+
+    @Expose
     private String crm;
+
+    @Expose(serialize = false)
     private String especialidade;
+
+    @Expose(serialize = false)
     private int status;
 
     //Metódos Set's
     public void setId_medico(Integer id_medico) {
         this.id_medico = id_medico;
+    }
+
+    public void setId_unico(Integer id_unico) {
+        this.id_unico = id_unico;
     }
 
     public void setNome(String nome) {
@@ -57,6 +80,10 @@ public class Medico {
     //Metódos Get's
     public Integer getId_medico() {
         return id_medico;
+    }
+
+    public Integer getId_unico() {
+        return id_unico;
     }
 
     public String getNome() {

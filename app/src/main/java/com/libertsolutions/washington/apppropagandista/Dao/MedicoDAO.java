@@ -40,12 +40,14 @@ public class MedicoDAO {
             cnn.AbrirConexao();
             valores = new ContentValues();
             valores.put("nome",medico.getNome());
-            valores.put("dtAniversario",medico.getDtAniversario().toString());
+            if(medico.getDtAniversario() != null)
+                valores.put("dtAniversario",medico.getDtAniversario());
             valores.put("secretaria",medico.getSecretaria());
             valores.put("telefone",medico.getTelefone());
             valores.put("email",medico.getEmail());
             valores.put("crm",medico.getCrm());
             valores.put("especialidade",medico.getEspecialidade());
+            valores.put("id_unico",medico.getId_unico());
             valores.put("status",1);
             resultado = cnn.db().insert("Medico",null,valores);
         }catch (Exception error)
@@ -73,6 +75,7 @@ public class MedicoDAO {
             valores.put("email",medico.getEmail());
             valores.put("crm",medico.getCrm());
             valores.put("especialidade",medico.getEspecialidade());
+            valores.put("id_unico", medico.getId_unico());
             cnn.db().update("Medico",valores,where,null);
         }catch (Exception error)
         {
@@ -83,11 +86,32 @@ public class MedicoDAO {
 
     }
 
+    //Metódo Existe Id
+    public boolean Existe(Integer id_unico)
+    {
+        boolean existe = false;
+        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","status"};
+        try{
+            //Abre Conexão
+            cnn.AbrirConexao();
+            Cursor cursor = cnn.db().query("Medico",campos,"id_unico = "+id_unico,null,null,null,null);
+            if(cursor.moveToFirst()) {
+                existe = true;
+            }
+        }catch (Exception error)
+        {
+            Mensagem.MensagemAlerta(context,error.getMessage());
+        }finally {
+            cnn.close();
+        }
+        return  existe;
+    }
+
     //Metódo Consultar
     public Medico Consultar(Integer id_medico)
     {
         Medico medico = new Medico();
-        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","status"};
+        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","id_unico","status"};
         try{
             //Abre Conexão
             cnn.AbrirConexao();
@@ -102,7 +126,8 @@ public class MedicoDAO {
                     medico.setCrm(cursor.getString(5));
                     medico.setEmail(cursor.getString(6));
                     medico.setEspecialidade(cursor.getString(7));
-                    medico.setStatus(Integer.parseInt(cursor.getString(8)));
+                    medico.setId_unico(cursor.getInt(8));
+                    medico.setStatus(Integer.parseInt(cursor.getString(9)));
                 }
             }
         }catch (Exception error)
@@ -118,7 +143,7 @@ public class MedicoDAO {
     public ArrayList<Medico> Listar(String start,String limit)
     {
         Medico medico;
-        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","status"};
+        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","id_unico","status"};
         ArrayList<Medico> list = new ArrayList<Medico>();
         try {
             //Abre Conexão
@@ -136,7 +161,8 @@ public class MedicoDAO {
                 medico.setEmail(cursor.getString(5));
                 medico.setCrm(cursor.getString(6));
                 medico.setEspecialidade(cursor.getString(7));
-                medico.setStatus(cursor.getInt(8));
+                medico.setId_unico(cursor.getInt(8));
+                medico.setStatus(cursor.getInt(9));
                 list.add(medico);
             }
 

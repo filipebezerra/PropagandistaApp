@@ -129,11 +129,16 @@
         </activity>
 
         <!-- Tela Detalhes Médico -->
-        <activity android:name=".Controller.DetalhesMedicoActivity"
+        <activity
+            android:name=".Controller.DetalhesMedicoActivity"
             android:label="@string/title_medico_details"
-            android:parentActivityName=".Controller.MedicoActivity">
+            android:parentActivityName=".Controller.MedicoActivity"></activity>
 
-        </activity>
+        <!-- Tela Sincronização -->
+        <activity
+            android:name=".Controller.SincronizarActivity"
+            android:label="@string/title_activity_sincronizar"
+            android:parentActivityName=".Controller.MainActivity"></activity>
     </application>
 
 </manifest>

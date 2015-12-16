@@ -134,6 +134,8 @@ public class MainActivity extends AppCompatActivity
             Tela.AbrirTela(MainActivity.this, MedicoActivity.class);
         } else if (id == R.id.nav_config) {
             Tela.AbrirTela(MainActivity.this, ConfiguracaoActivity.class);
+        } else if (id == R.id.nav_sincronizar) {
+            Tela.AbrirTela(MainActivity.this, SincronizarActivity.class);
         } else if (id == R.id.nav_sair) {
             PreferencesUtils.logoutUser(this);
             this.finish();

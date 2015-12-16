@@ -84,6 +84,7 @@ public class Banco extends SQLiteOpenHelper  {
                 "email text," +
                 "crm text," +
                 "especialidade text," +
+                "id_unico integer,"+
                 "status integer)";
     }
 
@@ -95,6 +96,7 @@ public class Banco extends SQLiteOpenHelper  {
                 "id_medico integer not null,"+
                 "obs text,"+
                 "status integer,"+
+                "id_unico integer,"+
                 "FOREIGN KEY(id_medico) REFERENCES Medico(id_medico))";
     }
 
