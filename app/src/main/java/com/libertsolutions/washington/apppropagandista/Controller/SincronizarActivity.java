@@ -28,6 +28,7 @@ import static com.libertsolutions.washington.apppropagandista.api.controller.Ret
 public class SincronizarActivity extends AppCompatActivity {
     private MaterialDialog mProgressDialog;
     private MedicoDAO medicoDb;
+    private Medico medico;
 
     @Bind(R.id.btnSincronizar)
     Button btnsicronizar;
@@ -77,7 +78,8 @@ public class SincronizarActivity extends AppCompatActivity {
         //Integra Médicos
         if(chkMedicos.isChecked())
         {
-            ImportaMedicos();
+            ImportaMedicos();//Importa médicos do webservice
+            EnviaMedicos();//Envia medicos para o web serviçe
         }
 
         //Integra Agendas
@@ -115,6 +117,57 @@ public class SincronizarActivity extends AppCompatActivity {
         }
     }
 
+    public void EnviaMedicos()
+    {
+        try {
+            //Recupera lista de médicos ainda não enviados para o webservice.
+            List<Medico> lstMedicos = medicoDb.Listar(1);
+            final MedicoService service = createService(MedicoService.class, this);
+            Propagandista propagandista = PreferencesUtils.getUserLogged(this);
+            if (service != null) {
+                for (Medico objMedico : lstMedicos) {
+                    this.medico = objMedico;
+                    service.put(propagandista.getCpf(), objMedico)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new MedicoEnviar());
+                }
+            }
+
+            dismissDialog();
+        }catch (Exception erro)
+        {
+            dismissDialog();
+            Mensagem.MensagemAlerta("Sincronizar Dados", erro.getMessage(), SincronizarActivity.this);
+        }
+    }
+
+    private class  MedicoEnviar extends Subscriber<Integer> {
+        @Override
+        public void onCompleted() {
+            // vazio
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            if (e.getCause() != null) {
+                //Log.e(TAG, e.getCause().getMessage());
+            }
+            Mensagem.MensagemAlerta(SincronizarActivity.this, e.getMessage());
+        }
+
+        @Override
+        public void onNext(Integer id_unico) {
+            if (id_unico > 0) {
+                medico.setId_unico(id_unico);//Seta id unico
+                medico.setStatus(2);//Status 1= Pendente; 2 = Enviado
+                medicoDb.Alterar(medico);
+            } else {
+                Mensagem.MensagemAlerta("Enviar médicos", "Ocorreu um erro ao enviar médico.", SincronizarActivity.this);
+            }
+        }
+    }
+
     private class  MedicoSubscriber extends Subscriber<List<Medico>> {
         @Override
         public void onCompleted() {
@@ -135,6 +188,7 @@ public class SincronizarActivity extends AppCompatActivity {
                 for (int i =0; i < medicos.size();i++)
                 {
                     Medico medico = medicos.get(i);
+                    medico.setStatus(2);//Seta status = 2 improtado;
                     //Valida se médico já existe
                     if(medicoDb.Existe(medico.getId_unico())) {
                         medicoDb.Alterar(medico);
