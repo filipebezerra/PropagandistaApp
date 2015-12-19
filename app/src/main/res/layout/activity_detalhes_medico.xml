@@ -27,6 +27,10 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
+            <EditText android:id="@+id/txtIdUnico" android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
             <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 

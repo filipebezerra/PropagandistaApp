@@ -14,27 +14,60 @@ import android.widget.EditText;
 
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
+import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mask;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
+import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
+import com.libertsolutions.washington.apppropagandista.api.MedicoService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
+
 public class DetalhesMedicoActivity extends AppCompatActivity {
     //Atributos
     private MedicoDAO medicoDb;
-    private EditText txtId;
-    private EditText txtNome;
-    private EditText txtDtAniversario;
+    @Bind(R.id.txtIdUnico)
+    EditText txtIdUnico;
+
+    @Bind(R.id.txtId)
+    EditText txtId;
+
+    @Bind(R.id.txtNome)
+    EditText txtNome;
+
+    @Bind(R.id.txtDtAniversario)
+    EditText txtDtAniversario;
+
+    @Bind(R.id.txtSecretaria)
+    EditText txtSecretaria;
+
+    @Bind(R.id.txtTelefone)
+    EditText txtTelefone;
+
+    @Bind(R.id.txtEmail)
+    EditText txtEmail;
+
+    @Bind(R.id.txtCrm)
+    EditText txtCrm;
+
+    @Bind(R.id.txtEspecialidade)
+    EditText txtEspecialidade;
+
+    @Bind(R.id.btnSalvar)
+    Button btnSalvar;
     DatePickerDialog dataAniversario;
-    private EditText txtSecretaria;
-    private EditText txtTelefone;
-    private EditText txtEmail;
-    private EditText txtCrm;
-    private EditText txtEspecialidade;
-    private Button btnSalvar;
+    private Medico medico;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +75,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detalhes_medico);
         this.medicoDb = new MedicoDAO(this);
 
-        //Recupera Campos
-        getCampos();
+        ButterKnife.bind(this);
 
         //Chama Funções para Campos Data
         setDateTimeField();
@@ -54,24 +86,6 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 dataAniversario.show();
                 return false;
-            }
-        });
-
-        //Click Botão Salvar
-        btnSalvar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!validaTela()) {
-                    Medico medico = getDados();
-                    try {
-                        //Salva dados no banco
-                        medicoDb.Alterar(medico);
-                    } catch (Exception error) {
-                    } finally {
-                        Mensagem.MensagemAlerta(DetalhesMedicoActivity.this, "Dados alterados com sucesso!");
-                        onBackPressed();
-                    }
-                }
             }
         });
 
@@ -93,6 +107,32 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         }
     }
 
+    /// Metódo click botão Salvar
+    @OnClick(R.id.btnSalvar)
+    public void bnSalvarClick() {
+        if(!validaTela()) {
+            medico = getDados();
+            try
+            {
+                medico.setStatus(1);//Seta status = 1 Pendente;
+                //Salva dados no banco
+                medicoDb.Alterar(medico);
+                final MedicoService service = createService(MedicoService.class, this);
+                if (service != null) {
+                    service.post(medico)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new MedicoEnviar());
+                }
+            }catch (Exception error)
+            {
+            }finally {
+                Mensagem.MensagemAlerta(DetalhesMedicoActivity.this, "Dados incluidos com sucesso!");
+                onBackPressed();
+            }
+        }
+    }
+
     //Metódo para mostrar data
     private void setDateTimeField() {
         //Dialog Data
@@ -109,26 +149,12 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    //Metódo Recuperar Campos
-    public void getCampos()
-    {
-        this.txtId = (EditText)findViewById(R.id.txtId);
-        this.txtNome = (EditText)findViewById(R.id.txtNome);
-        this.txtDtAniversario = (EditText)findViewById(R.id.txtDtAniversario);
-        this.txtSecretaria = (EditText)findViewById(R.id.txtSecretaria);
-        this.txtTelefone = (EditText)findViewById(R.id.txtTelefone);
-        this.txtEmail = (EditText)findViewById(R.id.txtEmail);
-        this.txtCrm = (EditText)findViewById(R.id.txtCrm);
-        this.txtEspecialidade = (EditText)findViewById(R.id.txtEspecialidade);
-        this.btnSalvar = (Button)findViewById(R.id.btnSalvar);
-    }
-
     //Metódo Preenche Objeto
     public Medico getDados()
     {
         Medico  medico = new Medico();
         medico.setNome(this.txtNome.getText().toString());
-
+        medico.setId_unico(Integer.parseInt(txtIdUnico.getText().toString()));
         medico.setId_medico(Integer.parseInt(txtId.getText().toString()));
         if(TextUtils.isEmpty(txtDtAniversario.getText().toString()))
             medico.setDtAniversario("");
@@ -192,6 +218,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
     private void PreencheTela(Medico medico)
     {
         this.txtId.setText(medico.getId_medico().toString());
+        this.txtIdUnico.setText(medico.getId_unico().toString());
         this.txtNome.setText(medico.getNome());
         this.txtDtAniversario.setText(medico.getDtAniversario());
         this.txtSecretaria.setText(medico.getSecretaria());
@@ -199,5 +226,31 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         this.txtEmail.setText(medico.getEmail());
         this.txtCrm.setText(medico.getCrm());
         this.txtEspecialidade.setText(medico.getEspecialidade());
+    }
+
+    private class  MedicoEnviar extends Subscriber<Integer> {
+        @Override
+        public void onCompleted() {
+            // vazio
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            if (e.getCause() != null) {
+                //Log.e(TAG, e.getCause().getMessage());
+            }
+            Mensagem.MensagemAlerta(DetalhesMedicoActivity.this, e.getMessage());
+        }
+
+        @Override
+        public void onNext(Integer id_unico) {
+            if (id_unico > 0) {
+                medico.setId_unico(id_unico);//Seta id unico
+                medico.setStatus(2);//Status 1= Pendente; 2 = Enviado
+                medicoDb.Alterar(medico);
+            } else {
+                Mensagem.MensagemAlerta("Enviar médicos", "Ocorreu um erro ao enviar médico.", DetalhesMedicoActivity.this);
+            }
+        }
     }
 }

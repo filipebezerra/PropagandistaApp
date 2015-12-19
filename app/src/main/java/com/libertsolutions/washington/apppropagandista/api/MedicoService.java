@@ -20,4 +20,7 @@ public interface MedicoService {
 
     @PUT("MedicoApi/Put/")
     Observable<Integer> put(@Query("cpf") String cpf,@Body Medico medico);
+
+    @PUT("MedicoApi/Post/")
+    Observable<Integer> post(@Body Medico medico);
 }
