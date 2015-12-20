@@ -70,7 +70,7 @@ public class SincronizarActivity extends AppCompatActivity {
     @OnClick(R.id.btnSincronizar)
     public void onSincronizarClick() {
         mProgressDialog = new MaterialDialog.Builder(SincronizarActivity.this)
-                .content("Por favor aguarde...importando dados")
+                .content("Por favor aguarde, importando dados....")
                 .progress(true, 0)
                 .cancelable(false)
                 .show();
@@ -99,7 +99,6 @@ public class SincronizarActivity extends AppCompatActivity {
     public void ImportaMedicos()
     {
         try {
-            mProgressDialog.setContent("Sincronizando Médicos....");
             final MedicoService service = createService(MedicoService.class, this);
             Propagandista propagandista = PreferencesUtils.getUserLogged(this);
             if (service != null) {
@@ -108,11 +107,8 @@ public class SincronizarActivity extends AppCompatActivity {
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new MedicoSubscriber());
             }
-
-            dismissDialog();
         }catch (Exception erro)
         {
-            dismissDialog();
             Mensagem.MensagemAlerta("Sincronizar Dados", erro.getMessage(), SincronizarActivity.this);
         }
     }
@@ -142,6 +138,7 @@ public class SincronizarActivity extends AppCompatActivity {
         }
     }
 
+    //Envia Médico para o webservice
     private class  MedicoEnviar extends Subscriber<Integer> {
         @Override
         public void onCompleted() {
@@ -150,6 +147,7 @@ public class SincronizarActivity extends AppCompatActivity {
 
         @Override
         public void onError(Throwable e) {
+            dismissDialog();
             if (e.getCause() != null) {
                 //Log.e(TAG, e.getCause().getMessage());
             }
@@ -158,6 +156,7 @@ public class SincronizarActivity extends AppCompatActivity {
 
         @Override
         public void onNext(Integer id_unico) {
+            dismissDialog();
             if (id_unico > 0) {
                 medico.setId_unico(id_unico);//Seta id unico
                 medico.setStatus(2);//Status 1= Pendente; 2 = Enviado
@@ -168,6 +167,7 @@ public class SincronizarActivity extends AppCompatActivity {
         }
     }
 
+    //Obtem médicos do web service
     private class  MedicoSubscriber extends Subscriber<List<Medico>> {
         @Override
         public void onCompleted() {
