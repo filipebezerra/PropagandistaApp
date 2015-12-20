@@ -17,8 +17,10 @@ import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Enum.Status;
 import com.libertsolutions.washington.apppropagandista.Enum.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
+import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
+import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 import com.libertsolutions.washington.apppropagandista.api.AgendaService;
 
@@ -108,8 +110,11 @@ public class CadastroCompromissoActivity extends AppCompatActivity {
                 //Salva dados no banco
                 agendaDb.Incluir(agenda);
                 final AgendaService service = createService(AgendaService.class, this);
+                Propagandista propagandista = PreferencesUtils.getUserLogged(this);
                 if (service != null) {
-                    service.post(agenda)
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                    agenda.setData(sdf.parse(agenda.getData()+" "+agenda.getHora()).toString());
+                    service.put(propagandista.getCpf(), agenda)
                             .subscribeOn(Schedulers.newThread())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(new AgendaEnviar());

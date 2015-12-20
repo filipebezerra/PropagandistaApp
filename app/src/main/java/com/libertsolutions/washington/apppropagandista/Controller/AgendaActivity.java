@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -61,7 +62,7 @@ public class AgendaActivity extends AppCompatActivity {
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
-                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+                (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
@@ -155,7 +156,7 @@ public class AgendaActivity extends AppCompatActivity {
                 HashMap<String, String> map = new HashMap<String, String>();
                 map.put(columnTags[0],String.valueOf(agenda.getId_agenda()));  //Id
                 map.put(columnTags[1],agenda.getId_medico().getNome());  //Médico
-                map.put(columnTags[2], "Data: " + agenda.getData().toString());  //Data e Horário
+                map.put(columnTags[2], "Data: " + agenda.getData()+" "+agenda.getHora());  //Data e Horário
                 map.put(columnTags[3], "Obs: " + agenda.getObs());  //Observação
                 //Adiciona dados no Arraylist
                 lstAgenda.add(map);

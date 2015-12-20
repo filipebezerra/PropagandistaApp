@@ -1,6 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by washington on 04/11/2015.
@@ -9,21 +10,25 @@ public class Agenda {
     private Integer id_agenda;
 
     @Expose
+    @SerializedName("dtCompromisso")
     private String data;
 
-    @Expose
+    @Expose(serialize = false)
     private String hora;
 
     @Expose
+    @SerializedName("observacao")
     private String obs;
 
     @Expose
     private Medico id_medico;
 
     private Integer status;
+
+    @Expose(serialize = false)
     private Integer statusAgenda;
 
-    @Expose
+    @Expose(serialize = false)
     private Integer id_unico;
 
     //Metódos Get's
