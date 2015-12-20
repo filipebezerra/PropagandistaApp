@@ -13,6 +13,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
+import com.libertsolutions.washington.apppropagandista.Enum.Status;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
@@ -114,10 +115,11 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
             medico = getDados();
             try
             {
-                medico.setStatus(1);//Seta status = 1 Pendente;
+                medico.setStatus(Status.Alterado.codigo);
                 //Salva dados no banco
                 medicoDb.Alterar(medico);
                 final MedicoService service = createService(MedicoService.class, this);
+
                 if (service != null) {
                     service.post(medico)
                             .subscribeOn(Schedulers.newThread())
@@ -246,7 +248,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         public void onNext(Integer id_unico) {
             if (id_unico > 0) {
                 medico.setId_unico(id_unico);//Seta id unico
-                medico.setStatus(2);//Status 1= Pendente; 2 = Enviado
+                medico.setStatus(Status.Enviado.codigo);
                 medicoDb.Alterar(medico);
             } else {
                 Mensagem.MensagemAlerta("Enviar médicos", "Ocorreu um erro ao enviar médico.", DetalhesMedicoActivity.this);

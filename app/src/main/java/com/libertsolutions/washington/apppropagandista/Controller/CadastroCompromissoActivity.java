@@ -15,10 +15,12 @@ import android.widget.TimePicker;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Enum.Status;
+import com.libertsolutions.washington.apppropagandista.Enum.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
+import com.libertsolutions.washington.apppropagandista.api.AgendaService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,6 +30,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
 
 public class CadastroCompromissoActivity extends AppCompatActivity {
     private AgendaDAO agendaDb;
@@ -99,6 +105,13 @@ public class CadastroCompromissoActivity extends AppCompatActivity {
             {
                 //Salva dados no banco
                 agendaDb.Incluir(agenda);
+                final AgendaService service = createService(AgendaService.class, this);
+                if (service != null) {
+                    service.post(agenda)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new AgendaEnviar());
+                }
             }catch (Exception error)
             {
             }finally {
@@ -157,6 +170,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity {
         agenda.setHora(txtHora.getText().toString());
         agenda.setId_medico(new MedicoDAO(this).Consultar(Integer.parseInt(txtIdMedico.getText().toString())));
         agenda.setStatus(Status.Pendente.codigo);
+        agenda.setStatusAgenda(StatusAgenda.Pendente.codigo);
         if(TextUtils.isEmpty(txtObs.getText().toString()))
             agenda.setObs("");
         else
@@ -220,7 +234,6 @@ public class CadastroCompromissoActivity extends AppCompatActivity {
         @Override
         public void onError(Throwable e) {
             if (e.getCause() != null) {
-                //Log.e(TAG, e.getCause().getMessage());
             }
             Mensagem.MensagemAlerta(CadastroCompromissoActivity.this, e.getMessage());
         }
@@ -229,7 +242,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity {
         public void onNext(Integer id_unico) {
             if (id_unico > 0) {
                 agenda.setId_unico(id_unico);//Seta id unico
-                agenda.setStatus(Status.Enviado.codigo);//Status 1= Pendente; 2 = Enviado; 3 = Alterado
+                agenda.setStatus(Status.Enviado.codigo);
                 agendaDb.Alterar(agenda);
             } else {
                 Mensagem.MensagemAlerta("Enviar médicos", "Ocorreu um erro ao enviar médico.", CadastroCompromissoActivity.this);

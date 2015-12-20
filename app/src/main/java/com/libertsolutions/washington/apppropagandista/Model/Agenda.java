@@ -1,16 +1,29 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Created by washington on 04/11/2015.
  */
 public class Agenda {
     private Integer id_agenda;
+
+    @Expose
     private String data;
+
+    @Expose
     private String hora;
+
+    @Expose
     private String obs;
+
+    @Expose
     private Medico id_medico;
+
     private Integer status;
     private Integer statusAgenda;
+
+    @Expose
     private Integer id_unico;
 
     //Metódos Get's
