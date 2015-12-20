@@ -187,6 +187,52 @@ public class MedicoDAO {
         return list;
     }
 
+    //Metódo Listar paginação
+    public ArrayList<Medico> Listar(String start,String limit)
+    {
+        Medico medico;
+        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","id_unico","status"};
+        ArrayList<Medico> list = new ArrayList<Medico>();
+        try {
+            //Abre Conexão
+            cnn.AbrirConexao();
+
+            Cursor cursor = cnn.db().query("Medico",
+                    campos,
+                    null,
+                    null,
+                    null,
+                    null,
+                    "nome",
+                    start+","+limit);
+
+            while(cursor.moveToNext()){
+                medico = new Medico();
+                medico.setId_medico(Integer.parseInt(cursor.getString(0)));
+                medico.setNome(cursor.getString(1));
+                medico.setDtAniversario(cursor.getString(2));
+                medico.setSecretaria(cursor.getString(3));
+                medico.setTelefone(cursor.getString(4));
+                medico.setEmail(cursor.getString(5));
+                medico.setCrm(cursor.getString(6));
+                medico.setEspecialidade(cursor.getString(7));
+                medico.setId_unico(cursor.getInt(8));
+                medico.setStatus(cursor.getInt(9));
+                list.add(medico);
+            }
+
+            if (cursor != null && !cursor.isClosed())
+            {
+                cursor.close();
+            }
+
+        }catch (Exception error)
+        {
+            //Mensagem.MensagemAlerta("Listar Cond.Pgto.", error.getMessage(), activ);
+        }
+        return list;
+    }
+
     //Listar médicos por status
     public ArrayList<Medico> Listar(int status)
     {
