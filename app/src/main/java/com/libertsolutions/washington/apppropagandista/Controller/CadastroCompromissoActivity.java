@@ -63,6 +63,8 @@ public class CadastroCompromissoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_compromisso);
 
+        agendaDb = new AgendaDAO(this);
+
         ButterKnife.bind(this);
 
         //Chama Funções para Campos Data e Hora

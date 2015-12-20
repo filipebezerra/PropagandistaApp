@@ -241,4 +241,24 @@ public class AgendaDAO {
         }
         return list;
     }
+
+    //Metódo Existe Id
+    public boolean Existe(Integer id_unico)
+    {
+        boolean existe = false;
+        try{
+            //Abre Conexão
+            cnn.AbrirConexao();
+            Cursor cursor = cnn.db().query(TABLE_NAME,COLUMNS,"id_unico = "+id_unico,null,null,null,null);
+            if(cursor.moveToFirst()) {
+                existe = true;
+            }
+        }catch (Exception error)
+        {
+            Mensagem.MensagemAlerta(context,error.getMessage());
+        }finally {
+            cnn.close();
+        }
+        return  existe;
+    }
 }

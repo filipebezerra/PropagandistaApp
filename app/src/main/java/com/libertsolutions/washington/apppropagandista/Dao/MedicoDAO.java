@@ -129,7 +129,7 @@ public class MedicoDAO {
                     medico.setEmail(cursor.getString(6));
                     medico.setEspecialidade(cursor.getString(7));
                     medico.setId_unico(cursor.getInt(8));
-                    medico.setStatus(Integer.parseInt(cursor.getString(9)));
+                    medico.setStatus(cursor.getInt(9));
                 }
             }
         }catch (Exception error)

@@ -2,16 +2,21 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.StateSet;
 import android.widget.Button;
 import android.widget.CheckBox;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
+import com.libertsolutions.washington.apppropagandista.Enum.Status;
+import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
+import com.libertsolutions.washington.apppropagandista.api.AgendaService;
 import com.libertsolutions.washington.apppropagandista.api.MedicoService;
 
 import java.util.List;
@@ -28,6 +33,7 @@ import static com.libertsolutions.washington.apppropagandista.api.controller.Ret
 public class SincronizarActivity extends AppCompatActivity {
     private MaterialDialog mProgressDialog;
     private MedicoDAO medicoDb;
+    private AgendaDAO agendaDb;
     private Medico medico;
 
     @Bind(R.id.btnSincronizar)
@@ -48,6 +54,7 @@ public class SincronizarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sincronizar);
 
         this.medicoDb = new MedicoDAO(this);
+        this.agendaDb = new AgendaDAO(this);
         ButterKnife.bind(this);
     }
 
@@ -70,7 +77,7 @@ public class SincronizarActivity extends AppCompatActivity {
     @OnClick(R.id.btnSincronizar)
     public void onSincronizarClick() {
         mProgressDialog = new MaterialDialog.Builder(SincronizarActivity.this)
-                .content("Por favor aguarde, importando dados....")
+                .content("Por favor aguarde, sincronizando dados....")
                 .progress(true, 0)
                 .cancelable(false)
                 .show();
@@ -85,7 +92,8 @@ public class SincronizarActivity extends AppCompatActivity {
         //Integra Agendas
         if(chkAgendas.isChecked())
         {
-            ImportaAgendas();
+            ImportaAgendas();//Importa Agendas Registradas
+            EnviaAgendas();//Envia Agendas Pendentes
         }
     }
 
@@ -156,7 +164,7 @@ public class SincronizarActivity extends AppCompatActivity {
             dismissDialog();
             if (id_unico > 0) {
                 medico.setId_unico(id_unico);//Seta id unico
-                medico.setStatus(2);//Status 1= Pendente; 2 = Enviado
+                medico.setStatus(Status.Enviado.codigo);
                 medicoDb.Alterar(medico);
             } else {
                 Mensagem.MensagemAlerta("Enviar médicos", "Ocorreu um erro ao enviar médico.", SincronizarActivity.this);
@@ -185,7 +193,7 @@ public class SincronizarActivity extends AppCompatActivity {
                 for (int i =0; i < medicos.size();i++)
                 {
                     Medico medico = medicos.get(i);
-                    medico.setStatus(2);//Seta status = 2 improtado;
+                    medico.setStatus(Status.Enviado.codigo);//Seta status = 2 improtado;
                     //Valida se médico já existe
                     if(medicoDb.Existe(medico.getId_unico())) {
                         medicoDb.Alterar(medico);
@@ -202,6 +210,59 @@ public class SincronizarActivity extends AppCompatActivity {
     /// Metódo para enviar e receber agendas cadastradas no web-service
     public void ImportaAgendas()
     {
-        mProgressDialog.setContent("Sincronizando Agendas....");
+        try {
+            final AgendaService service = createService(AgendaService.class, this);
+            Propagandista propagandista = PreferencesUtils.getUserLogged(this);
+            if (service != null) {
+                service.getByCpf(propagandista.getCpf())
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new AgendaSubscriber());
+            }
+        }catch (Exception erro)
+        {
+            Mensagem.MensagemAlerta("Sincronizar Dados", erro.getMessage(), SincronizarActivity.this);
+        }
+    }
+
+    //Obtem médicos do web service
+    private class AgendaSubscriber extends Subscriber<List<Agenda>> {
+        @Override
+        public void onCompleted() {
+            // vazio
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            if (e.getCause() != null) {
+                //Log.e(TAG, e.getCause().getMessage());
+            }
+            Mensagem.MensagemAlerta(SincronizarActivity.this, e.getMessage());
+        }
+
+        @Override
+        public void onNext(List<Agenda> agendas) {
+            if (agendas != null) {
+                for (int i =0; i < agendas.size();i++)
+                {
+                    Agenda agenda = agendas.get(i);
+                    medico.setStatus(Status.Enviado.codigo);
+                    //Valida se médico já existe
+                    if(agendaDb.Existe(agenda.getId_unico())) {
+                        agendaDb.Alterar(agenda);
+                    }
+                    else
+                        agendaDb.Incluir(agenda);
+                }
+            } else {
+                Mensagem.MensagemAlerta("Sincronizar", "Médicos não foram importados...", SincronizarActivity.this);
+            }
+        }
+    }
+
+    //Metódo para enviar
+    public void EnviaAgendas()
+    {
+        dismissDialog();
     }
 }
