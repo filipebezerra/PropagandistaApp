@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
@@ -61,7 +62,7 @@ public class ConsultaMedicoActivity extends AppCompatActivity {
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
-                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+                (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
