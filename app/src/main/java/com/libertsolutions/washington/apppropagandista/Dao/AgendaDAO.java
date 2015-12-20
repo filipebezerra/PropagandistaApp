@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class AgendaDAO {
     private static final String TABLE_NAME = "Agenda";
-    private static final String[] COLUMNS = {"id_agenda","data","hora","id_medico","obs","status"};
+    private static final String[] COLUMNS = {"id_agenda","data","hora","id_medico","obs","status","statusagenda","id_unico"};
     private Banco cnn;
     private Context context;
 
@@ -43,7 +43,9 @@ public class AgendaDAO {
             valores.put("hora",agenda.getHora());
             valores.put("obs",agenda.getObs());
             valores.put("id_medico",agenda.getId_medico().getId_medico());
-            valores.put("status",StatusAgenda.Pendente.codigo);
+            valores.put("statusagenda",StatusAgenda.Pendente.codigo);
+            valores.put("status",agenda.getStatus());
+            valores.put("id_unico",StatusAgenda.Pendente.codigo);
             resultado = cnn.db().insert(TABLE_NAME,null,valores);
         }catch (Exception error)
         {
@@ -68,6 +70,7 @@ public class AgendaDAO {
             valores.put("obs",agenda.getObs());
             valores.put("id_medico", agenda.getId_medico().getId_medico());
             valores.put("status",agenda.getStatus());
+            valores.put("statusagenda",agenda.getStatus());
             cnn.db().update(TABLE_NAME,valores,where,null);
         }catch (Exception error)
         {
@@ -93,7 +96,9 @@ public class AgendaDAO {
                     agenda.setHora(cursor.getString(2));
                     agenda.setId_medico(new MedicoDAO(context).Consultar(cursor.getInt(3)));
                     agenda.setObs(cursor.getString(4));
-                    agenda.setStatus(Integer.parseInt(cursor.getString(5)));
+                    agenda.setStatus(cursor.getInt(5));
+                    agenda.setStatusAgenda(cursor.getInt(6));
+                    agenda.setId_unico(cursor.getInt(7));
                 }
             }
         }catch (Exception error)
@@ -131,7 +136,9 @@ public class AgendaDAO {
                 agenda.setHora(cursor.getString(2));
                 agenda.setId_medico(new MedicoDAO(context).Consultar(cursor.getInt(3)));
                 agenda.setObs(cursor.getString(4));
-                agenda.setStatus(Integer.parseInt(cursor.getString(5)));
+                agenda.setStatus(cursor.getInt(5));
+                agenda.setStatusAgenda(cursor.getInt(6));
+                agenda.setId_unico(cursor.getInt(7));
                 list.add(agenda);
             }
 
@@ -173,7 +180,9 @@ public class AgendaDAO {
                     agenda.setHora(cursor.getString(2));
                     agenda.setId_medico(new MedicoDAO(context).Consultar(cursor.getInt(3)));
                     agenda.setObs(cursor.getString(4));
-                    agenda.setStatus(Integer.parseInt(cursor.getString(5)));
+                    agenda.setStatus(cursor.getInt(5));
+                    agenda.setStatusAgenda(cursor.getInt(6));
+                    agenda.setId_unico(cursor.getInt(7));
                     list.add(agenda);
                 }
                 while (cursor.moveToNext());

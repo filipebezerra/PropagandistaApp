@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import rx.Subscriber;
+
 public class AgendaActivity extends AppCompatActivity {
     ArrayList<HashMap<String, String>> lstAgenda = new ArrayList<HashMap<String, String>>();
     PersonalAdapter arrayAdapter;

@@ -129,11 +129,8 @@ public class SincronizarActivity extends AppCompatActivity {
                             .subscribe(new MedicoEnviar());
                 }
             }
-
-            dismissDialog();
         }catch (Exception erro)
         {
-            dismissDialog();
             Mensagem.MensagemAlerta("Sincronizar Dados", erro.getMessage(), SincronizarActivity.this);
         }
     }
@@ -197,7 +194,6 @@ public class SincronizarActivity extends AppCompatActivity {
                         medicoDb.Incluir(medico);
                 }
             } else {
-                dismissDialog();
                 Mensagem.MensagemAlerta("Sincronizar", "Médicos não foram importados...", SincronizarActivity.this);
             }
         }

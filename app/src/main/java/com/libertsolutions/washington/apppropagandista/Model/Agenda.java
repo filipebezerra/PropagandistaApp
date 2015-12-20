@@ -10,6 +10,8 @@ public class Agenda {
     private String obs;
     private Medico id_medico;
     private Integer status;
+    private Integer statusAgenda;
+    private Integer id_unico;
 
     //Metódos Get's
     public Integer getId_agenda() {
@@ -33,6 +35,14 @@ public class Agenda {
 
     public Integer getStatus() {
         return status;
+    }
+
+    public Integer getStatusAgenda() {
+        return statusAgenda;
+    }
+
+    public Integer getId_unico() {
+        return id_unico;
     }
     
     //Metódos Set's
@@ -58,5 +68,12 @@ public class Agenda {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+    public void setStatusAgenda(Integer statusAgenda) {
+        this.statusAgenda = statusAgenda;
+    }
+
+    public void setId_unico(Integer id_unico) {
+        this.id_unico = id_unico;
     }
 }

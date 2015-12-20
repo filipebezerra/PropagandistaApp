@@ -95,6 +95,7 @@ public class Banco extends SQLiteOpenHelper  {
                 "hora text not null,"+
                 "id_medico integer not null,"+
                 "obs text,"+
+                "statusagenda integer,"+
                 "status integer,"+
                 "id_unico integer,"+
                 "FOREIGN KEY(id_medico) REFERENCES Medico(id_medico))";
