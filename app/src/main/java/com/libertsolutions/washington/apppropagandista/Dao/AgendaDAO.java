@@ -70,7 +70,7 @@ public class AgendaDAO {
             valores.put("obs",agenda.getObs());
             valores.put("id_medico", agenda.getId_medico().getId_medico());
             valores.put("status",agenda.getStatus());
-            valores.put("statusagenda",agenda.getStatus());
+            valores.put("statusagenda", agenda.getStatus());
             cnn.db().update(TABLE_NAME,valores,where,null);
         }catch (Exception error)
         {
@@ -154,6 +154,7 @@ public class AgendaDAO {
         return list;
     }
 
+    //Listar Agenda
     public ArrayList<Agenda> Listar(String start,String limit, String filter, String...args)
     {
         Agenda agenda;
@@ -171,6 +172,50 @@ public class AgendaDAO {
                     null,
                     "data, hora",
                     start+","+limit);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    agenda = new Agenda();
+                    agenda.setId_agenda(cursor.getInt(0));
+                    agenda.setData(cursor.getString(1));
+                    agenda.setHora(cursor.getString(2));
+                    agenda.setId_medico(new MedicoDAO(context).Consultar(cursor.getInt(3)));
+                    agenda.setObs(cursor.getString(4));
+                    agenda.setStatus(cursor.getInt(5));
+                    agenda.setStatusAgenda(cursor.getInt(6));
+                    agenda.setId_unico(cursor.getInt(7));
+                    list.add(agenda);
+                }
+                while (cursor.moveToNext());
+
+                cursor.close();
+            }
+
+        }catch (Exception error)
+        {
+            Mensagem.MensagemAlerta(context, error.getMessage());
+        }
+        return list;
+    }
+
+    //Listar Agenda Por Status
+    public ArrayList<Agenda> Listar(Integer status)
+    {
+        Agenda agenda;
+        ArrayList<Agenda> list = new ArrayList<>();
+        try {
+            //Abre Conexão
+            cnn.AbrirConexao();
+
+            Cursor cursor = cnn.db().query(
+                    TABLE_NAME,
+                    COLUMNS,
+                    "status="+status,
+                    null,
+                    null,
+                    null,
+                    "data, hora",
+                    null);
 
             if (cursor != null && cursor.moveToFirst()) {
                 do {

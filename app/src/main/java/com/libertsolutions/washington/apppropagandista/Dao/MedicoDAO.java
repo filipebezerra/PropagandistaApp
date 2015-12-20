@@ -142,7 +142,7 @@ public class MedicoDAO {
     }
 
     //Metódo Listar paginação
-    public ArrayList<Medico> Listar(String start,String limit)
+    public ArrayList<Medico> Listar(String start,String limit, String filter, String...args)
     {
         Medico medico;
         String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","id_unico","status"};
@@ -151,7 +151,14 @@ public class MedicoDAO {
             //Abre Conexão
             cnn.AbrirConexao();
 
-            Cursor cursor = cnn.db().query("Medico",campos,null,null,null,null,"nome",start+","+limit);
+            Cursor cursor = cnn.db().query("Medico",
+                    campos,
+                    filter,
+                    args,
+                    null,
+                    null,
+                    "nome",
+                    start+","+limit);
 
             while(cursor.moveToNext()){
                 medico = new Medico();
@@ -190,7 +197,7 @@ public class MedicoDAO {
             //Abre Conexão
             cnn.AbrirConexao();
 
-            Cursor cursor = cnn.db().query("Medico",campos,"id_medico = "+status,null,null,null,null);
+            Cursor cursor = cnn.db().query("Medico",campos,"status = "+status,null,null,null,null);
 
             while(cursor.moveToNext()){
                 medico = new Medico();

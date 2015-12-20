@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity
     private void PreencheGrid(int start, int limit) {
         try {
             List<Agenda> lista = new ArrayList<>();
-            lista = agendaDb.Listar(String.valueOf(start), String.valueOf(limit), "status=?", "1");
+            lista = agendaDb.Listar(String.valueOf(start), String.valueOf(limit), "statusagenda=?", "1");
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] { "id", "col1", "col2", "col3" };
 
