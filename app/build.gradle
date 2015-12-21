@@ -32,6 +32,7 @@ dependencies {
     compile libs.supportDesign
     compile libs.support_v4
     compile libs.supportPreference_v7
+    compile libs.supportCardView
     compile libs.butterKnife
     compile (libs.materialDialogs) { transitive = true }
     compile libs.retrofit

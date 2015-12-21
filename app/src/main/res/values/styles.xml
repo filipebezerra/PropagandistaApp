@@ -24,4 +24,15 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="Widget.Propagandista" parent="android:Widget" />
+
+    <style name="Widget.Propagandista.CardView">
+        <item name="android:background">@color/white</item>
+        <item name="cardCornerRadius">2dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardMaxElevation">8dp</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="contentPadding">16dp</item>
+    </style>
+
 </resources>
