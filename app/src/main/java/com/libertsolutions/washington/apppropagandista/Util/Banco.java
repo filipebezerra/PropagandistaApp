@@ -56,6 +56,7 @@ public class Banco extends SQLiteOpenHelper  {
         try {
             //executa os scripts de criação do banco
             db.execSQL(Usuario());//Script Tabela Usuário
+            db.execSQL(Especialidade());//Script Tabela Especialidade Médica
             db.execSQL(Medico());//Script Tabela Médico
             db.execSQL(Agenda());//Script Tabela Agenda
             db.execSQL(Visita());//Script Tabela Visita
@@ -83,9 +84,10 @@ public class Banco extends SQLiteOpenHelper  {
                 "telefone text," +
                 "email text," +
                 "crm text," +
-                "especialidade text," +
+                "id_especialidade integer," +
                 "id_unico integer,"+
-                "status integer)";
+                "status integer," +
+                "FOREIGN KEY(id_especialidade) REFERENCES Especialidade(id_especialidade))";
     }
 
     //cria a tabela Agenda
@@ -115,6 +117,12 @@ public class Banco extends SQLiteOpenHelper  {
                 "detalhes text,"+
                 "status integer,"+
                 "FOREIGN KEY(id_agenda) REFERENCES Agenda(id_agenda))";
+    }
+
+    //cria a tabela Especialidade
+    private String Especialidade()   {
+        return "CREATE TABLE IF NOT EXISTS Especialidade (id_especialidade INTEGER, " +
+                "nome text not null)";
     }
 
     //este método faz a atualização do banco

@@ -203,8 +203,7 @@ public class MainActivity extends AppCompatActivity
                 HashMap<String, String> map = new HashMap<String, String>();
                 map.put(columnTags[0], String.valueOf(agenda.getId_agenda()));  //Id
                 map.put(columnTags[1], agenda.getId_medico().getNome());  //Médico
-                map.put(columnTags[2],
-                        "Data: " + agenda.getData() + " " + agenda.getHora());  //Data e Horário
+                map.put(columnTags[2],"Data: " + agenda.getData() + " " + agenda.getHora());  //Data e Horário
                 map.put(columnTags[3], "Obs: " + agenda.getObs());  //Observação
                 //Adiciona dados no Arraylist
                 lstAgenda.add(map);
@@ -212,8 +211,7 @@ public class MainActivity extends AppCompatActivity
 
             int currentPosition = mListView.getFirstVisiblePosition();
             //Função para realizar adptação necessária para inserir dados no ListView
-            arrayAdapter = new PersonalAdapter(this, lstAgenda, R.layout.cols_3, columnTags,
-                    columnIds);
+            arrayAdapter = new PersonalAdapter(this, lstAgenda, R.layout.cols_3, columnTags,columnIds);
 
             //Adiciona Array no ListView
             mListView.setAdapter(arrayAdapter);

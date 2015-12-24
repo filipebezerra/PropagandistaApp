@@ -1,6 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by washington on 04/11/2015.
@@ -30,8 +31,9 @@ public class Medico {
     @Expose
     private String crm;
 
-    @Expose(serialize = false)
-    private String especialidade;
+    @SerializedName("Especialidade")
+    @Expose
+    private Especialidade id_espcialidade;
 
     @Expose(serialize = false)
     private int status;
@@ -69,8 +71,8 @@ public class Medico {
         this.crm = crm;
     }
 
-    public void setEspecialidade(String especialidade) {
-        this.especialidade = especialidade;
+    public void setId_espcialidade(Especialidade id_espcialidade) {
+        this.id_espcialidade = id_espcialidade;
     }
 
     public void setStatus(int status) {
@@ -110,11 +112,11 @@ public class Medico {
         return crm;
     }
 
-    public String getEspecialidade() {
-        return especialidade;
-    }
-
     public int getStatus() {
         return status;
+    }
+
+    public Especialidade getId_especialidade() {
+        return id_espcialidade;
     }
 }

@@ -8,15 +8,18 @@ import android.widget.CheckBox;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
+import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Enum.Status;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
+import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.api.AgendaService;
+import com.libertsolutions.washington.apppropagandista.api.EspecialidadeService;
 import com.libertsolutions.washington.apppropagandista.api.MedicoService;
 
 import java.util.List;
@@ -34,6 +37,7 @@ public class SincronizarActivity extends AppCompatActivity {
     private MaterialDialog mProgressDialog;
     private MedicoDAO medicoDb;
     private AgendaDAO agendaDb;
+    private EspecialidadeDAO especialidadeDb;
     private Medico medico;
 
     @Bind(R.id.btnSincronizar)
@@ -55,6 +59,7 @@ public class SincronizarActivity extends AppCompatActivity {
 
         this.medicoDb = new MedicoDAO(this);
         this.agendaDb = new AgendaDAO(this);
+        this.especialidadeDb = new EspecialidadeDAO(this);
         ButterKnife.bind(this);
     }
 
@@ -85,6 +90,7 @@ public class SincronizarActivity extends AppCompatActivity {
         //Integra Médicos
         if(chkMedicos.isChecked())
         {
+            ImportaEspecialidade();//Importa médicos do webservice
             ImportaMedicos();//Importa médicos do webservice
             EnviaMedicos();//Envia medicos para o web serviçe
         }
@@ -114,6 +120,23 @@ public class SincronizarActivity extends AppCompatActivity {
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new MedicoSubscriber());
+            }
+        }catch (Exception erro)
+        {
+            Mensagem.MensagemAlerta("Sincronizar Dados", erro.getMessage(), SincronizarActivity.this);
+        }
+    }
+
+    /// Metódo para enviar e receber médicos cadastrados no web-service
+    public void ImportaEspecialidade()
+    {
+        try {
+            final EspecialidadeService service = createService(EspecialidadeService.class, this);
+            if (service != null) {
+                service.get()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new EspecialidadeSubscriber());
             }
         }catch (Exception erro)
         {
@@ -203,6 +226,40 @@ public class SincronizarActivity extends AppCompatActivity {
                 }
             } else {
                 Mensagem.MensagemAlerta("Sincronizar", "Médicos não foram importados...", SincronizarActivity.this);
+            }
+        }
+    }
+
+    //Obtem médicos do web service
+    private class  EspecialidadeSubscriber extends Subscriber<List<Especialidade>> {
+        @Override
+        public void onCompleted() {
+            // vazio
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            if (e.getCause() != null) {
+                //Log.e(TAG, e.getCause().getMessage());
+            }
+            Mensagem.MensagemAlerta(SincronizarActivity.this, e.getMessage());
+        }
+
+        @Override
+        public void onNext(List<Especialidade> especialidades) {
+            if (especialidades != null) {
+                for (int i =0; i < especialidades.size();i++)
+                {
+                    Especialidade especialidade = especialidades.get(i);
+                    //Valida se médico já existe
+                    if(especialidadeDb.Existe(especialidade.getId_especialidade())) {
+                        especialidadeDb.Alterar(especialidade);
+                    }
+                    else
+                        especialidadeDb.Incluir(especialidade);
+                }
+            } else {
+                Mensagem.MensagemAlerta("Sincronizar", "Especialidade Médica não foi importado...", SincronizarActivity.this);
             }
         }
     }

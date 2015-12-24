@@ -12,8 +12,10 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
+import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Enum.Status;
+import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
@@ -184,9 +186,9 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
             medico.setCrm(this.txtCrm.getText().toString());
 
         if(TextUtils.isEmpty(txtEspecialidade.getText().toString()))
-            medico.setEspecialidade("");
+            medico.setId_espcialidade(new Especialidade());
         else
-            medico.setEspecialidade(this.txtEspecialidade.getText().toString());
+            medico.setId_espcialidade(new EspecialidadeDAO(this).Consultar(Integer.parseInt(this.txtEspecialidade.getText().toString())));
 
         return medico;
     }
@@ -227,7 +229,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
         this.txtTelefone.setText(medico.getTelefone());
         this.txtEmail.setText(medico.getEmail());
         this.txtCrm.setText(medico.getCrm());
-        this.txtEspecialidade.setText(medico.getEspecialidade());
+        this.txtEspecialidade.setText(medico.getId_especialidade().getId_especialidade());
     }
 
     private class  MedicoEnviar extends Subscriber<Integer> {

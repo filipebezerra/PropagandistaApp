@@ -144,6 +144,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity {
 
     //Metódo para mostrar data e hora
     private void setDateTimeField() {
+
         //Dialog Data
         Calendar newCalendar = Calendar.getInstance();
         dataCompromisso = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
