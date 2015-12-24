@@ -2,7 +2,6 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,12 +14,10 @@ import android.widget.EditText;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Enum.Status;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
-import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mask;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
-import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
-import com.libertsolutions.washington.apppropagandista.api.MedicoService;
+import com.libertsolutions.washington.apppropagandista.api.services.MedicoService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

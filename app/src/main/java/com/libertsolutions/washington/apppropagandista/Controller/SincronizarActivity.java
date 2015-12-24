@@ -2,7 +2,6 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.StateSet;
 import android.widget.Button;
 import android.widget.CheckBox;
 
@@ -16,8 +15,8 @@ import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
-import com.libertsolutions.washington.apppropagandista.api.AgendaService;
-import com.libertsolutions.washington.apppropagandista.api.MedicoService;
+import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
+import com.libertsolutions.washington.apppropagandista.api.services.MedicoService;
 
 import java.util.List;
 

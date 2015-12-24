@@ -17,11 +17,10 @@ import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mask;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
-import com.libertsolutions.washington.apppropagandista.api.MedicoService;
+import com.libertsolutions.washington.apppropagandista.api.services.MedicoService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import butterknife.Bind;

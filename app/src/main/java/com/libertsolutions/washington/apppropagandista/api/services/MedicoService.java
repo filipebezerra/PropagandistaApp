@@ -1,12 +1,9 @@
-package com.libertsolutions.washington.apppropagandista.api;
+package com.libertsolutions.washington.apppropagandista.api.services;
 
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
-
 import java.util.List;
-
 import retrofit.http.Body;
 import retrofit.http.GET;
-import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Query;
 import rx.Observable;

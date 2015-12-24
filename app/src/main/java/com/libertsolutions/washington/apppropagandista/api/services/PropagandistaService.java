@@ -1,4 +1,4 @@
-package com.libertsolutions.washington.apppropagandista.api;
+package com.libertsolutions.washington.apppropagandista.api.services;
 
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import retrofit.http.GET;

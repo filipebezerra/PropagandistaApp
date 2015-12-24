@@ -22,7 +22,7 @@ import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
-import com.libertsolutions.washington.apppropagandista.api.AgendaService;
+import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
