@@ -3,9 +3,12 @@ package com.libertsolutions.washington.apppropagandista.Util;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
+
+import static com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO.TABELA_VISITA;
 
 /**
- * Created by washington on 04/11/2015.
+ * @author Washington, Filipe Bezerra
  */
 public class Banco extends SQLiteOpenHelper  {
     //Atributos
@@ -38,10 +41,6 @@ public class Banco extends SQLiteOpenHelper  {
         }
 
         return instance;
-    }
-
-    public void FecharConexao() {
-        close();
     }
 
     @Override
@@ -103,22 +102,23 @@ public class Banco extends SQLiteOpenHelper  {
 
     //cria a tabela Visita
     private String Visita()   {
-        return "CREATE TABLE IF NOT EXISTS Visita (id_visita INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "dtInicio text not null,"+
-                "horaInicio text not null,"+
-                "longInicial real not null,"+
-                "latInicial real not null,"+
-                "dtFim text,"+
-                "horaFim,"+
-                "longFinal real,"+
-                "latFinal real,"+
-                "detalhes text,"+
-                "status integer,"+
-                "FOREIGN KEY(id_agenda) REFERENCES Agenda(id_agenda))";
+        return "CREATE TABLE IF NOT EXISTS " + TABELA_VISITA + "(" +
+                VisitaDAO.CAMPO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                VisitaDAO.CAMPO_DT_INICIO + " INTEGER not null, " +
+                VisitaDAO.CAMPO_LATITUDE_INICIAL + " REAL not null, " +
+                VisitaDAO.CAMPO_LONGITUDE_INICIAL + " REAL not null, " +
+                VisitaDAO.CAMPO_DT_FIM + " INTEGER, " +
+                VisitaDAO.CAMPO_LATITUDE_INICIAL + " REAL, " +
+                VisitaDAO.CAMPO_LONGITUDE_INICIAL + " REAL, " +
+                VisitaDAO.CAMPO_DETALHES + " TEXT, " +
+                VisitaDAO.CAMPO_STATUS + " INTEGER, " +
+                VisitaDAO.CAMPO_RELACAO_AGENDA + " INTEGER, " +
+                "FOREIGN KEY("+ VisitaDAO.CAMPO_RELACAO_AGENDA + ") REFERENCES Agenda(id_agenda))";
     }
 
     //este método faz a atualização do banco
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //TODO (filipe bezerra) regra de negócio para atualizar a versão do banco
     }
 }

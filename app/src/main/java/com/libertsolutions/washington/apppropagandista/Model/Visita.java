@@ -1,118 +1,114 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 /**
- * Created by washington on 17/11/2015.
+ * @author Washington, Filipe Bezerra
  */
 public class Visita {
-    private Integer id_visita;
-    private String dtInicio;
-    private String horaInicio;
-    private Double longInicial;
-    private Double latInicial;
-    private String dtFim;
-    private String horaFim;
-    private Double longFinal;
-        private Double latFinal;
-    private String detalhes;
-    private Agenda agenda;
-    private Integer status;
+    private Integer mId;
 
-    //Metódos Get's
-    public Integer getId_visita() {
-        return id_visita;
+    private Long mDataInicio;
+
+    private Double mLatInicial;
+
+    private Double mLongInicial;
+
+    private Long mDataFim;
+
+    private Double mLatFinal;
+
+    private Double mLongFinal;
+
+    private String mDetalhes;
+
+    private Agenda mAgenda;
+
+    private Integer mStatus;
+
+    public static Visita iniciar(final Long data, final Double latitude, final Double longitude) {
+        final Visita visita = new Visita();
+        visita.setDataInicio(data);
+        visita.setLatInicial(latitude);
+        visita.setLongInicial(longitude);
+        return visita;
     }
 
-    public String getDtInicio() {
-        return dtInicio;
+    public Integer getId() {
+        return mId;
     }
 
-    public String getHoraInicio() {
-        return horaInicio;
+    public void setId(Integer id) {
+        this.mId = id;
     }
 
-    public Double getLongInicial() {
-        return longInicial;
+    public Long getDataInicio() {
+        return mDataInicio;
+    }
+
+    public void setDataInicio(Long dataInicio) {
+        this.mDataInicio = dataInicio;
     }
 
     public Double getLatInicial() {
-        return latInicial;
-    }
-
-    public String getDtFim() {
-        return dtFim;
-    }
-
-    public String getHoraFim() {
-        return horaFim;
-    }
-
-    public Double getLongFinal() {
-        return longFinal;
-    }
-
-    public Double getLatFinal() {
-        return latFinal;
-    }
-
-    public String getDetalhes() {
-        return detalhes;
-    }
-
-    public Agenda getAgenda() {
-        return agenda;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    //Metódos Set's
-
-    public void setId_visita(Integer id_visita) {
-        this.id_visita = id_visita;
-    }
-
-    public void setDtInicio(String dtInicio) {
-        this.dtInicio = dtInicio;
-    }
-
-    public void setHoraInicio(String horaInicio) {
-        this.horaInicio = horaInicio;
-    }
-
-    public void setLongInicial(Double longInicial) {
-        this.longInicial = longInicial;
+        return mLatInicial;
     }
 
     public void setLatInicial(Double latInicial) {
-        this.latInicial = latInicial;
+        this.mLatInicial = latInicial;
     }
 
-    public void setDtFim(String dtFim) {
-        this.dtFim = dtFim;
+    public Double getLongInicial() {
+        return mLongInicial;
     }
 
-    public void setHoraFim(String horaFim) {
-        this.horaFim = horaFim;
+    public void setLongInicial(Double longInicial) {
+        this.mLongInicial = longInicial;
     }
 
-    public void setLongFinal(Double longFinal) {
-        this.longFinal = longFinal;
+    public Long getDataFim() {
+        return mDataFim;
+    }
+
+    public void setDataFim(Long dataFim) {
+        this.mDataFim = dataFim;
+    }
+
+    public Double getLatFinal() {
+        return mLatFinal;
     }
 
     public void setLatFinal(Double latFinal) {
-        this.latFinal = latFinal;
+        this.mLatFinal = latFinal;
+    }
+
+    public Double getLongFinal() {
+        return mLongFinal;
+    }
+
+    public void setLongFinal(Double longFinal) {
+        this.mLongFinal = longFinal;
+    }
+
+    public String getDetalhes() {
+        return mDetalhes;
     }
 
     public void setDetalhes(String detalhes) {
-        this.detalhes = detalhes;
+        this.mDetalhes = detalhes;
+    }
+
+    public Agenda getAgenda() {
+        return mAgenda;
     }
 
     public void setAgenda(Agenda agenda) {
-        this.agenda = agenda;
+        this.mAgenda = agenda;
+    }
+
+    public Integer getStatus() {
+        return mStatus;
     }
 
     public void setStatus(Integer status) {
-        this.status = status;
+        this.mStatus = status;
     }
 }
