@@ -25,7 +25,6 @@ import retrofit.RxJavaCallAdapterFactory;
  * @author Filipe Bezerra
  * @version #, 02/12/2015
  * @since #
- * @see com.libertsolutions.washington.apppropagandista.api.PropagandistaService
  */
 public class RetrofitController {
     private static final long HTTP_CACHE_SIZE = 10 * 1024 * 1024;
