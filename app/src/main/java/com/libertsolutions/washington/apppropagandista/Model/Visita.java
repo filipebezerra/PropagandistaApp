@@ -1,114 +1,150 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 /**
+ * Classe modelo dos dados de visita.
+ *
  * @author Washington, Filipe Bezerra
+ * @version 1.0
+ * @since 1.0
  */
 public class Visita {
+    // id de armazenamento interno do SQLite, deverá ser inteiro e auto incremento
     private Integer mId;
 
+    // id da agenda no servidor
+    private Integer mIdVisita;
+
+    // data do início da visita, armazenado como milessegundos
     private Long mDataInicio;
 
+    // latitude inicial
     private Double mLatInicial;
 
+    // longitude inicial
     private Double mLongInicial;
 
+    // data do fim da visita, armazenado como milessegundos
     private Long mDataFim;
 
+    // latitude final
     private Double mLatFinal;
 
+    // longitude final
     private Double mLongFinal;
 
     private String mDetalhes;
 
-    private Agenda mAgenda;
+    // id de relacionamento com tabela Agenda
+    private Integer mIdAgenda;
 
-    private Integer mStatus;
+    // status da sincronização
+    private Status mStatus;
 
-    public static Visita iniciar(final Long data, final Double latitude, final Double longitude) {
-        final Visita visita = new Visita();
-        visita.setDataInicio(data);
-        visita.setLatInicial(latitude);
-        visita.setLongInicial(longitude);
-        return visita;
+    public static Visita iniciar(final Long data, final Double latitude, final Double longitude,
+            final Integer idAgenda) {
+        return new Visita()
+                .setDataInicio(data)
+                .setLatInicial(latitude)
+                .setLongInicial(longitude)
+                .setIdAgenda(idAgenda);
     }
 
     public Integer getId() {
         return mId;
     }
 
-    public void setId(Integer id) {
-        this.mId = id;
+    public Visita setId(Integer id) {
+        mId = id;
+        return this;
+    }
+
+    public Integer getIdVisita() {
+        return mIdVisita;
+    }
+
+    public Visita setIdVisita(Integer idVisita) {
+        mIdVisita = idVisita;
+        return this;
     }
 
     public Long getDataInicio() {
         return mDataInicio;
     }
 
-    public void setDataInicio(Long dataInicio) {
-        this.mDataInicio = dataInicio;
+    public Visita setDataInicio(Long dataInicio) {
+        mDataInicio = dataInicio;
+        return this;
     }
 
     public Double getLatInicial() {
         return mLatInicial;
     }
 
-    public void setLatInicial(Double latInicial) {
-        this.mLatInicial = latInicial;
+    public Visita setLatInicial(Double latInicial) {
+        mLatInicial = latInicial;
+        return this;
     }
 
     public Double getLongInicial() {
         return mLongInicial;
     }
 
-    public void setLongInicial(Double longInicial) {
-        this.mLongInicial = longInicial;
+    public Visita setLongInicial(Double longInicial) {
+        mLongInicial = longInicial;
+        return this;
     }
 
     public Long getDataFim() {
         return mDataFim;
     }
 
-    public void setDataFim(Long dataFim) {
-        this.mDataFim = dataFim;
+    public Visita setDataFim(Long dataFim) {
+        mDataFim = dataFim;
+        return this;
     }
 
     public Double getLatFinal() {
         return mLatFinal;
     }
 
-    public void setLatFinal(Double latFinal) {
-        this.mLatFinal = latFinal;
+    public Visita setLatFinal(Double latFinal) {
+        mLatFinal = latFinal;
+        return this;
     }
 
     public Double getLongFinal() {
         return mLongFinal;
     }
 
-    public void setLongFinal(Double longFinal) {
-        this.mLongFinal = longFinal;
+    public Visita setLongFinal(Double longFinal) {
+        mLongFinal = longFinal;
+        return this;
     }
 
     public String getDetalhes() {
         return mDetalhes;
     }
 
-    public void setDetalhes(String detalhes) {
-        this.mDetalhes = detalhes;
+    public Visita setDetalhes(String detalhes) {
+        mDetalhes = detalhes;
+        return this;
     }
 
-    public Agenda getAgenda() {
-        return mAgenda;
+    public Integer getIdAgenda() {
+        return mIdAgenda;
     }
 
-    public void setAgenda(Agenda agenda) {
-        this.mAgenda = agenda;
+    public Visita setIdAgenda(Integer idAgenda) {
+        mIdAgenda = idAgenda;
+        return this;
     }
 
-    public Integer getStatus() {
+    public Status getStatus() {
         return mStatus;
     }
 
-    public void setStatus(Integer status) {
-        this.mStatus = status;
+    public Visita setStatus(Status status) {
+        mStatus = status;
+        return this;
     }
 }

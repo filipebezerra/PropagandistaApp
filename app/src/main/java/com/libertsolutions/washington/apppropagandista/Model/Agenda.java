@@ -1,97 +1,120 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import android.support.annotation.NonNull;
+import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
+import org.joda.time.DateTime;
+
+import static com.libertsolutions.washington.apppropagandista.Model.StatusAgenda.Finalizado;
+import static com.libertsolutions.washington.apppropagandista.Model.StatusAgenda.Pendente;
 
 /**
- * Created by washington on 04/11/2015.
+ * Classe modelo dos dados da agenda.
+ *
+ * @author Washington, Filipe Bezerra
+ * @version 1.0
+ * @since 1.0
  */
 public class Agenda {
-    private Integer id_agenda;
+    // id de armazenamento interno do SQLite, deverá ser inteiro e auto incremento
+    private Integer mId;
 
-    @Expose
-    @SerializedName("dtCompromisso")
-    private String data;
+    // id da agenda no servidor
+    private Integer mIdAgenda;
 
-    @Expose(serialize = false)
-    private String hora;
+    // data do compromisso, armazenado como milessegundos
+    private Long mDataCompromisso;
 
-    @Expose
-    @SerializedName("observacao")
-    private String obs;
+    private String mObservacao;
 
-    @Expose
-    private Medico id_medico;
+    // id de relacionamento com tabela Medico
+    private Integer mIdMedico;
 
-    private Integer status;
+    // status do compromisso, é armazenado como inteiro
+    private StatusAgenda mStatusAgenda;
 
-    @Expose(serialize = false)
-    private Integer statusAgenda;
+    // status da sincronização
+    private Status mStatus;
 
-    @Expose(serialize = false)
-    private Integer id_unico;
+    public static Agenda fromModel(@NonNull AgendaModel model) {
+        Preconditions.checkNotNull(model, "model não pode ser nulo");
+        Preconditions.checkNotNull(model.idAgenda, "idAgenda não pode ser nulo");
+        Preconditions.checkNotNull(model.dtCompromisso, "dtCompromisso não pode ser nulo");
+        Preconditions.checkNotNull(model.idMedico, "idMedico não pode ser nulo");
+        Preconditions.checkState(
+                (model.statusAgenda >= Pendente.ordinal())
+                        && (model.statusAgenda <= Finalizado.ordinal()),
+                String.format("statusAgenda %d é inválido", model.statusAgenda));
 
-    //Metódos Get's
-    public Integer getId_agenda() {
-        return id_agenda;
+        return new Agenda()
+                .setIdAgenda(model.idAgenda)
+                .setDataCompromisso(DateTime.parse(model.dtCompromisso).getMillis())
+                .setObservacao(model.observacao)
+                .setIdMedico(model.idMedico)
+                .setStatusAgenda(StatusAgenda.fromOrdinal(model.statusAgenda));
     }
 
-    public String getData() {
-        return data;
-    }
-    public String getHora() {
-        return hora;
+    public Integer getId() {
+        return mId;
     }
 
-    public String getObs() {
-        return obs;
+    public Agenda setId(Integer id) {
+        mId = id;
+        return this;
     }
 
-    public Medico getId_medico() {
-        return id_medico;
+    public Integer getIdAgenda() {
+        return mIdAgenda;
     }
 
-    public Integer getStatus() {
-        return status;
+    public Agenda setIdAgenda(Integer idAgenda) {
+        mIdAgenda = idAgenda;
+        return this;
     }
 
-    public Integer getStatusAgenda() {
-        return statusAgenda;
+    public Long getDataCompromisso() {
+        return mDataCompromisso;
     }
 
-    public Integer getId_unico() {
-        return id_unico;
-    }
-    
-    //Metódos Set's
-    public void setId_agenda(Integer id_agenda) {
-        this.id_agenda = id_agenda;
+    public Agenda setDataCompromisso(Long dataCompromisso) {
+        mDataCompromisso = dataCompromisso;
+        return this;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public String getObservacao() {
+        return mObservacao;
     }
 
-    public void setHora(String hora) {
-        this.hora = hora;
+    public Agenda setObservacao(String observacao) {
+        mObservacao = observacao;
+        return this;
     }
 
-    public void setObs(String obs) {
-        this.obs = obs;
+    public Integer getIdMedico() {
+        return mIdMedico;
     }
 
-    public void setId_medico(Medico id_medico) {
-        this.id_medico = id_medico;
+    public Agenda setIdMedico(Integer idMedico) {
+        mIdMedico = idMedico;
+        return this;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-    public void setStatusAgenda(Integer statusAgenda) {
-        this.statusAgenda = statusAgenda;
+    public StatusAgenda getStatusAgenda() {
+        return mStatusAgenda;
     }
 
-    public void setId_unico(Integer id_unico) {
-        this.id_unico = id_unico;
+    public Agenda setStatusAgenda(
+            StatusAgenda statusAgenda) {
+        mStatusAgenda = statusAgenda;
+        return this;
+    }
+
+    public Status getStatus() {
+        return mStatus;
+    }
+
+    public Agenda setStatus(Status status) {
+        mStatus = status;
+        return this;
     }
 }

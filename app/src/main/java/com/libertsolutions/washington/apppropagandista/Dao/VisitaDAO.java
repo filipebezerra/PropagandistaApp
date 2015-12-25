@@ -6,52 +6,49 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.common.base.Preconditions;
-import com.libertsolutions.washington.apppropagandista.Enum.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
+import com.libertsolutions.washington.apppropagandista.Model.Status;
+import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.Util.Banco;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Classe de acesso aos dados de {@link Visita}. Esta classe contém todas operações
+ * que necessitam de comunicação e transação com banco de dados local(SQLite).
+ *
  * @author Washington, Filipe Bezerra
+ * @version 1.0, 24/12/2015
+ * @since 1.0
  */
 public class VisitaDAO {
     public static final String TABELA_VISITA = "Visita";
-    public static final String CAMPO_ID = "_id";
-    public static final String CAMPO_DT_INICIO = "dt_inicio";
-    public static final String CAMPO_LATITUDE_INICIAL = "lat_inicial";
-    public static final String CAMPO_LONGITUDE_INICIAL = "long_inicial";
-    public static final String CAMPO_DT_FIM = "dt_fim";
-    public static final String CAMPO_LATITUDE_FINAL = "lat_final";
-    public static final String CAMPO_LONGITUDE_FINAL = "long_final";
-    public static final String CAMPO_DETALHES = "detalhes";
-    public static final String CAMPO_STATUS = "status";
-    public static final String CAMPO_RELACAO_AGENDA = "id_agenda";
+    public static final String COLUNA_ID = "_id";
+    public static final String COLUNA_ID_VISITA = "id_visita";
+    public static final String COLUNA_DT_INICIO = "dt_inicio";
+    public static final String COLUNA_LATITUDE_INICIAL = "lat_inicial";
+    public static final String COLUNA_LONGITUDE_INICIAL = "long_inicial";
+    public static final String COLUNA_DT_FIM = "dt_fim";
+    public static final String COLUNA_LATITUDE_FINAL = "lat_final";
+    public static final String COLUNA_LONGITUDE_FINAL = "long_final";
+    public static final String COLUNA_DETALHES = "detalhes";
+    public static final String COLUNA_STATUS = "status";
+    public static final String COLUNA_RELACAO_AGENDA = "id_agenda";
 
-    private static final String[] PROJECAO_TODOS_CAMPOS = {
-            CAMPO_ID,
-            CAMPO_DT_INICIO ,
-            CAMPO_LATITUDE_INICIAL,
-            CAMPO_LONGITUDE_INICIAL,
-            CAMPO_DT_FIM,
-            CAMPO_LATITUDE_FINAL,
-            CAMPO_LONGITUDE_FINAL,
-            CAMPO_DETALHES,
-            CAMPO_STATUS,
-            CAMPO_RELACAO_AGENDA
+    private static final String[] PROJECAO_TODAS_COLUNAS = {
+            COLUNA_ID,
+            COLUNA_ID_VISITA,
+            COLUNA_DT_INICIO,
+            COLUNA_LATITUDE_INICIAL,
+            COLUNA_LONGITUDE_INICIAL,
+            COLUNA_DT_FIM,
+            COLUNA_LATITUDE_FINAL,
+            COLUNA_LONGITUDE_FINAL,
+            COLUNA_DETALHES,
+            COLUNA_STATUS,
+            COLUNA_RELACAO_AGENDA
     };
-
-    /**
-     * Cópia dos campos {@link #PROJECAO_TODOS_CAMPOS} mas exclui o campo
-     * {@link #CAMPO_RELACAO_AGENDA}.
-     *
-     * Criado para ser usados nos métodos {@link #consultar(Integer)} e
-     * {@link #listar(String, String)}.
-     */
-    private static final String[] PROJECAO_SEM_CAMPO_RELACAO_AGENDA =
-            Arrays.copyOfRange(PROJECAO_TODOS_CAMPOS, 0, PROJECAO_TODOS_CAMPOS.length - 1);
 
     @NonNull private Banco mBanco;
 
@@ -60,8 +57,7 @@ public class VisitaDAO {
      *
      * @param context contexto para inicializar o banco.
      */
-    public VisitaDAO(@NonNull Context context)
-    {
+    public VisitaDAO(@NonNull Context context) {
         mBanco = Banco.getInstance(context);
     }
 
@@ -76,21 +72,35 @@ public class VisitaDAO {
     public long incluir(@NonNull Visita visita) {
         // Pré-condições para realizar a transação na tabela destino
         Preconditions.checkNotNull(visita, "visita não pode ser nula");
-        Preconditions.checkNotNull(visita.getDataInicio(), "dataInicio não pode ser nulo");
-        Preconditions.checkNotNull(visita.getLatInicial(), "latInicial não pode ser nula");
-        Preconditions.checkNotNull(visita.getLongInicial(), "longInicial não pode ser nula");
-        Preconditions.checkNotNull(visita.getAgenda(), "agenda não pode ser nula");
-        Preconditions.checkNotNull(visita.getAgenda().getId_agenda(), "idAgenda não pode ser nulo");
+        Preconditions.checkNotNull(visita.getDataInicio(),
+                "visita.getDataInicio() não pode ser nulo");
+        Preconditions.checkNotNull(visita.getLatInicial(),
+                "visita.getLatInicial() não pode ser nula");
+        Preconditions.checkNotNull(visita.getLongInicial(),
+                "visita.getLongInicial() não pode ser nula");
+        Preconditions.checkNotNull(visita.getIdAgenda(),
+                "visita.getIdAgenda() não pode ser nula");
+        Preconditions.checkState((
+                        visita.getStatus() != null
+                                && visita.getStatus() == Status.Importado
+                                && visita.getIdVisita() == null),
+                "agenda.getIdVisita() não pode ser nulo");
 
         ContentValues valores = new ContentValues();
-        valores.put(CAMPO_DT_INICIO, visita.getDataInicio());
-        valores.put(CAMPO_LATITUDE_INICIAL, visita.getLatInicial());
-        valores.put(CAMPO_LONGITUDE_INICIAL, visita.getLongInicial());
-        valores.put(CAMPO_RELACAO_AGENDA, visita.getAgenda().getId_agenda());
-        valores.put(CAMPO_STATUS, visita.getStatus());
 
-        if (visita.getDetalhes() != null && visita.getDetalhes().length() > 0) {
-            valores.put(CAMPO_DETALHES, visita.getDetalhes());
+        if (visita.getIdVisita() != null) {
+            valores.put(COLUNA_ID_VISITA, visita.getIdVisita());
+        }
+
+        valores.put(COLUNA_DT_INICIO, visita.getDataInicio());
+        valores.put(COLUNA_LATITUDE_INICIAL, visita.getLatInicial());
+        valores.put(COLUNA_LONGITUDE_INICIAL, visita.getLongInicial());
+        valores.put(COLUNA_RELACAO_AGENDA, visita.getIdAgenda());
+        valores.put(COLUNA_STATUS, visita.getStatus() == null ?
+                Status.Pendente.ordinal() : visita.getStatus().ordinal());
+
+        if (visita.getDetalhes() != null && !visita.getDetalhes().isEmpty()) {
+            valores.put(COLUNA_DETALHES, visita.getDetalhes());
         }
 
         try {
@@ -112,29 +122,48 @@ public class VisitaDAO {
     public int alterar(@NonNull Visita visita) {
         // Pré-condições para realizar a transação na tabela destino
         Preconditions.checkNotNull(visita, "visita não pode ser nula");
-        Preconditions.checkNotNull(visita.getId(), "id não pode ser nulo");
-        Preconditions.checkNotNull(visita.getDataInicio(), "dataInicio não pode ser nulo");
-        Preconditions.checkNotNull(visita.getLatInicial(), "latInicial não pode ser nula");
-        Preconditions.checkNotNull(visita.getLongInicial(), "longInicial não pode ser nula");
+        Preconditions.checkNotNull(visita.getId(), "visita.getId() não pode ser nulo");
+        Preconditions.checkNotNull(visita.getDataInicio(), "visita.getDataInicio() não pode ser nulo");
+        Preconditions.checkNotNull(visita.getLatInicial(), "visita.getLatInicial() não pode ser nula");
+        Preconditions.checkNotNull(visita.getLongInicial(), "visita.getLongInicial() não pode ser nula");
 
-        Preconditions.checkNotNull(visita.getAgenda(), "agenda não pode ser nula");
-        Preconditions.checkNotNull(visita.getAgenda().getId_agenda(), "idAgenda não pode ser nulo");
+        Preconditions.checkNotNull(visita.getIdAgenda(), "visita.getIdAgenda() não pode ser nulo");
 
-        Preconditions.checkNotNull(visita.getDataFim(), "dataFim não pode ser nula");
-        Preconditions.checkNotNull(visita.getLatFinal(), "latFinal não pode ser nula");
-        Preconditions.checkNotNull(visita.getLongFinal(), "longFinal não pode ser nula");
+        Preconditions.checkNotNull(visita.getDataFim(), "visita.getDataFim() não pode ser nula");
+        Preconditions.checkNotNull(visita.getLatFinal(), "visita.getLatFinal() não pode ser nula");
+        Preconditions.checkNotNull(visita.getLongFinal(), "visita.getLongFinal() não pode ser nula");
+
+        Preconditions.checkNotNull(visita.getStatus(),
+                "visita.getStatus() não pode ser nula");
+        Preconditions.checkState(
+                ((visita.getStatus() == Status.Enviado
+                        || visita.getStatus() == Status.Importado)
+                        && visita.getIdVisita() == null),
+                "visita.getIdVisita() não pode ser nulo");
 
         ContentValues valores = new ContentValues();
-        valores.put(CAMPO_DT_FIM, visita.getDataFim());
-        valores.put(CAMPO_LATITUDE_FINAL, visita.getLatFinal());
-        valores.put(CAMPO_LONGITUDE_FINAL, visita.getLongFinal());
-        valores.put(CAMPO_STATUS, visita.getStatus());
 
-        if (visita.getDetalhes() != null && visita.getDetalhes().length() > 0) {
-            valores.put(CAMPO_DETALHES, visita.getDetalhes());
+        if (visita.getStatus() == Status.Enviado || visita.getStatus() == Status.Importado) {
+            valores.put(COLUNA_ID_VISITA, visita.getIdVisita());
+
+            if (visita.getStatus() == Status.Importado) {
+                valores.put(COLUNA_RELACAO_AGENDA, visita.getIdAgenda());
+            }
         }
 
-        final String where = CAMPO_ID +" = ?";
+        valores.put(COLUNA_DT_FIM, visita.getDataFim());
+        valores.put(COLUNA_LATITUDE_FINAL, visita.getLatFinal());
+        valores.put(COLUNA_LONGITUDE_FINAL, visita.getLongFinal());
+        valores.put(COLUNA_STATUS,
+                visita.getStatus() == Status.Enviado
+                        || visita.getStatus() == Status.Importado ?
+                        visita.getStatus().ordinal() : Status.Pendente.ordinal());
+
+        if (visita.getDetalhes() != null && visita.getDetalhes().length() > 0) {
+            valores.put(COLUNA_DETALHES, visita.getDetalhes());
+        }
+
+        final String where = COLUNA_ID +" = ?";
         final String [] whereById = new String [] {
                 String.valueOf(visita.getId()) };
 
@@ -144,6 +173,50 @@ public class VisitaDAO {
                     .update(TABELA_VISITA, valores, where, whereById);
         } finally {
             mBanco.close();
+        }
+    }
+
+    /**
+     * Consulta e recupera os dados da visita pelo {@code id} provido. O {@code id}
+     * não deve ser {@code null} nem ser {@code id <= 0}.<br><br>
+     * Esta consulta não recupera os dados da relação a entidade {@link Agenda}, ou seja não
+     * chama faz chamada ao método {@link Visita#setIdAgenda(Integer)}.<br><br>
+     * Esta consulta poderá retornar {@code null}.
+     *
+     * @param id o código da visita.
+     * @return a visita consultada no banco de dados
+     */
+    public @Nullable Visita consultar(@NonNull Integer id) {
+        Preconditions.checkNotNull(id, "id não deve ser nulo");
+        Preconditions.checkState(id > 0, "id não deve ser menor que zero");
+
+        final String where = COLUNA_ID + " = ?";
+        final String [] whereById = new String [] { String.valueOf(id) };
+
+        Cursor cursor = null;
+        try {
+            cursor = query(where, whereById, null, null);
+            return cursor != null ? toSingleEntity(cursor) : null;
+        } finally {
+            closeCursor(cursor);
+        }
+    }
+
+    /**
+     * Lista os dados da visita pelo quantidade requerida baseada no {@code start} e no
+     * {@code end}
+     *
+     * @param start
+     * @param end
+     * @return
+     */
+    public @Nullable List<Visita> listar(@Nullable String start, @Nullable String end) {
+        Cursor cursor = null;
+        try {
+            cursor = query(null, null, start, end);
+            return cursor != null ? toEntityList(cursor) : null;
+        } finally {
+            closeCursor(cursor);
         }
     }
 
@@ -168,23 +241,27 @@ public class VisitaDAO {
         Visita visita = new Visita();
 
         visita.setId(cursor.getInt(
-                cursor.getColumnIndex(CAMPO_ID)));
+                cursor.getColumnIndex(COLUNA_ID)));
+        visita.setIdVisita(cursor.getInt(
+                cursor.getColumnIndex(COLUNA_ID_VISITA)));
         visita.setDataInicio(cursor.getLong(
-                cursor.getColumnIndex(CAMPO_DT_INICIO)));
+                cursor.getColumnIndex(COLUNA_DT_INICIO)));
         visita.setLatInicial(cursor.getDouble(
-                cursor.getColumnIndex(CAMPO_LATITUDE_INICIAL)));
+                cursor.getColumnIndex(COLUNA_LATITUDE_INICIAL)));
         visita.setLongInicial(cursor.getDouble(
-                cursor.getColumnIndex(CAMPO_LONGITUDE_INICIAL)));
+                cursor.getColumnIndex(COLUNA_LONGITUDE_INICIAL)));
         visita.setDataFim(cursor.getLong(
-                cursor.getColumnIndex(CAMPO_DT_FIM)));
+                cursor.getColumnIndex(COLUNA_DT_FIM)));
         visita.setLatFinal(cursor.getDouble(
-                cursor.getColumnIndex(CAMPO_LATITUDE_FINAL)));
+                cursor.getColumnIndex(COLUNA_LATITUDE_FINAL)));
         visita.setLongFinal(cursor.getDouble(
-                cursor.getColumnIndex(CAMPO_LONGITUDE_FINAL)));
+                cursor.getColumnIndex(COLUNA_LONGITUDE_FINAL)));
         visita.setDetalhes(cursor.getString(
-                cursor.getColumnIndex(CAMPO_DETALHES)));
-        visita.setStatus(cursor.getInt(
-                cursor.getColumnIndex(CAMPO_STATUS)));
+                cursor.getColumnIndex(COLUNA_DETALHES)));
+        visita.setStatus(Status.fromOrdinal(cursor.getInt(
+                cursor.getColumnIndex(COLUNA_STATUS))));
+        visita.setIdAgenda(cursor.getInt(
+                cursor.getColumnIndex(COLUNA_RELACAO_AGENDA)));
 
         return visita;
     }
@@ -234,8 +311,7 @@ public class VisitaDAO {
             @Nullable String start, @Nullable String end) {
 
         String limit = null;
-        if ((start != null && start.length() > 0) &&
-                (end != null && end.length() > 0)) {
+        if ((start != null && !start.isEmpty()) && (end != null && !end.isEmpty())) {
             limit = start + "," + end;
         }
 
@@ -245,7 +321,7 @@ public class VisitaDAO {
             return mBanco.db()
                     .query(
                             TABELA_VISITA,
-                            PROJECAO_SEM_CAMPO_RELACAO_AGENDA,
+                            PROJECAO_TODAS_COLUNAS,
                             where,
                             arguments,
                             null,
@@ -266,48 +342,6 @@ public class VisitaDAO {
     private void closeCursor(Cursor cursor) {
         if (cursor != null) {
             cursor.close();
-        }
-    }
-
-    /**
-     * Consulta e recupera os dados da visita pelo {@code idVisita} provido. O {@code idVisita}
-     * não deve ser {@code null} nem ser {@code idVisita <= 0}.<br><br>
-     * Esta consulta não recupera os dados da relação a entidade {@link Agenda}, ou seja não
-     * chama faz chamada ao método {@link Visita#setAgenda(Agenda)}.<br><br>
-     * Esta consulta poderá retornar {@code null}.
-     *
-     * @param idVisita o código da visita.
-     * @return a visita consultada no banco de dados
-     */
-    public @Nullable Visita consultar(@NonNull Integer idVisita) {
-        Preconditions.checkNotNull(idVisita, "idVisita não deve ser nulo");
-        Preconditions.checkState(idVisita > 0, "idVisita não deve ser menor que zero");
-
-        final String where = CAMPO_ID +" = ?";
-        final String [] whereById = new String [] { String.valueOf(idVisita) };
-
-        Cursor cursor = null;
-        try {
-            cursor = query(where, whereById, null, null);
-            return cursor != null ? toSingleEntity(cursor) : null;
-        } finally {
-            closeCursor(cursor);
-        }
-    }
-
-    /**
-     *
-     * @param start
-     * @param end
-     * @return
-     */
-    public @Nullable List<Visita> listar(@Nullable String start, @Nullable String end) {
-        Cursor cursor = null;
-        try {
-            cursor = query(null, null, start, end);
-            return cursor != null ? toEntityList(cursor) : null;
-        } finally {
-            closeCursor(cursor);
         }
     }
 }

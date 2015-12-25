@@ -3,13 +3,11 @@ package com.libertsolutions.washington.apppropagandista.Dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
+import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.Util.Banco;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
-
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by washington on 11/11/2015.
@@ -234,7 +232,7 @@ public class MedicoDAO {
     }
 
     //Listar médicos por status
-    public ArrayList<Medico> Listar(int status)
+    public ArrayList<Medico> Listar(Status status)
     {
         Medico medico;
         String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","id_unico","status"};
@@ -243,7 +241,7 @@ public class MedicoDAO {
             //Abre Conexão
             cnn.AbrirConexao();
 
-            Cursor cursor = cnn.db().query("Medico",campos,"status = "+status,null,null,null,null);
+            Cursor cursor = cnn.db().query("Medico",campos,"status = "+status.ordinal(),null,null,null,null);
 
             while(cursor.moveToNext()){
                 medico = new Medico();
