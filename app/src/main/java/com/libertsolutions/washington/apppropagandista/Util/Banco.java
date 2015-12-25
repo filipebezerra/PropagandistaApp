@@ -3,14 +3,25 @@ package com.libertsolutions.washington.apppropagandista.Util;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
 
 import static com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO.TABELA_VISITA;
 
 /**
+ * Classe utilitária para operações com banco de dados local (SQLite).
+ *
  * @author Washington, Filipe Bezerra
+ * @version 1.0
+ * @since 1.0
  */
 public class Banco extends SQLiteOpenHelper  {
+    /**
+     * Variável de classe usada para loggind em modo debug
+     */
+    private static final String LOG = Banco.class.getSimpleName();
+
     //Atributos
     private static final String DATABASE_NAME = "blocskin.db";//nome do banco
     private static final int DATABASE_VERSION = 1;//versão do banco
@@ -58,9 +69,9 @@ public class Banco extends SQLiteOpenHelper  {
             db.execSQL(Medico());//Script Tabela Médico
             db.execSQL(Agenda());//Script Tabela Agenda
             db.execSQL(Visita());//Script Tabela Visita
-        }catch (Exception error)
-        {
-            Mensagem.MensagemAlerta(context,error.getMessage());
+        }catch (Exception error) {
+            Log.e(LOG, "Falha na criação das tabelas.", error);
+            throw error;
         }
     }
 
@@ -89,31 +100,46 @@ public class Banco extends SQLiteOpenHelper  {
 
     //cria a tabela Agenda
     private String Agenda()   {
-        return "CREATE TABLE IF NOT EXISTS Agenda (id_agenda INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "data text not null,"+
-                "hora text not null,"+
-                "id_medico integer not null,"+
-                "obs text,"+
-                "statusagenda integer,"+
-                "status integer,"+
-                "id_unico integer,"+
-                "FOREIGN KEY(id_medico) REFERENCES Medico(id_medico))";
+        final String SQL =  "CREATE TABLE IF NOT EXISTS " + AgendaDAO.TABELA_AGENDA + "("  +
+                    AgendaDAO.COLUNA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    AgendaDAO.COLUNA_ID_AGENDA + " INTEGER," +
+                    AgendaDAO.COLUNA_DT_COMPROMISSO + " INTEGER not null, " +
+                    AgendaDAO.COLUNA_OBSERVACAO + " TEXT," +
+                    AgendaDAO.COLUNA_STATUS_AGENDA + " INTEGER, " +
+                    AgendaDAO.COLUNA_STATUS + " INTEGER, " +
+                    AgendaDAO.COLUNA_RELACAO_MEDICO + " INTEGER not null, " +
+                " FOREIGN KEY (id_medico) REFERENCES Medico (id_medico)" +
+                " UNIQUE (" + AgendaDAO.COLUNA_ID_AGENDA + ") ON CONFLICT REPLACE);";
+
+        Log.d(LOG, "SQL de criação da tabela Agenda: \n\n" + SQL);
+        return SQL;
     }
 
-    //cria a tabela Visita
+    /**
+     * Gera o script de criação da tabela Visita
+     *
+     * @return o script da tabela.
+     */
     private String Visita()   {
-        return "CREATE TABLE IF NOT EXISTS " + TABELA_VISITA + "(" +
-                VisitaDAO.CAMPO_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                VisitaDAO.CAMPO_DT_INICIO + " INTEGER not null, " +
-                VisitaDAO.CAMPO_LATITUDE_INICIAL + " REAL not null, " +
-                VisitaDAO.CAMPO_LONGITUDE_INICIAL + " REAL not null, " +
-                VisitaDAO.CAMPO_DT_FIM + " INTEGER, " +
-                VisitaDAO.CAMPO_LATITUDE_INICIAL + " REAL, " +
-                VisitaDAO.CAMPO_LONGITUDE_INICIAL + " REAL, " +
-                VisitaDAO.CAMPO_DETALHES + " TEXT, " +
-                VisitaDAO.CAMPO_STATUS + " INTEGER, " +
-                VisitaDAO.CAMPO_RELACAO_AGENDA + " INTEGER, " +
-                "FOREIGN KEY("+ VisitaDAO.CAMPO_RELACAO_AGENDA + ") REFERENCES Agenda(id_agenda))";
+        final String SQL = "CREATE TABLE " + TABELA_VISITA + " (" +
+                    VisitaDAO.COLUNA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    VisitaDAO.COLUNA_ID_VISITA + " INTEGER," +
+                    VisitaDAO.COLUNA_DT_INICIO + " INTEGER not null, " +
+                    VisitaDAO.COLUNA_LATITUDE_INICIAL + " REAL not null, " +
+                    VisitaDAO.COLUNA_LONGITUDE_INICIAL + " REAL not null, " +
+                    VisitaDAO.COLUNA_DT_FIM + " INTEGER, " +
+                    VisitaDAO.COLUNA_LATITUDE_FINAL + " REAL, " +
+                    VisitaDAO.COLUNA_LONGITUDE_FINAL + " REAL, " +
+                    VisitaDAO.COLUNA_DETALHES + " TEXT, " +
+                    VisitaDAO.COLUNA_STATUS + " INTEGER, " +
+                    VisitaDAO.COLUNA_RELACAO_AGENDA + " INTEGER not null, " +
+                " FOREIGN KEY (" + VisitaDAO.COLUNA_RELACAO_AGENDA +
+                    ") REFERENCES " + AgendaDAO.TABELA_AGENDA +
+                        " (" + AgendaDAO.COLUNA_ID_AGENDA + "), " +
+                " UNIQUE (" + VisitaDAO.COLUNA_ID_VISITA + ") ON CONFLICT REPLACE);";
+
+        Log.d(LOG, "SQL de criação da tabela Visita: \n\n" + SQL);
+        return SQL;
     }
 
     //este método faz a atualização do banco
