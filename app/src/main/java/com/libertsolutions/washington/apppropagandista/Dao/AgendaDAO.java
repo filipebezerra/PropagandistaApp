@@ -38,15 +38,17 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
 
     static final String SCRIPT_CRIACAO =
             "CREATE TABLE " + AgendaDAO.TABELA_AGENDA + "("  +
-                        AgendaDAO.COLUNA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                        AgendaDAO.COLUNA_ID_AGENDA + " INTEGER," +
-                        AgendaDAO.COLUNA_DT_COMPROMISSO + " INTEGER not null, " +
-                        AgendaDAO.COLUNA_OBSERVACAO + " TEXT," +
-                        AgendaDAO.COLUNA_STATUS_AGENDA + " INTEGER, " +
-                        AgendaDAO.COLUNA_STATUS + " INTEGER, " +
-                        AgendaDAO.COLUNA_RELACAO_MEDICO + " INTEGER not null, " +
-                    " FOREIGN KEY (id_medico) REFERENCES Medico (id_medico)" +
-                    " UNIQUE (" + AgendaDAO.COLUNA_ID_AGENDA + ") ON CONFLICT REPLACE);";
+                    COLUNA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUNA_ID_AGENDA + " INTEGER," +
+                    COLUNA_DT_COMPROMISSO + " INTEGER not null, " +
+                    COLUNA_OBSERVACAO + " TEXT," +
+                    COLUNA_STATUS_AGENDA + " INTEGER, " +
+                    COLUNA_STATUS + " INTEGER, " +
+                    COLUNA_RELACAO_MEDICO + " INTEGER not null, " +
+            " FOREIGN KEY (" + COLUNA_RELACAO_MEDICO +
+                ") REFERENCES " + MedicoDAO.TABELA_MEDICO +
+                " (" + MedicoDAO.COLUNA_ID_MEDICO + "), " +
+            " UNIQUE (" + COLUNA_ID_AGENDA + ") ON CONFLICT REPLACE);";
 
     /**
      * Construtor padrão.
@@ -166,6 +168,10 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
 
         if (agenda.getStatus() == Status.Enviado || agenda.getStatus() == Status.Importado) {
             valores.put(COLUNA_ID_AGENDA, agenda.getIdMedico());
+
+            if (agenda.getStatus() == Status.Importado) {
+                valores.put(COLUNA_RELACAO_MEDICO, agenda.getIdMedico());
+            }
         }
 
         valores.put(COLUNA_DT_COMPROMISSO, agenda.getDataCompromisso());
@@ -174,7 +180,6 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
             valores.put(COLUNA_OBSERVACAO, agenda.getObservacao());
         }
 
-        valores.put(COLUNA_RELACAO_MEDICO, agenda.getIdMedico());
         valores.put(COLUNA_STATUS_AGENDA, agenda.getStatusAgenda().ordinal());
 
         valores.put(COLUNA_STATUS,
