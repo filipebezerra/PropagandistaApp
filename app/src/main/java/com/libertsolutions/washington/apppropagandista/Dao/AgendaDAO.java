@@ -37,7 +37,7 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
     };
 
     static final String SCRIPT_CRIACAO =
-            "CREATE TABLE " + AgendaDAO.TABELA_AGENDA + "("  +
+            "CREATE TABLE " + TABELA_AGENDA + "("  +
                     COLUNA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUNA_ID_AGENDA + " INTEGER," +
                     COLUNA_DT_COMPROMISSO + " INTEGER not null, " +
