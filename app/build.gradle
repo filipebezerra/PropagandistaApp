@@ -8,9 +8,9 @@ android {
     defaultConfig {
         applicationId "com.libertsolutions.washington.apppropagandista"
         minSdkVersion 9
-        targetSdkVersion 23
+        targetSdkVersion 22
         versionCode 1
-        versionName "1.0"
+        versionName "0.1.0"
     }
     buildTypes {
         release {
@@ -41,6 +41,10 @@ dependencies {
     compile libs.rxAndroid
     compile libs.okHttp
     compile libs.okHttpLoggingInterceptor
+    compile libs.playServicesLocation
+    compile libs.guava
+    compile libs.jodaTime
+    compile libs.betterPickers
 
     testCompile unitTests.junit
 }
