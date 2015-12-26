@@ -20,7 +20,7 @@ import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
  */
 public class AgendaDAO extends DAOGenerico<Agenda> {
     static final String TABELA_AGENDA = "Agenda";
-    private static final String COLUNA_ID_AGENDA = "id_agenda";
+    static final String COLUNA_ID_AGENDA = "id_agenda";
     private static final String COLUNA_DT_COMPROMISSO = "dt_compromisso";
     private static final String COLUNA_OBSERVACAO = "observacao";
     private static final String COLUNA_STATUS_AGENDA = "status_agenda";
