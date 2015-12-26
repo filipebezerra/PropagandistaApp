@@ -15,10 +15,7 @@ import static com.libertsolutions.washington.apppropagandista.Model.StatusAgenda
  * @version 1.0
  * @since 1.0
  */
-public class Agenda {
-    // id de armazenamento interno do SQLite, deverá ser inteiro e auto incremento
-    private Integer mId;
-
+public class Agenda extends ModeloBase {
     // id da agenda no servidor
     private Integer mIdAgenda;
 
@@ -33,9 +30,12 @@ public class Agenda {
     // status do compromisso, é armazenado como inteiro
     private StatusAgenda mStatusAgenda;
 
-    // status da sincronização
-    private Status mStatus;
-
+    /**
+     * Obtém os dados da agenda importados do webservice.
+     *
+     * @param model o modelo de dados da agenda recuperado do webservice.
+     * @return a agenda.
+     */
     public static Agenda fromModel(@NonNull AgendaModel model) {
         Preconditions.checkNotNull(model, "model não pode ser nulo");
         Preconditions.checkNotNull(model.idAgenda, "idAgenda não pode ser nulo");
@@ -51,7 +51,8 @@ public class Agenda {
                 .setDataCompromisso(DateTime.parse(model.dtCompromisso).getMillis())
                 .setObservacao(model.observacao)
                 .setIdMedico(model.idMedico)
-                .setStatusAgenda(StatusAgenda.fromOrdinal(model.statusAgenda));
+                .setStatusAgenda(StatusAgenda.fromOrdinal(model.statusAgenda))
+                .setStatus(Status.Importado);
     }
 
     public Integer getId() {

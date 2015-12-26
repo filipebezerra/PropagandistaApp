@@ -262,7 +262,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
     /**
      * Especifica a lista de colunas para seleção na tabela que serão recuperados ao usar métodos como
      * {@link #query(String, String[], String, String)} podendo ser usado nas implementações
-     * de {@link #incluir(Object)}, {@link #alterar(Object)}, {@link #consultar(Integer)},
+     * de {@link #incluir(ModeloBase)}, {@link #alterar(ModeloBase)}, {@link #consultar(Integer)},
      * {@link #listar(Status)} e {@link #listar(String, String)}.
      *
      * @return a lista de colunas da seleção.
@@ -286,13 +286,6 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * @see #toEntityList(Cursor)
      */
     protected abstract @Nullable T fromCursor(@NonNull Cursor cursor);
-
-    /**
-     * Especifica o SQL de criação da tabela no banco de dados.
-     *
-     * @return o script de criação da tabela.
-     */
-    abstract @NonNull String scriptCriacao();
 
     /**
      * Efetua a inclusão da {@code entidade} especificada no banco de dados.
