@@ -7,10 +7,7 @@ package com.libertsolutions.washington.apppropagandista.Model;
  * @version 1.0
  * @since 1.0
  */
-public class Visita {
-    // id de armazenamento interno do SQLite, deverá ser inteiro e auto incremento
-    private Integer mId;
-
+public class Visita extends ModeloBase<Visita> {
     // id da agenda no servidor
     private Integer mIdVisita;
 
@@ -37,9 +34,6 @@ public class Visita {
     // id de relacionamento com tabela Agenda
     private Integer mIdAgenda;
 
-    // status da sincronização
-    private Status mStatus;
-
     public static Visita iniciar(final Long data, final Double latitude, final Double longitude,
             final Integer idAgenda) {
         return new Visita()
@@ -49,12 +43,15 @@ public class Visita {
                 .setIdAgenda(idAgenda);
     }
 
-    public Integer getId() {
-        return mId;
-    }
-
+    @Override
     public Visita setId(Integer id) {
         mId = id;
+        return this;
+    }
+
+    @Override
+    public Visita setStatus(Status status) {
+        mStatus = status;
         return this;
     }
 
@@ -136,15 +133,6 @@ public class Visita {
 
     public Visita setIdAgenda(Integer idAgenda) {
         mIdAgenda = idAgenda;
-        return this;
-    }
-
-    public Status getStatus() {
-        return mStatus;
-    }
-
-    public Visita setStatus(Status status) {
-        mStatus = status;
         return this;
     }
 }

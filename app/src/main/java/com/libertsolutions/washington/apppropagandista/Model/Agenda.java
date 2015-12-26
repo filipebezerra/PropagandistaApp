@@ -15,7 +15,7 @@ import static com.libertsolutions.washington.apppropagandista.Model.StatusAgenda
  * @version 1.0
  * @since 1.0
  */
-public class Agenda extends ModeloBase {
+public class Agenda extends ModeloBase<Agenda> {
     // id da agenda no servidor
     private Integer mIdAgenda;
 
@@ -55,12 +55,15 @@ public class Agenda extends ModeloBase {
                 .setStatus(Status.Importado);
     }
 
-    public Integer getId() {
-        return mId;
-    }
-
+    @Override
     public Agenda setId(Integer id) {
         mId = id;
+        return this;
+    }
+
+    @Override
+    public Agenda setStatus(Status status) {
+        mStatus = status;
         return this;
     }
 
@@ -107,15 +110,6 @@ public class Agenda extends ModeloBase {
     public Agenda setStatusAgenda(
             StatusAgenda statusAgenda) {
         mStatusAgenda = statusAgenda;
-        return this;
-    }
-
-    public Status getStatus() {
-        return mStatus;
-    }
-
-    public Agenda setStatus(Status status) {
-        mStatus = status;
         return this;
     }
 }
