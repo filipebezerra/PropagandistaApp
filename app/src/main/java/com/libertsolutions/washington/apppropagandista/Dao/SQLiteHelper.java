@@ -53,14 +53,10 @@ public class SQLiteHelper extends SQLiteOpenHelper  {
      * @return o script da tabela.
      */
     private static String scriptUsuario()   {
-        final String SQL = "CREATE TABLE Usuario (" +
-                "id_usuario INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "nome text not null,"+
-                "cpf text not null,"+
-                "email text not null," +
-                "senha text not null)";
+        final String SQL = UsuarioDAO.SCRIPT_CRIACAO;
 
-        Log.i(LOG, "SQL de criação da tabela Usuario: \n\n" + SQL);
+        Log.i(LOG, String.format("SQL de criação da tabela %s: \n\n%s",
+                UsuarioDAO.TABELA_USUARIO, SQL));
         return SQL;
     }
 

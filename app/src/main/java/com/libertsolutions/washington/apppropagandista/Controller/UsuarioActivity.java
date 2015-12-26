@@ -10,14 +10,10 @@ import android.widget.EditText;
 import com.libertsolutions.washington.apppropagandista.Dao.UsuarioDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Usuario;
 import com.libertsolutions.washington.apppropagandista.R;
-import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 
-import org.w3c.dom.Text;
-
 public class UsuarioActivity extends AppCompatActivity {
-    //Atributos
-    private UsuarioDAO userDb;
+    private UsuarioDAO mUsuarioDAO;
     private EditText txtNome;
     private EditText txtCpf;
     private EditText txtEmail;
@@ -28,7 +24,8 @@ public class UsuarioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario);
-        this.userDb = new UsuarioDAO(this);
+
+        this.mUsuarioDAO = new UsuarioDAO(this);
 
         //Recupera Campos
         getCampos();
@@ -42,7 +39,7 @@ public class UsuarioActivity extends AppCompatActivity {
                     try
                     {
                         //Salva dados no banco
-                        userDb.Incluir(user);
+                        mUsuarioDAO.incluir(user);
                     }catch (Exception error)
                     {
                     }finally {
@@ -53,6 +50,20 @@ public class UsuarioActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mUsuarioDAO.openDatabase();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mUsuarioDAO.closeDatabase();
     }
 
     //Metódo Recuperar Campos

@@ -1,57 +1,70 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
-import com.google.gson.annotations.Expose;
+public class Usuario extends ModeloBase<Usuario> {
+    private Integer mIdUsuario;
 
-/**
- * Created by washington on 04/11/2015.
- */
-public class Usuario {
-    private Integer id_usuario;
-    private String nome;
-    private String cpf;
-    @Expose
-    private String email;
-    private String senha;
+    private String mNome;
 
-    //Metódos Set's
-    public void setId_usuario(int id_usuario) {
-        this.id_usuario = id_usuario;
+    private String mCpf;
+
+    private String mEmail;
+
+    private String mSenha;
+
+    @Override
+    public Usuario setId(Integer id) {
+        mId = id;
+        return this;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    @Override
+    public Usuario setStatus(Status status) {
+        mStatus = status;
+        return this;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public Integer getIdUsuario() {
+        return mIdUsuario;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
-    //Metódos Get's
-    public int getId_usuario() {
-        return id_usuario;
+    public Usuario setIdUsuario(Integer idUsuario) {
+        mIdUsuario = idUsuario;
+        return this;
     }
 
     public String getNome() {
-        return nome;
+        return mNome;
+    }
+
+    public Usuario setNome(String nome) {
+        mNome = nome;
+        return this;
     }
 
     public String getCpf() {
-        return cpf;
+        return mCpf;
+    }
+
+    public Usuario setCpf(String cpf) {
+        mCpf = cpf;
+        return this;
     }
 
     public String getEmail() {
-        return email;
+        return mEmail;
+    }
+
+    public Usuario setEmail(String email) {
+        mEmail = email;
+        return this;
     }
 
     public String getSenha() {
-        return senha;
+        return mSenha;
+    }
+
+    public Usuario setSenha(String senha) {
+        mSenha = senha;
+        return this;
     }
 }
