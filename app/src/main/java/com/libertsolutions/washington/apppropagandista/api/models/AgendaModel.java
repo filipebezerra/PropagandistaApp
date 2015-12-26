@@ -29,9 +29,6 @@ public class AgendaModel {
     @SerializedName("id_medico")
     public int idMedico;
 
-    @SerializedName("id_propagandista")
-    public int idPropagandista;
-
     @SerializedName("status")
     public int statusAgenda;
 }
