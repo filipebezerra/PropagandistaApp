@@ -46,21 +46,21 @@ public class VisitaDAO extends DAOGenerico<Visita> {
 
     static final String SCRIPT_CRIACAO =
             "CREATE TABLE " + TABELA_VISITA + " (" +
-                    VisitaDAO.COLUNA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    VisitaDAO.COLUNA_ID_VISITA + " INTEGER," +
-                    VisitaDAO.COLUNA_DT_INICIO + " INTEGER not null, " +
-                    VisitaDAO.COLUNA_LATITUDE_INICIAL + " REAL not null, " +
-                    VisitaDAO.COLUNA_LONGITUDE_INICIAL + " REAL not null, " +
-                    VisitaDAO.COLUNA_DT_FIM + " INTEGER, " +
-                    VisitaDAO.COLUNA_LATITUDE_FINAL + " REAL, " +
-                    VisitaDAO.COLUNA_LONGITUDE_FINAL + " REAL, " +
-                    VisitaDAO.COLUNA_DETALHES + " TEXT, " +
-                    VisitaDAO.COLUNA_STATUS + " INTEGER, " +
-                    VisitaDAO.COLUNA_RELACAO_AGENDA + " INTEGER not null, " +
-            " FOREIGN KEY (" + VisitaDAO.COLUNA_RELACAO_AGENDA +
+                    COLUNA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUNA_ID_VISITA + " INTEGER," +
+                    COLUNA_DT_INICIO + " INTEGER not null, " +
+                    COLUNA_LATITUDE_INICIAL + " REAL not null, " +
+                    COLUNA_LONGITUDE_INICIAL + " REAL not null, " +
+                    COLUNA_DT_FIM + " INTEGER, " +
+                    COLUNA_LATITUDE_FINAL + " REAL, " +
+                    COLUNA_LONGITUDE_FINAL + " REAL, " +
+                    COLUNA_DETALHES + " TEXT, " +
+                    COLUNA_STATUS + " INTEGER, " +
+                    COLUNA_RELACAO_AGENDA + " INTEGER not null, " +
+            " FOREIGN KEY (" + COLUNA_RELACAO_AGENDA +
                 ") REFERENCES " + AgendaDAO.TABELA_AGENDA +
                 " (" + AgendaDAO.COLUNA_ID_AGENDA + "), " +
-            " UNIQUE (" + VisitaDAO.COLUNA_ID_VISITA + ") ON CONFLICT REPLACE);";
+            " UNIQUE (" + COLUNA_ID_VISITA + ") ON CONFLICT REPLACE);";
 
     /**
      * Construtor padrão.
@@ -133,7 +133,8 @@ public class VisitaDAO extends DAOGenerico<Visita> {
     @Override
     public long incluir(@NonNull Visita visita) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Preconditions.checkState(mDatabase != null,
+                "é preciso chamar o método openDatabase() antes");
 
         Preconditions.checkNotNull(visita, "visita não pode ser nula");
         Preconditions.checkNotNull(visita.getDataInicio(),
@@ -144,11 +145,10 @@ public class VisitaDAO extends DAOGenerico<Visita> {
                 "visita.getLongInicial() não pode ser nula");
         Preconditions.checkNotNull(visita.getIdAgenda(),
                 "visita.getIdAgenda() não pode ser nula");
-        Preconditions.checkState((
-                        visita.getStatus() != null
-                                && visita.getStatus() == Status.Importado
-                                && visita.getIdVisita() == null),
-                "agenda.getIdVisita() não pode ser nulo");
+
+        Preconditions.checkState(
+                visita.getStatus() != Status.Importado || visita.getIdVisita() == null,
+                "visita.getIdVisita() não pode ser nulo");
 
         ContentValues valores = new ContentValues();
 
@@ -216,14 +216,15 @@ public class VisitaDAO extends DAOGenerico<Visita> {
         valores.put(COLUNA_DT_FIM, visita.getDataFim());
         valores.put(COLUNA_LATITUDE_FINAL, visita.getLatFinal());
         valores.put(COLUNA_LONGITUDE_FINAL, visita.getLongFinal());
+
+        if (visita.getDetalhes() != null && !visita.getDetalhes().isEmpty()) {
+            valores.put(COLUNA_DETALHES, visita.getDetalhes());
+        }
+
         valores.put(COLUNA_STATUS,
                 visita.getStatus() == Status.Enviado
                         || visita.getStatus() == Status.Importado ?
                         visita.getStatus().ordinal() : Status.Pendente.ordinal());
-
-        if (visita.getDetalhes() != null && visita.getDetalhes().length() > 0) {
-            valores.put(COLUNA_DETALHES, visita.getDetalhes());
-        }
 
         final String where = COLUNA_ID +" = ?";
         final String [] whereById = new String [] {
