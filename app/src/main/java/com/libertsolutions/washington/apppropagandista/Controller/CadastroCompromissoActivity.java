@@ -130,6 +130,8 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
+        mAgendaDAO.openDatabase();
+
         final CalendarDatePickerDialogFragment calendarDialogFragment =
                 (CalendarDatePickerDialogFragment) getSupportFragmentManager()
                         .findFragmentByTag(FRAG_TAG_DATE_PICKER);
@@ -142,6 +144,13 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         if (radialDialogFragment != null) {
             radialDialogFragment.setOnTimeSetListener(this);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mAgendaDAO.closeDatabase();
     }
 
     @OnEditorAction(R.id.txtMedico)
