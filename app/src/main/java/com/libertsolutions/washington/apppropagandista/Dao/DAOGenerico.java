@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.Model.ModeloBase;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
-import com.libertsolutions.washington.apppropagandista.Util.SQLiteHelper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
  * @version 1.0, 26/12/2015
  * @since 1.0
  */
-public abstract class DAOGenerico<T> {
+public abstract class DAOGenerico<T extends ModeloBase> {
     /**
      * Classe utilitária para gerenciar o banco de dados
      */
@@ -30,6 +30,22 @@ public abstract class DAOGenerico<T> {
      * Banco de dados
      */
     @Nullable protected SQLiteDatabase mDatabase;
+
+    /**
+     * Todas entidades devem conter esta coluna como chave primária.
+     *
+     * Classes que descendem de {@link ModeloBase} já contém o atributo {@link ModeloBase#mId}
+     * que será usado como coluna chave primária da tabela.
+     */
+    protected static final String COLUNA_ID = "_id";
+
+    /**
+     * Todas entidades devem conter esta coluna como controle interno de sincronização.
+     *
+     * Classes que descendem de {@link ModeloBase} já contém o atributo {@link ModeloBase#mStatus}
+     * que será usado como coluna na tabela.
+     */
+    protected static final String COLUNA_STATUS = "status";
 
     /**
      * Construtor padrão.
@@ -57,6 +73,17 @@ public abstract class DAOGenerico<T> {
      */
     public void closeDatabase() throws IllegalStateException {
         mHelper.close();
+    }
+
+    /**
+     * Fecha o cursor liberando os recursos alocados.
+     *
+     * @param cursor O {@code cursor}.
+     */
+    protected void closeCursor(Cursor cursor) {
+        if (cursor != null) {
+            cursor.close();
+        }
     }
 
     /**
@@ -133,9 +160,99 @@ public abstract class DAOGenerico<T> {
     }
 
     /**
+     * Consulta se existe um registro na tabela com o {@code id} especificado.
+     *
+     * @param id a ser consultado.
+     * @return se existe registro para o {@code id}.
+     */
+    public boolean existe(Integer id) {
+        return consultar(id) != null;
+    }
+
+    /**
+     * Consulta por um registro no banco de dados que corresponde ao {@code id} especificado e o
+     * retorna.
+     *
+     * @param id a ser consultado.
+     * @return a entidade que corresponde.
+     */
+    public @Nullable T consultar(@NonNull Integer id) {
+        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+
+        Preconditions.checkNotNull(id, "id não deve ser nulo");
+        Preconditions.checkState(id > 0, "id não deve ser menor que zero");
+
+        final String where = COLUNA_ID +" = ?";
+        final String [] whereById = new String [] { String.valueOf(id) };
+
+        Cursor cursor = null;
+        try {
+            cursor = query(where, whereById, null, null);
+            return cursor != null ? toSingleEntity(cursor) : null;
+        } finally {
+            closeCursor(cursor);
+        }
+    }
+
+    /**
+     * Lista todos registros da tabela dentro do limite especificado.
+     *
+     * @param start o início da consulta.
+     * @param end até que ponto da consulta.
+     * @return o conjunto de entidades.
+     */
+    public @Nullable List<T> listar(@Nullable String start, @Nullable String end) {
+        return listar(start, end, null, (String[]) null);
+    }
+
+    /**
+     * Lista todos registros da tabela dentro do limite especificado usando o {@code filter} e
+     * os {@code args} para definir a condição de busca.
+     *
+     * @param start o início da consulta.
+     * @param end até que ponto da consulta.
+     * @param filter o filtro da busca.
+     * @param args os argumentos usados no filtro da busca.
+     * @return o conjunto de entidades.
+     */
+    public @Nullable List<T> listar(@Nullable String start, @Nullable String end,
+            @Nullable String filter, @Nullable String... args) {
+        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+
+        Cursor cursor = null;
+        try {
+            cursor = query(filter, args, start, end);
+            return cursor != null ? toEntityList(cursor) : null;
+        } finally {
+            closeCursor(cursor);
+        }
+    }
+
+    /**
+     * Lista todos registros da tabela que correspondem ao {@code status}.
+     *
+     * @param status a ser consultado.
+     * @return o conjunto de entidades.
+     */
+    public @Nullable List<T> listar(@NonNull Status status) {
+        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+
+        final String where = COLUNA_STATUS + " = ?";
+        final String [] whereById = new String [] { String.valueOf(status.ordinal()) };
+
+        Cursor cursor = null;
+        try {
+            cursor = query(where, whereById, null, null);
+            return cursor != null ? toEntityList(cursor) : null;
+        } finally {
+            closeCursor(cursor);
+        }
+    }
+
+    /**
      * Especifica o nome da tabela usado no método {@link #query(String, String[], String, String)},
-     * podendo ser usado também nas implementações dos métodos {@link #incluir(Object)},
-     * {@link #alterar(Object)}, {@link #consultar(Integer)}, {@link #listar(Status)} e
+     * podendo ser usado também nas implementações dos métodos {@link #incluir(ModeloBase)},
+     * {@link #alterar(ModeloBase)}, {@link #consultar(Integer)}, {@link #listar(Status)} e
      * {@link #listar(String, String)}.
      *
      * @return o nome da tabela.
@@ -171,6 +288,13 @@ public abstract class DAOGenerico<T> {
     protected abstract @Nullable T fromCursor(@NonNull Cursor cursor);
 
     /**
+     * Especifica o SQL de criação da tabela no banco de dados.
+     *
+     * @return o script de criação da tabela.
+     */
+    abstract @NonNull String scriptCriacao();
+
+    /**
      * Efetua a inclusão da {@code entidade} especificada no banco de dados.
      *
      * @param entidade a entidade com dados novos.
@@ -186,38 +310,4 @@ public abstract class DAOGenerico<T> {
      * @return a quantidade de registros afetados pela alteração no banco de dados.
      */
     public abstract int alterar(@NonNull T entidade);
-
-    /**
-     * Consulta por um registro no banco de dados que corresponde ao {@code id} especificado e o
-     * retorna.
-     *
-     * @param id a ser consultado.
-     * @return a entidade que corresponde.
-     */
-    public abstract @Nullable T consultar(@NonNull Integer id);
-
-    /**
-     * Lista todos registros da tabela dentro do limite especificado.
-     *
-     * @param start o início da consulta.
-     * @param end até que ponto da consulta.
-     * @return o conjunto de entidades.
-     */
-    public abstract @Nullable List<T> listar(@Nullable String start, @Nullable String end);
-
-    /**
-     * Lista todos registros da tabela que correspondem ao {@code status}.
-     *
-     * @param status a ser consultado.
-     * @return o conjunto de entidades.
-     */
-    public abstract List<T> listar(@NonNull Status status);
-
-    /**
-     * Consulta se existe um registro na tabela com o {@code id} especificado.
-     *
-     * @param id a ser consultado.
-     * @return se existe registro para o {@code id}.
-     */
-    public abstract boolean existe(Integer id);
 }
