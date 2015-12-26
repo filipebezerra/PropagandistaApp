@@ -8,7 +8,7 @@ package com.libertsolutions.washington.apppropagandista.Model;
  * @version 1.0, 26/12/2015
  * @since 1.0
  */
-public abstract class ModeloBase {
+public abstract class ModeloBase<T> {
     // id de armazenamento interno do SQLite, deverá ser inteiro e auto incremento
     protected Integer mId;
 
@@ -19,17 +19,11 @@ public abstract class ModeloBase {
         return mId;
     }
 
-    public ModeloBase setId(Integer id) {
-        mId = id;
-        return this;
-    }
+    public abstract T setId(Integer id);
 
     public Status getStatus() {
         return mStatus;
     }
 
-    public ModeloBase setStatus(Status status) {
-        mStatus = status;
-        return this;
-    }
+    public abstract T setStatus(Status status);
 }

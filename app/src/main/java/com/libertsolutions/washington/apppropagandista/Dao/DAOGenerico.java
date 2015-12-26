@@ -37,7 +37,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * Classes que descendem de {@link ModeloBase} já contém o atributo {@link ModeloBase#mId}
      * que será usado como coluna chave primária da tabela.
      */
-    protected static final String COLUNA_ID = "_id";
+    static final String COLUNA_ID = "_id";
 
     /**
      * Todas entidades devem conter esta coluna como controle interno de sincronização.
@@ -45,7 +45,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * Classes que descendem de {@link ModeloBase} já contém o atributo {@link ModeloBase#mStatus}
      * que será usado como coluna na tabela.
      */
-    protected static final String COLUNA_STATUS = "status";
+    static final String COLUNA_STATUS = "status";
 
     /**
      * Construtor padrão.
