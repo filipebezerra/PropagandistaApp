@@ -210,6 +210,9 @@ public class MedicoDAO extends DAOGenerico<Medico> {
     }
 
     public @Nullable List<Medico> listar() {
+        Preconditions.checkState(mDatabase != null,
+                "é preciso chamar o método openDatabase() antes");
+
         return listar(null, null);
     }
 }

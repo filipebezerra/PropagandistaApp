@@ -3,6 +3,8 @@ package com.libertsolutions.washington.apppropagandista.Model;
 import android.support.annotation.NonNull;
 import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.joda.time.DateTime;
 
@@ -84,6 +86,16 @@ public class Medico extends ModeloBase<Medico> {
         model.email = medico.getEmail();
         model.crm = medico.getCrm();
         model.idEspecialidade = medico.getIdEspecialidade();
+
+        if (enderecos.isEmpty()) {
+            model.enderecos = Collections.emptyList();
+        } else {
+            model.enderecos = new ArrayList<>();
+
+            for (Endereco endereco : enderecos) {
+                model.enderecos.add(Endereco.toModel(endereco));
+            }
+        }
 
         return model;
     }

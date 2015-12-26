@@ -7,7 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.Endereco;
+import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
+import java.util.List;
 
 /**
  * Classe de acesso aos dados de {@link Endereco}. Esta classe contém todas operações
@@ -216,5 +218,28 @@ public class EnderecoDAO extends DAOGenerico<Endereco> {
                 String.valueOf(endereco.getId()) };
 
         return mDatabase.update(TABELA_ENDERECO, valores, where, whereById);
+    }
+
+    /**
+     * Consulta por todos endereços no banco de dados que correspondem ao {@code medico}
+     * especificado e os retornam.
+     *
+     * @param medico a ser consultado.
+     * @return o conjunto de entidades que correspondem.
+     */
+    public @Nullable List<Endereco> listar(@NonNull Medico medico) {
+        Preconditions.checkState(mDatabase != null,
+                "é preciso chamar o método openDatabase() antes");
+
+        Preconditions.checkNotNull(medico, "medico não deve ser nulo");
+        Preconditions.checkNotNull(medico.getIdMedico(),
+                "medico.getIdMedico() não deve ser nulo");
+        Preconditions.checkState(medico.getIdMedico() > 0,
+                "medico.getIdMedico() não deve ser menor que zero");
+
+        final String where = COLUNA_RELACAO_MEDICO +" = ?";
+        final String [] whereById = new String [] { String.valueOf(medico.getIdMedico()) };
+
+        return toEntityList(query(where, whereById, null, null));
     }
 }
