@@ -47,12 +47,36 @@ public class Agenda extends ModeloBase<Agenda> {
                 String.format("statusAgenda %d é inválido", model.statusAgenda));
 
         return new Agenda()
+                .setId(model.idCliente)
                 .setIdAgenda(model.idAgenda)
                 .setDataCompromisso(DateTime.parse(model.dtCompromisso).getMillis())
                 .setObservacao(model.observacao)
                 .setIdMedico(model.idMedico)
                 .setStatusAgenda(StatusAgenda.fromOrdinal(model.statusAgenda))
                 .setStatus(Status.Importado);
+    }
+
+    public static AgendaModel toModel(@NonNull Agenda agenda) {
+        Preconditions.checkNotNull(agenda, "agenda não pode ser nulo");
+        Preconditions.checkNotNull(agenda.getId(),
+                "agenda.getId() não pode ser nulo");
+        Preconditions.checkNotNull(agenda.getIdMedico(),
+                "agenda.getIdMedico() não pode ser nulo");
+        Preconditions.checkNotNull(agenda.getStatusAgenda(),
+                "agenda.getStatusAgenda() não pode ser nulo");
+        Preconditions.checkNotNull(agenda.getDataCompromisso(),
+                "agenda.getDataCompromisso() não pode ser nulo");
+
+        final AgendaModel model = new AgendaModel();
+        model.idCliente = agenda.getId();
+        model.idAgenda = agenda.getIdAgenda();
+        model.idMedico = agenda.getIdMedico();
+        model.statusAgenda = agenda.getStatusAgenda().ordinal();
+        model.dtCompromisso = new DateTime(agenda.getDataCompromisso())
+                .toString("yyyy-MM-dd'T'HH:mm:ss");
+        model.observacao = agenda.getObservacao();
+
+        return model;
     }
 
     @Override
