@@ -10,15 +10,19 @@ import retrofit.http.Query;
 import rx.Observable;
 
 /**
- * Created by washington on 20/12/2015.
+ * Interface de serviço para acessos aos recursos HTTP disponíveis na API de Agenda do webservice.
+ *
+ * @author Washington, Filipe Bezerra
+ * @version 1.0, 20/12/2015
+ * @since 1.0
  */
 public interface AgendaService {
     @GET("AgendaApi/Get/")
     Observable<List<AgendaModel>> getByCpf(@Query("cpf") String cpf);
 
     @PUT("AgendaApi/Put/")
-    Observable<Integer> put(@Query("cpf") String cpf,@Body AgendaModel agenda);
+    Observable<AgendaModel> put(@Query("cpf") String cpf,@Body AgendaModel model);
 
     @PUT("AgendaApi/Post/")
-    Observable<Integer> post(@Body AgendaModel agenda);
+    Observable<AgendaModel> post(@Body AgendaModel model);
 }
