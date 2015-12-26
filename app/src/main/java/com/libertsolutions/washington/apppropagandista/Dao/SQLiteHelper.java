@@ -28,10 +28,11 @@ public class SQLiteHelper extends SQLiteOpenHelper  {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQLiteHelper.scriptUsuario());
+        db.execSQL(SQLiteHelper.scriptEspecialidade());
         db.execSQL(SQLiteHelper.scriptMedico());
+        db.execSQL(SQLiteHelper.scriptEndereco());
         db.execSQL(SQLiteHelper.scriptAgenda());
         db.execSQL(SQLiteHelper.scriptVisita());
-        db.execSQL(SQLiteHelper.scriptEspecialidade());
     }
 
     @Override
@@ -39,10 +40,11 @@ public class SQLiteHelper extends SQLiteOpenHelper  {
         Log.w(LOG, "Atualizando banco de dados da versão " + oldVersion + " para "
                 + newVersion + ", o que irá destruir todos dados existentes.");
 
-        db.execSQL("DROP TABLE IF EXISTS Usuario");
-        db.execSQL("DROP TABLE IF EXISTS " + MedicoDAO.TABELA_MEDICO);
-        db.execSQL("DROP TABLE IF EXISTS " + AgendaDAO.TABELA_AGENDA);
+        db.execSQL("DROP TABLE IF EXISTS " + UsuarioDAO.TABELA_USUARIO);
         db.execSQL("DROP TABLE IF EXISTS " + VisitaDAO.TABELA_VISITA);
+        db.execSQL("DROP TABLE IF EXISTS " + AgendaDAO.TABELA_AGENDA);
+        db.execSQL("DROP TABLE IF EXISTS " + EnderecoDAO.TABELA_ENDERECO);
+        db.execSQL("DROP TABLE IF EXISTS " + MedicoDAO.TABELA_MEDICO);
         db.execSQL("DROP TABLE IF EXISTS " + EspecialidadeDAO.TABELA_ESPECIALIDADE);
         onCreate(db);
     }
@@ -70,6 +72,19 @@ public class SQLiteHelper extends SQLiteOpenHelper  {
 
         Log.i(LOG, String.format("SQL de criação da tabela %s: \n\n%s",
                 MedicoDAO.TABELA_MEDICO, SQL));
+        return SQL;
+    }
+
+    /**
+     * Gera o script de criação da tabela Endereco
+     *
+     * @return o script da tabela.
+     */
+    private static String scriptEndereco()   {
+        final String SQL = EnderecoDAO.SCRIPT_CRIACAO;
+
+        Log.i(LOG, String.format("SQL de criação da tabela %s: \n\n%s",
+                EnderecoDAO.TABELA_ENDERECO, SQL));
         return SQL;
     }
 
