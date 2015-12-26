@@ -1,38 +1,10 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
-import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-
-import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
-import com.libertsolutions.washington.apppropagandista.Enum.Status;
-import com.libertsolutions.washington.apppropagandista.Model.Medico;
-import com.libertsolutions.washington.apppropagandista.R;
-import com.libertsolutions.washington.apppropagandista.Util.Mask;
-import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
-import com.libertsolutions.washington.apppropagandista.api.services.MedicoService;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
-import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
 
 public class DetalhesMedicoActivity extends AppCompatActivity {
+    //TODO reimplementar
+    /*
     //Atributos
     private MedicoDAO medicoDb;
     @Bind(R.id.txtIdUnico)
@@ -252,4 +224,5 @@ public class DetalhesMedicoActivity extends AppCompatActivity {
             }
         }
     }
+    */
 }

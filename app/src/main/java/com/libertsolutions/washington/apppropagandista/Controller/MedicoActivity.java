@@ -139,7 +139,7 @@ public class MedicoActivity extends ActionBarActivity {
         try
         {
             List<Medico> lista = new ArrayList<Medico>();
-            lista = medicoDb.Listar(String.valueOf(start),String.valueOf(limit));
+            lista = medicoDb.listar(String.valueOf(start), String.valueOf(limit));
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] {"id","col1", "col2","col3"};
 

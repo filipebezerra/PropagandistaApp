@@ -112,7 +112,7 @@ public class ConsultaMedicoActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
                     HashMap<String, Object> obj = (HashMap<String, Object>) grdMedicos.getAdapter().getItem(position);
-                    Medico medico = medicoDb.Consultar(Integer.parseInt(obj.get("id").toString()));
+                    Medico medico = medicoDb.consultar(Integer.parseInt(obj.get("id").toString()));
                     Intent param = new Intent();
                     param.putExtra("id_medico", medico.getId_medico().toString());
                     param.putExtra("nome", medico.getNome());
@@ -152,7 +152,7 @@ public class ConsultaMedicoActivity extends AppCompatActivity {
         try
         {
             List<Medico> lista = new ArrayList<Medico>();
-            lista = medicoDb.Listar(String.valueOf(start),String.valueOf(limit));
+            lista = medicoDb.listar(String.valueOf(start), String.valueOf(limit));
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] {"id","col1", "col2","col3"};
 

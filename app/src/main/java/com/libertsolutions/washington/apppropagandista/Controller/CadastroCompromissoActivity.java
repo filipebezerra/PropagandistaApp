@@ -105,7 +105,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
 
-        final List<Medico> medicos = mMedicoDAO.Listar();
+        final List<Medico> medicos = mMedicoDAO.listar();
         mMedicosAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, medicos);
         mMedicosAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -242,7 +242,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
 
         if (isFormValid) {
             final Agenda novaAgenda = new Agenda();
-            novaAgenda.setIdMedico(mMedicoSelecionado.getId_medico());
+            novaAgenda.setIdMedico(mMedicoSelecionado.getIdMedico());
             novaAgenda.setDataCompromisso(obtainDateInMillesFromFields());
             novaAgenda.setStatusAgenda(StatusAgenda.Pendente);
             novaAgenda.setStatus(Status.Pendente);

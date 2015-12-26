@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
+import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
@@ -27,8 +28,7 @@ import com.libertsolutions.washington.apppropagandista.Util.Tela;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import rx.Subscriber;
+import org.joda.time.DateTime;
 
 public class AgendaActivity extends AppCompatActivity {
     ArrayList<HashMap<String, String>> lstAgenda = new ArrayList<HashMap<String, String>>();
@@ -144,7 +144,7 @@ public class AgendaActivity extends AppCompatActivity {
         try
         {
             List<Agenda> lista = new ArrayList<Agenda>();
-            lista = agendaDb.Listar(String.valueOf(start),String.valueOf(limit));
+            lista = agendaDb.listar(String.valueOf(start), String.valueOf(limit));
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] {"id","col1", "col2","col3"};
 
@@ -153,12 +153,11 @@ public class AgendaActivity extends AppCompatActivity {
             for (int i = 0; i < lista.size();i++)
             {
                 Agenda agenda = lista.get(i);
-                HashMap<String, String> map = new HashMap<String, String>();
-                map.put(columnTags[0],String.valueOf(agenda.getId_agenda()));  //Id
-                map.put(columnTags[1],agenda.getId_medico().getNome());  //Médico
-                map.put(columnTags[2], "Data: " + agenda.getData()+" "+agenda.getHora());  //Data e Horário
-                map.put(columnTags[3], "Obs: " + agenda.getObs());  //Observação
-                //Adiciona dados no Arraylist
+                HashMap<String, String> map = new HashMap<>();
+                map.put(columnTags[0], String.valueOf(agenda.getId()));
+                map.put(columnTags[1], new MedicoDAO(this).consultar(agenda.getIdMedico()).getNome());
+                map.put(columnTags[2], "Data: " + new DateTime(agenda.getDataCompromisso()).toString("dd/MM/yyyy"));
+                map.put(columnTags[3], "Obs: " + agenda.getObservacao());
                 lstAgenda.add(map);
             }
 

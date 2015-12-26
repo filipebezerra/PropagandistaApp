@@ -19,18 +19,15 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
-import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
-import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.Navigator;
 import com.libertsolutions.washington.apppropagandista.Util.PersonalAdapter;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -190,9 +187,12 @@ public class MainActivity extends AppCompatActivity
 
     //Metódo para preencher Grid
     private void PreencheGrid(int start, int limit) {
+        //TODO reimplementar
+        /*
         try {
             List<Agenda> lista = new ArrayList<>();
-            lista = agendaDb.Listar(String.valueOf(start), String.valueOf(limit), "statusagenda=?", "1");
+            lista = agendaDb.listar(String.valueOf(start), String.valueOf(limit), "statusagenda=?",
+                    "1");
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] { "id", "col1", "col2", "col3" };
 
@@ -201,11 +201,11 @@ public class MainActivity extends AppCompatActivity
             for (int i = 0; i < lista.size(); i++) {
                 Agenda agenda = lista.get(i);
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put(columnTags[0], String.valueOf(agenda.getId_agenda()));  //Id
-                map.put(columnTags[1], agenda.getId_medico().getNome());  //Médico
+                map.put(columnTags[0], String.valueOf(agenda.getId()));  //Id
+                map.put(columnTags[1], agenda.getIdMedico().getNome());  //Médico
                 map.put(columnTags[2],
                         "Data: " + agenda.getData() + " " + agenda.getHora());  //Data e Horário
-                map.put(columnTags[3], "Obs: " + agenda.getObs());  //Observação
+                map.put(columnTags[3], "Obs: " + agenda.getObservacao());  //Observação
                 //Adiciona dados no Arraylist
                 lstAgenda.add(map);
             }
@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception error) {
             Mensagem.MensagemAlerta("Preenche Grid", error.getMessage(), MainActivity.this);
         }
+        */
     }
 
     private class loadMoreListView extends AsyncTask<Void, Void, Void> {
