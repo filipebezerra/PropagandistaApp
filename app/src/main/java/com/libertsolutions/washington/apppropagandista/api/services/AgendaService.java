@@ -1,7 +1,6 @@
 package com.libertsolutions.washington.apppropagandista.api.services;
 
-import com.libertsolutions.washington.apppropagandista.Model.Agenda;
-
+import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import java.util.List;
 
 import retrofit.http.Body;
@@ -15,11 +14,11 @@ import rx.Observable;
  */
 public interface AgendaService {
     @GET("AgendaApi/Get/")
-    Observable<List<Agenda>> getByCpf(@Query("cpf") String cpf);
+    Observable<List<AgendaModel>> getByCpf(@Query("cpf") String cpf);
 
     @PUT("AgendaApi/Put/")
-    Observable<Integer> put(@Query("cpf") String cpf,@Body Agenda agenda);
+    Observable<Integer> put(@Query("cpf") String cpf,@Body AgendaModel agenda);
 
     @PUT("AgendaApi/Post/")
-    Observable<Integer> post(@Body Agenda agenda);
+    Observable<Integer> post(@Body AgendaModel agenda);
 }
