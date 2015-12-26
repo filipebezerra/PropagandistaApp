@@ -21,14 +21,14 @@ import java.util.List;
 
 public class MedicoDAO extends DAOGenerico<Medico> {
     static final String TABELA_MEDICO = "Medico";
-    public static final String COLUNA_ID_MEDICO = "id_medico";
-    public static final String COLUNA_NOME = "nome";
-    public static final String COLUNA_DATA_ANIVERSARIO = "dt_aniversario";
-    public static final String COLUNA_SECRETARIA = "secretaria";
-    public static final String COLUNA_TELEFONE = "telefone";
-    public static final String COLUNA_EMAIL = "email";
-    public static final String COLUNA_CRM = "crm";
-    public static final String COLUNA_RELACAO_ESPECIALIDADE = "id_especialidade";
+    static final String COLUNA_ID_MEDICO = "id_medico";
+    private static final String COLUNA_NOME = "nome";
+    private static final String COLUNA_DATA_ANIVERSARIO = "dt_aniversario";
+    private static final String COLUNA_SECRETARIA = "secretaria";
+    private static final String COLUNA_TELEFONE = "telefone";
+    private static final String COLUNA_EMAIL = "email";
+    private static final String COLUNA_CRM = "crm";
+    private static final String COLUNA_RELACAO_ESPECIALIDADE = "id_especialidade";
 
     private static final String[] PROJECAO_TODAS_COLUNAS = {
             COLUNA_ID,
