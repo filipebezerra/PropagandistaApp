@@ -3,270 +3,213 @@ package com.libertsolutions.washington.apppropagandista.Dao;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
-import com.libertsolutions.washington.apppropagandista.Util.Banco;
-import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Created by washington on 11/11/2015.
+ * Classe de acesso aos dados de {@link Medico}. Esta classe contém todas operações
+ * que necessitam de comunicação e transação com banco de dados local(SQLite).
+ *
+ * @author Washington, Filipe Bezerra
+ * @version 0.1.0, 26/12/2015
+ * @since 0.1.0
  */
-public class MedicoDAO {
-    private Banco cnn;
-    private Context context;
 
-    //Construtor
-    public MedicoDAO(Context context)
-    {
-        try{
-            this.context = context;
-            cnn = Banco.getInstance(context);
-        }catch (Exception error)
-        {
-            Mensagem.MensagemAlerta(context, error.getMessage());
-        }
+public class MedicoDAO extends DAOGenerico<Medico> {
+    static final String TABELA_MEDICO = "Medico";
+    public static final String COLUNA_ID_MEDICO = "id_medico";
+    public static final String COLUNA_NOME = "nome";
+    public static final String COLUNA_DATA_ANIVERSARIO = "dt_aniversario";
+    public static final String COLUNA_SECRETARIA = "secretaria";
+    public static final String COLUNA_TELEFONE = "telefone";
+    public static final String COLUNA_EMAIL = "email";
+    public static final String COLUNA_CRM = "crm";
+    public static final String COLUNA_RELACAO_ESPECIALIDADE = "id_especialidade";
+
+    private static final String[] PROJECAO_TODAS_COLUNAS = {
+            COLUNA_ID,
+            COLUNA_ID_MEDICO,
+            COLUNA_NOME,
+            COLUNA_DATA_ANIVERSARIO,
+            COLUNA_SECRETARIA,
+            COLUNA_TELEFONE,
+            COLUNA_EMAIL,
+            COLUNA_CRM,
+            COLUNA_STATUS,
+            COLUNA_RELACAO_ESPECIALIDADE
+    };
+
+    static final String SCRIPT_CRIACAO =
+            "CREATE TABLE " + TABELA_MEDICO + " (" +
+                    COLUNA_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUNA_ID_MEDICO + " INTEGER, " +
+                    COLUNA_NOME + " TEXT not null, " +
+                    COLUNA_DATA_ANIVERSARIO + " LONG, "+
+                    COLUNA_SECRETARIA + " TEXT, " +
+                    COLUNA_TELEFONE + " TEXT not null, " +
+                    COLUNA_EMAIL + " TEXT, " +
+                    COLUNA_CRM + " TEXT, " +
+                    COLUNA_STATUS + " INTEGER, " +
+                    COLUNA_RELACAO_ESPECIALIDADE + " INTEGER not null, " +
+            " FOREIGN KEY (" + COLUNA_RELACAO_ESPECIALIDADE +
+                ") REFERENCES " + EspecialidadeDAO.TABELA_ESPECIALIDADE +
+                " (" + EspecialidadeDAO.COLUNA_ID_ESPECIALIDADE + "), " +
+            " UNIQUE (" + COLUNA_ID_MEDICO + ") ON CONFLICT REPLACE);";
+
+
+    /**
+     * Construtor padrão.
+     *
+     * @param context contexto para inicializar o helper do banco de dados.
+     */
+    public MedicoDAO(@NonNull Context context) {
+        super(context);
     }
 
-    //Metódo Incluir
-    public void Incluir(Medico medico)
-    {
-        ContentValues valores;
-        long resultado;
-        try{
-            //Abre Conexão
-            cnn.AbrirConexao();
-            valores = new ContentValues();
-            valores.put("nome",medico.getNome());
-            if(medico.getDtAniversario() != null)
-                valores.put("dtAniversario",medico.getDtAniversario());
-            valores.put("secretaria",medico.getSecretaria());
-            valores.put("telefone",medico.getTelefone());
-            valores.put("email",medico.getEmail());
-            valores.put("crm",medico.getCrm());
-            valores.put("especialidade",medico.getEspecialidade());
-            valores.put("id_unico",medico.getId_unico());
-            valores.put("status",medico.getStatus());
-            resultado = cnn.db().insert("Medico",null,valores);
-        }catch (Exception error)
-        {
-            Mensagem.MensagemAlerta(context,error.getMessage());
-        }finally {
-            cnn.close();
-        }
+    @NonNull
+    @Override
+    protected String nomeTabela() {
+        return TABELA_MEDICO;
     }
 
-    //Metódo Alterar
-    public void Alterar(Medico medico)
-    {
-        ContentValues valores;
-        String where;
-        try{
-            where = "id_medico = "+medico.getId_medico();
-            //Abre Conexão
-            cnn.AbrirConexao();
-            valores = new ContentValues();
-            valores.put("nome",medico.getNome());
-            if(medico.getDtAniversario() != null)
-                valores.put("dtAniversario",medico.getDtAniversario());
-            valores.put("secretaria",medico.getSecretaria());
-            valores.put("telefone",medico.getTelefone());
-            valores.put("email",medico.getEmail());
-            valores.put("crm",medico.getCrm());
-            valores.put("especialidade",medico.getEspecialidade());
-            valores.put("id_unico", medico.getId_unico());
-            valores.put("status",medico.getStatus());
-            cnn.db().update("Medico",valores,where,null);
-        }catch (Exception error)
-        {
-            Mensagem.MensagemAlerta(context,error.getMessage());
-        }finally {
-            cnn.close();
-        }
-
+    @NonNull
+    @Override
+    protected String[] projecaoTodasColunas() {
+        return PROJECAO_TODAS_COLUNAS;
     }
 
-    //Metódo Existe Id
-    public boolean Existe(Integer id_unico)
-    {
-        boolean existe = false;
-        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","status"};
-        try{
-            //Abre Conexão
-            cnn.AbrirConexao();
-            Cursor cursor = cnn.db().query("Medico",campos,"id_unico = "+id_unico,null,null,null,null);
-            if(cursor.moveToFirst()) {
-                existe = true;
-            }
-        }catch (Exception error)
-        {
-            Mensagem.MensagemAlerta(context,error.getMessage());
-        }finally {
-            cnn.close();
-        }
-        return  existe;
+    @Nullable
+    @Override
+    protected String colunasOrdenacao() {
+        return null;
     }
 
-    //Metódo Consultar
-    public Medico Consultar(Integer id_medico)
-    {
-        Medico medico = new Medico();
-        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","id_unico","status"};
-        try{
-            //Abre Conexão
-            cnn.AbrirConexao();
-            Cursor cursor = cnn.db().query("Medico",campos,"id_medico = "+id_medico,null,null,null,null);
-            if(cursor != null) {
-                if (cursor.moveToFirst()) {
-                    medico.setId_medico(cursor.getInt(0));
-                    medico.setNome(cursor.getString(1));
-                    medico.setDtAniversario(cursor.getString(2).toString());
-                    medico.setTelefone(cursor.getString(3));
-                    medico.setEmail(cursor.getString(4));
-                    medico.setCrm(cursor.getString(5));
-                    medico.setEmail(cursor.getString(6));
-                    medico.setEspecialidade(cursor.getString(7));
-                    medico.setId_unico(cursor.getInt(8));
-                    medico.setStatus(cursor.getInt(9));
-                }
-            }
-        }catch (Exception error)
-        {
-            Mensagem.MensagemAlerta(context,error.getMessage());
-        }finally {
-            cnn.close();
-        }
-        return  medico;
+    @Nullable
+    @Override
+    protected Medico fromCursor(@NonNull Cursor cursor) {
+        if (!isCursorOpenedAndPrepared(cursor)) return null;
+
+        final Medico medico = new Medico();
+
+        medico.setId(
+                cursor.getInt(cursor.getColumnIndex(COLUNA_ID)));
+        medico.setIdMedico(
+                cursor.getInt(cursor.getColumnIndex(COLUNA_ID_MEDICO)));
+        medico.setNome(
+                cursor.getString(cursor.getColumnIndex(COLUNA_NOME)));
+        medico.setDataAniversario(
+                cursor.getLong(cursor.getColumnIndex(COLUNA_DATA_ANIVERSARIO)));
+        medico.setSecretaria(
+                cursor.getString(cursor.getColumnIndex(COLUNA_SECRETARIA)));
+        medico.setTelefone(
+                cursor.getString(cursor.getColumnIndex(COLUNA_TELEFONE)));
+        medico.setEmail(
+                cursor.getString(cursor.getColumnIndex(COLUNA_EMAIL)));
+        medico.setCrm(
+                cursor.getString(cursor.getColumnIndex(COLUNA_CRM)));
+        medico.setStatus(
+                Status.fromOrdinal(cursor.getInt(cursor.getColumnIndex(COLUNA_STATUS))));
+        medico.setIdEspecialidade(
+                cursor.getInt(cursor.getColumnIndex(COLUNA_RELACAO_ESPECIALIDADE)));
+
+        return medico;
     }
 
-    //Metódo Listar paginação
-    public ArrayList<Medico> Listar(String start,String limit, String filter, String...args)
-    {
-        Medico medico;
-        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","id_unico","status"};
-        ArrayList<Medico> list = new ArrayList<Medico>();
-        try {
-            //Abre Conexão
-            cnn.AbrirConexao();
+    @Override
+    public long incluir(@NonNull Medico medico) {
+        // Pré-condições para realizar a transação na tabela destino
+        Preconditions.checkState(mDatabase != null,
+                "é preciso chamar o método openDatabase() antes");
 
-            Cursor cursor = cnn.db().query("Medico",
-                    campos,
-                    filter,
-                    args,
-                    null,
-                    null,
-                    "nome",
-                    start+","+limit);
+        Preconditions.checkNotNull(medico, "medico não pode ser nula");
+        Preconditions.checkNotNull(medico.getNome(),
+                "medico.getNome() não pode ser nulo");
+        Preconditions.checkNotNull(medico.getTelefone(),
+                "medico.getTelefone() não pode ser nula");
+        Preconditions.checkNotNull(medico.getIdEspecialidade(),
+                "medico.getIdEspecialidade() não pode ser nula");
 
-            while(cursor.moveToNext()){
-                medico = new Medico();
-                medico.setId_medico(Integer.parseInt(cursor.getString(0)));
-                medico.setNome(cursor.getString(1));
-                medico.setDtAniversario(cursor.getString(2));
-                medico.setSecretaria(cursor.getString(3));
-                medico.setTelefone(cursor.getString(4));
-                medico.setEmail(cursor.getString(5));
-                medico.setCrm(cursor.getString(6));
-                medico.setEspecialidade(cursor.getString(7));
-                medico.setId_unico(cursor.getInt(8));
-                medico.setStatus(cursor.getInt(9));
-                list.add(medico);
-            }
+        Preconditions.checkState(
+                medico.getStatus() != Status.Importado || medico.getIdMedico() == null,
+                "medico.getIdMedico() não pode ser nulo");
 
-            if (cursor != null && !cursor.isClosed())
-            {
-                cursor.close();
-            }
+        ContentValues valores = new ContentValues();
 
-        }catch (Exception error)
-        {
-            //Mensagem.MensagemAlerta("Listar Cond.Pgto.", error.getMessage(), activ);
+        if (medico.getIdMedico() != null) {
+            valores.put(COLUNA_ID_MEDICO, medico.getIdMedico());
         }
-        return list;
+
+        valores.put(COLUNA_NOME, medico.getNome());
+        valores.put(COLUNA_DATA_ANIVERSARIO, medico.getDataAniversario());
+        valores.put(COLUNA_SECRETARIA, medico.getSecretaria());
+        valores.put(COLUNA_TELEFONE, medico.getTelefone());
+
+        valores.put(COLUNA_EMAIL, medico.getEmail());
+        valores.put(COLUNA_CRM, medico.getCrm());
+
+        valores.put(COLUNA_STATUS, medico.getStatus() == null ?
+                Status.Pendente.ordinal() : medico.getStatus().ordinal());
+
+        valores.put(COLUNA_RELACAO_ESPECIALIDADE, medico.getIdEspecialidade());
+
+        return mDatabase.insert(TABELA_MEDICO, null, valores);
     }
 
-    //Metódo Listar paginação
-    public ArrayList<Medico> Listar(String start,String limit)
-    {
-        Medico medico;
-        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","id_unico","status"};
-        ArrayList<Medico> list = new ArrayList<Medico>();
-        try {
-            //Abre Conexão
-            cnn.AbrirConexao();
+    @Override
+    public int alterar(@NonNull Medico medico) {
+        // Pré-condições para realizar a transação na tabela destino
+        Preconditions.checkState(mDatabase != null,
+                "é preciso chamar o método openDatabase() antes");
 
-            Cursor cursor = cnn.db().query("Medico",
-                    campos,
-                    null,
-                    null,
-                    null,
-                    null,
-                    "nome",
-                    start+","+limit);
+        Preconditions.checkNotNull(medico, "medico não pode ser nula");
+        Preconditions.checkNotNull(medico.getNome(),
+                "medico.getNome() não pode ser nulo");
+        Preconditions.checkNotNull(medico.getTelefone(),
+                "medico.getTelefone() não pode ser nula");
+        Preconditions.checkNotNull(medico.getIdEspecialidade(),
+                "medico.getIdEspecialidade() não pode ser nula");
 
-            while(cursor.moveToNext()){
-                medico = new Medico();
-                medico.setId_medico(Integer.parseInt(cursor.getString(0)));
-                medico.setNome(cursor.getString(1));
-                medico.setDtAniversario(cursor.getString(2));
-                medico.setSecretaria(cursor.getString(3));
-                medico.setTelefone(cursor.getString(4));
-                medico.setEmail(cursor.getString(5));
-                medico.setCrm(cursor.getString(6));
-                medico.setEspecialidade(cursor.getString(7));
-                medico.setId_unico(cursor.getInt(8));
-                medico.setStatus(cursor.getInt(9));
-                list.add(medico);
-            }
+        Preconditions.checkNotNull(medico.getStatus(),
+                "medico.getStatus() não pode ser nula");
+        Preconditions.checkState(
+                ((medico.getStatus() == Status.Enviado
+                        || medico.getStatus() == Status.Importado)
+                        && medico.getIdMedico() == null),
+                "medico.getIdVisita() não pode ser nulo");
 
-            if (cursor != null && !cursor.isClosed())
-            {
-                cursor.close();
-            }
+        ContentValues valores = new ContentValues();
 
-        }catch (Exception error)
-        {
-            //Mensagem.MensagemAlerta("Listar Cond.Pgto.", error.getMessage(), activ);
+        if (medico.getStatus() == Status.Enviado || medico.getStatus() == Status.Importado) {
+            valores.put(COLUNA_ID_MEDICO, medico.getIdMedico());
         }
-        return list;
+
+        valores.put(COLUNA_NOME, medico.getNome());
+        valores.put(COLUNA_DATA_ANIVERSARIO, medico.getDataAniversario());
+        valores.put(COLUNA_SECRETARIA, medico.getSecretaria());
+        valores.put(COLUNA_TELEFONE, medico.getTelefone());
+
+        valores.put(COLUNA_EMAIL, medico.getEmail());
+        valores.put(COLUNA_CRM, medico.getCrm());
+
+        valores.put(COLUNA_RELACAO_ESPECIALIDADE, medico.getIdEspecialidade());
+
+        valores.put(COLUNA_STATUS,
+                medico.getStatus() == Status.Enviado
+                        || medico.getStatus() == Status.Importado ?
+                        medico.getStatus().ordinal() : Status.Pendente.ordinal());
+
+        final String where = COLUNA_ID +" = ?";
+        final String [] whereById = new String [] {
+                String.valueOf(medico.getId()) };
+
+        return mDatabase.update(TABELA_MEDICO, valores, where, whereById);
     }
 
-    //Listar médicos por status
-    public ArrayList<Medico> Listar(Status status)
-    {
-        Medico medico;
-        String[] campos = {"id_medico","nome","dtAniversario","secretaria","telefone","email","crm","especialidade","id_unico","status"};
-        ArrayList<Medico> list = new ArrayList<Medico>();
-        try {
-            //Abre Conexão
-            cnn.AbrirConexao();
-
-            Cursor cursor = cnn.db().query("Medico",campos,"status = "+status.ordinal(),null,null,null,null);
-
-            while(cursor.moveToNext()){
-                medico = new Medico();
-                medico.setId_medico(Integer.parseInt(cursor.getString(0)));
-                medico.setNome(cursor.getString(1));
-                medico.setDtAniversario(cursor.getString(2));
-                medico.setSecretaria(cursor.getString(3));
-                medico.setTelefone(cursor.getString(4));
-                medico.setEmail(cursor.getString(5));
-                medico.setCrm(cursor.getString(6));
-                medico.setEspecialidade(cursor.getString(7));
-                medico.setId_unico(cursor.getInt(8));
-                medico.setStatus(cursor.getInt(9));
-                list.add(medico);
-            }
-
-            if (cursor != null && !cursor.isClosed())
-            {
-                cursor.close();
-            }
-
-        }catch (Exception error)
-        {
-            //Mensagem.MensagemAlerta("Listar Cond.Pgto.", error.getMessage(), activ);
-        }
-        return list;
+    public @Nullable List<Medico> listar() {
+        return listar(null, null);
     }
 }

@@ -1,120 +1,179 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
-import com.google.gson.annotations.Expose;
+import android.support.annotation.NonNull;
+import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
+import java.util.List;
+import org.joda.time.DateTime;
 
 /**
- * Created by washington on 04/11/2015.
+ * Classe modelo dos dados do médico.
+ *
+ * @author Washington, Filipe Bezerra
+ * @version 0.1.0, 26/12/2015
+ * @since 0.1.0
  */
-public class Medico {
-    @Expose(serialize = false)
-    private Integer id_medico;
+public class Medico extends ModeloBase<Medico> {
+    // id do médico no servidor
+    private Integer mIdMedico;
 
-    @Expose
-    private Integer id_unico;
+    private String mNome;
 
-    @Expose
-    private String nome;
+    // data de aniversário, armazenado como milessegundos
+    private Long mDataAniversario;
 
-    @Expose
-    private String dtAniversario;
+    private String mSecretaria;
 
-    @Expose
-    private String secretaria;
+    private String mTelefone;
 
-    @Expose
-    private String telefone;
+    private String mEmail;
 
-    @Expose
-    private String email;
+    private String mCrm;
 
-    @Expose
-    private String crm;
+    // id de relacionamento com tabela Especialidade
+    private Integer mIdEspecialidade;
 
-    @Expose(serialize = false)
-    private String especialidade;
+    /**
+     * Obtém os dados da agenda importados do webservice.
+     *
+     * @param model o modelo de dados da agenda recuperado do webservice.
+     * @return a agenda.
+     */
+    public static Medico fromModel(@NonNull MedicoModel model) {
+        Preconditions.checkNotNull(model, "model não pode ser nulo");
+        Preconditions.checkNotNull(model.idMedico, "model.idMedico não pode ser nulo");
+        Preconditions.checkNotNull(model.nome, "model.nome não pode ser nulo");
+        Preconditions.checkNotNull(model.telefone, "model.telefone não pode ser nulo");
+        Preconditions.checkState(model.idEspecialidade != 0, "model.idEspecialidade é inválido");
 
-    @Expose(serialize = false)
-    private int status;
-
-    //Metódos Set's
-    public void setId_medico(Integer id_medico) {
-        this.id_medico = id_medico;
+        return new Medico()
+                .setId(model.idCliente)
+                .setIdMedico(model.idMedico)
+                .setNome(model.nome)
+                .setDataAniversario(model.dataAniversario != null ?
+                        DateTime.parse(model.dataAniversario).getMillis() : null)
+                .setSecretaria(model.secretaria)
+                .setTelefone(model.telefone)
+                .setEmail(model.email)
+                .setCrm(model.crm)
+                .setIdEspecialidade(model.idEspecialidade);
     }
 
-    public void setId_unico(Integer id_unico) {
-        this.id_unico = id_unico;
+    public static MedicoModel toModel(@NonNull Medico medico, @NonNull List<Endereco> enderecos) {
+        Preconditions.checkNotNull(medico, "medico não pode ser nulo");
+        Preconditions.checkNotNull(medico.getId(),
+                "medico.getId() não pode ser nulo");
+        Preconditions.checkNotNull(medico.getIdMedico(),
+                "medico.getIdMedico() não pode ser nulo");
+        Preconditions.checkNotNull(medico.getNome(),
+                "medico.getNome() não pode ser nulo");
+        Preconditions.checkNotNull(medico.getTelefone(),
+                "medico.getTelefone() não pode ser nulo");
+        Preconditions.checkNotNull(medico.getIdEspecialidade(),
+                "medico.getIdEspecialidade() não pode ser nulo");
+
+        final MedicoModel model = new MedicoModel();
+        model.idCliente = medico.getId();
+        model.idMedico = medico.getIdMedico();
+        model.nome = medico.getNome();
+        model.dataAniversario = medico.getDataAniversario() != null ?
+                new DateTime(medico.getDataAniversario()).toString("yyyy-MM-dd'T'HH:mm:ss") :
+                null;
+        model.secretaria = medico.getSecretaria();
+        model.telefone = medico.getTelefone();
+        model.email = medico.getEmail();
+        model.crm = medico.getCrm();
+        model.idEspecialidade = medico.getIdEspecialidade();
+
+        return model;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    @Override
+    public Medico setId(Integer id) {
+        mId = id;
+        return this;
     }
 
-    public void setDtAniversario(String dtAniversario) {
-        this.dtAniversario = dtAniversario;
+    @Override
+    public Medico setStatus(Status status) {
+        mStatus = status;
+        return this;
     }
 
-    public void setSecretaria(String secretaria) {
-        this.secretaria = secretaria;
+    public Integer getIdMedico() {
+        return mIdMedico;
     }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setCrm(String crm) {
-        this.crm = crm;
-    }
-
-    public void setEspecialidade(String especialidade) {
-        this.especialidade = especialidade;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    //Metódos Get's
-    public Integer getId_medico() {
-        return id_medico;
-    }
-
-    public Integer getId_unico() {
-        return id_unico;
+    public Medico setIdMedico(Integer idMedico) {
+        mIdMedico = idMedico;
+        return this;
     }
 
     public String getNome() {
-        return nome;
+        return mNome;
     }
 
-    public String getDtAniversario() {
-        return dtAniversario;
+    public Medico setNome(String nome) {
+        this.mNome = nome;
+        return this;
+    }
+
+    public Long getDataAniversario() {
+        return mDataAniversario;
+    }
+
+    public Medico setDataAniversario(Long dataAniversario) {
+        mDataAniversario = dataAniversario;
+        return this;
     }
 
     public String getSecretaria() {
-        return secretaria;
+        return mSecretaria;
+    }
+
+    public Medico setSecretaria(String secretaria) {
+        this.mSecretaria = secretaria;
+        return this;
     }
 
     public String getTelefone() {
-        return telefone;
+        return mTelefone;
+    }
+
+    public Medico setTelefone(String telefone) {
+        this.mTelefone = telefone;
+        return this;
     }
 
     public String getEmail() {
-        return email;
+        return mEmail;
+    }
+
+    public Medico setEmail(String email) {
+        this.mEmail = email;
+        return this;
     }
 
     public String getCrm() {
-        return crm;
+        return mCrm;
     }
 
-    public String getEspecialidade() {
-        return especialidade;
+    public Medico setCrm(String crm) {
+        this.mCrm = crm;
+        return this;
     }
 
-    public int getStatus() {
-        return status;
+    public Integer getIdEspecialidade() {
+        return mIdEspecialidade;
+    }
+
+    public Medico setIdEspecialidade(Integer idEspecialidade) {
+        mIdEspecialidade = idEspecialidade;
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return getNome();
     }
 }
