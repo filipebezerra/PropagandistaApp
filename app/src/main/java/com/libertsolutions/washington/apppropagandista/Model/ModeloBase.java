@@ -10,16 +10,16 @@ package com.libertsolutions.washington.apppropagandista.Model;
  */
 public abstract class ModeloBase<T> {
     // id de armazenamento interno do SQLite, deverá ser inteiro e auto incremento
-    protected Integer mId;
+    protected Long mId;
 
     // status da sincronização
     protected Status mStatus;
 
-    public Integer getId() {
+    public Long getId() {
         return mId;
     }
 
-    public abstract T setId(Integer id);
+    public abstract T setId(Long id);
 
     public Status getStatus() {
         return mStatus;

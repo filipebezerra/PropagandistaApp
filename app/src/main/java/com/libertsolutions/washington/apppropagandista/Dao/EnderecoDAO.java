@@ -100,7 +100,7 @@ public class EnderecoDAO extends DAOGenerico<Endereco> {
 
         final Endereco endereco = new Endereco();
         endereco.setId(
-                cursor.getInt(cursor.getColumnIndex(COLUNA_ID)));
+                cursor.getLong(cursor.getColumnIndex(COLUNA_ID)));
         endereco.setIdEndereco(
                 cursor.getInt(cursor.getColumnIndex(COLUNA_ID_ENDERECO)));
         endereco.setEndereco(

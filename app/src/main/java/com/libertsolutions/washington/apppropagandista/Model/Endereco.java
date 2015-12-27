@@ -93,7 +93,7 @@ public class Endereco extends ModeloBase<Endereco> {
     }
 
     @Override
-    public Endereco setId(Integer id) {
+    public Endereco setId(Long id) {
         mId = id;
         return this;
     }

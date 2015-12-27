@@ -96,7 +96,7 @@ public class MedicoDAO extends DAOGenerico<Medico> {
         final Medico medico = new Medico();
 
         medico.setId(
-                cursor.getInt(cursor.getColumnIndex(COLUNA_ID)));
+                cursor.getLong(cursor.getColumnIndex(COLUNA_ID)));
         medico.setIdMedico(
                 cursor.getInt(cursor.getColumnIndex(COLUNA_ID_MEDICO)));
         medico.setNome(

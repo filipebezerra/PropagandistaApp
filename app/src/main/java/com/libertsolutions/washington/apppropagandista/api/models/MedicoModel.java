@@ -21,7 +21,7 @@ public class MedicoModel {
     public int idMedico;
 
     @SerializedName("id_cliente")
-    public int idCliente;
+    public long idCliente;
 
     public String nome;
 
@@ -46,7 +46,7 @@ public class MedicoModel {
         public int idEndereco;
 
         @SerializedName("id_cliente")
-        public int idCliente;
+        public long idCliente;
 
         public String endereco;
 

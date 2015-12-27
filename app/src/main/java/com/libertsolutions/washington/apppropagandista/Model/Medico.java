@@ -101,7 +101,7 @@ public class Medico extends ModeloBase<Medico> {
     }
 
     @Override
-    public Medico setId(Integer id) {
+    public Medico setId(Long id) {
         mId = id;
         return this;
     }

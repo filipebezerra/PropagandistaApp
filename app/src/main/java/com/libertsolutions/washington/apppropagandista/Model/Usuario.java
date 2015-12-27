@@ -19,7 +19,7 @@ public class Usuario extends ModeloBase<Usuario> {
     private String mSenha;
 
     @Override
-    public Usuario setId(Integer id) {
+    public Usuario setId(Long id) {
         mId = id;
         return this;
     }

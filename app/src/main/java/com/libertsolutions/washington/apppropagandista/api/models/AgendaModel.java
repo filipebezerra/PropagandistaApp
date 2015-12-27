@@ -20,7 +20,7 @@ public class AgendaModel {
     public int idAgenda;
 
     @SerializedName("id_cliente")
-    public int idCliente;
+    public long idCliente;
 
     public String dtCompromisso;
 

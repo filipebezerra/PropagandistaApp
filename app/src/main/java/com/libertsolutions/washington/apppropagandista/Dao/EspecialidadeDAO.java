@@ -71,7 +71,7 @@ public class EspecialidadeDAO extends DAOGenerico<Especialidade> {
 
         final Especialidade especialidade = new Especialidade();
         especialidade.setId(
-                cursor.getInt(cursor.getColumnIndex(COLUNA_ID)));
+                cursor.getLong(cursor.getColumnIndex(COLUNA_ID)));
         especialidade.setIdEspecialidade(
                 cursor.getInt(cursor.getColumnIndex(COLUNA_ID_ESPECIALIDADE)));
         especialidade.setNome(

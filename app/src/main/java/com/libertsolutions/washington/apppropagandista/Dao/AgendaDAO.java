@@ -84,22 +84,22 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
 
         Agenda agenda = new Agenda();
 
-        agenda.setId(cursor.getInt(
-                cursor.getColumnIndex(COLUNA_ID)));
-        agenda.setIdAgenda(cursor.getInt(
-                cursor.getColumnIndex(COLUNA_ID_AGENDA)));
-        agenda.setDataCompromisso(cursor.getLong(
-                cursor.getColumnIndex(COLUNA_DT_COMPROMISSO)));
-        agenda.setObservacao(cursor.getString(
-                cursor.getColumnIndex(COLUNA_OBSERVACAO)));
-        agenda.setStatusAgenda(StatusAgenda.fromOrdinal(cursor.getInt(
-                cursor.getColumnIndex(COLUNA_STATUS_AGENDA))));
-        agenda.setStatus(Status.fromOrdinal(cursor.getInt(
-                cursor.getColumnIndex(COLUNA_STATUS))));
-        agenda.setIdMedico(cursor.getInt(
-                cursor.getColumnIndex(COLUNA_RELACAO_MEDICO)));
-        agenda.setStatus(Status.fromOrdinal(cursor.getInt(
-                cursor.getColumnIndex(COLUNA_STATUS))));
+        agenda.setId(
+                cursor.getLong(cursor.getColumnIndex(COLUNA_ID)));
+        agenda.setIdAgenda(
+                cursor.getInt(cursor.getColumnIndex(COLUNA_ID_AGENDA)));
+        agenda.setDataCompromisso(
+                cursor.getLong(cursor.getColumnIndex(COLUNA_DT_COMPROMISSO)));
+        agenda.setObservacao(
+                cursor.getString(cursor.getColumnIndex(COLUNA_OBSERVACAO)));
+        agenda.setStatusAgenda(StatusAgenda.fromOrdinal(
+                cursor.getInt(cursor.getColumnIndex(COLUNA_STATUS_AGENDA))));
+        agenda.setStatus(Status.fromOrdinal(
+                cursor.getInt(cursor.getColumnIndex(COLUNA_STATUS))));
+        agenda.setIdMedico(
+                cursor.getInt(cursor.getColumnIndex(COLUNA_RELACAO_MEDICO)));
+        agenda.setStatus(Status.fromOrdinal(
+                cursor.getInt(cursor.getColumnIndex(COLUNA_STATUS))));
 
         return agenda;
     }

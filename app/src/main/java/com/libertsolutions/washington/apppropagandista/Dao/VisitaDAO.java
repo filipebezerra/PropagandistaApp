@@ -96,7 +96,7 @@ public class VisitaDAO extends DAOGenerico<Visita> {
 
         Visita visita = new Visita();
 
-        visita.setId(cursor.getInt(
+        visita.setId(cursor.getLong(
                 cursor.getColumnIndex(COLUNA_ID)));
         visita.setIdVisita(cursor.getInt(
                 cursor.getColumnIndex(COLUNA_ID_VISITA)));

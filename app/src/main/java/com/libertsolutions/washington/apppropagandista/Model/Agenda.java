@@ -80,7 +80,7 @@ public class Agenda extends ModeloBase<Agenda> {
     }
 
     @Override
-    public Agenda setId(Integer id) {
+    public Agenda setId(Long id) {
         mId = id;
         return this;
     }

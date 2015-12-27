@@ -44,7 +44,7 @@ public class Visita extends ModeloBase<Visita> {
     }
 
     @Override
-    public Visita setId(Integer id) {
+    public Visita setId(Long id) {
         mId = id;
         return this;
     }

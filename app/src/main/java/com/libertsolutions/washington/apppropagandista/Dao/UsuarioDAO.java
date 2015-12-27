@@ -77,7 +77,7 @@ public class UsuarioDAO extends DAOGenerico<Usuario> {
 
         final Usuario usuario = new Usuario();
         usuario.setId(
-                cursor.getInt(cursor.getColumnIndex(COLUNA_ID)));
+                cursor.getLong(cursor.getColumnIndex(COLUNA_ID)));
         usuario.setIdUsuario(
                 cursor.getInt(cursor.getColumnIndex(COLUNA_ID_USUARIO)));
         usuario.setNome(
