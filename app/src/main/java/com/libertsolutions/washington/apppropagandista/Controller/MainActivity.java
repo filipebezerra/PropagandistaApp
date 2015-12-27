@@ -24,6 +24,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
 import com.libertsolutions.washington.apppropagandista.Util.Navigator;
@@ -33,7 +34,6 @@ import com.libertsolutions.washington.apppropagandista.Util.Tela;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.joda.time.DateTime;
 
 import static com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO.COLUNA_STATUS_AGENDA;
 
@@ -226,8 +226,7 @@ public class MainActivity extends AppCompatActivity
                         String.valueOf(agenda.getIdMedico()));
 
                 map.put(columnTags[1], medico != null ? medico.getNome() : "");
-                map.put(columnTags[2], "Data: " + new DateTime(agenda.getDataCompromisso())
-                        .toString("dd/MM/yyyy - HH:mm"));
+                map.put(columnTags[2], "Data: " + DateUtil.format(agenda.getDataCompromisso()));
                 map.put(columnTags[3], "Obs: " + agenda.getObservacao());
 
                 mListaAgenda.add(map);
