@@ -103,6 +103,7 @@
 
         </android.support.design.widget.TextInputLayout>
 
+        <!--
         <Button
             android:id="@id/btnSalvar"
             android:layout_width="match_parent"
@@ -113,6 +114,7 @@
             android:textColor="#FFFFFF"
             android:background="@drawable/button_selector"
             />
+            -->
     </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>

@@ -69,7 +69,7 @@ public class UsuarioActivity extends AppCompatActivity {
     //Metódo Recuperar Campos
     public void getCampos()
     {
-        this.txtNome = (EditText)findViewById(R.id.txtNome);
+        this.txtNome = (EditText)findViewById(R.id.txtNomeMedico);
         this.txtCpf = (EditText)findViewById(R.id.txtCpf);
         this.txtEmail = (EditText)findViewById(R.id.txtEmail);
         this.txtSenha = (EditText)findViewById(R.id.txtSenha);

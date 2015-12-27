@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO.COLUNA_STATUS_AGENDA;
+import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -226,7 +227,8 @@ public class MainActivity extends AppCompatActivity
                         String.valueOf(agenda.getIdMedico()));
 
                 map.put(columnTags[1], medico != null ? medico.getNome() : "");
-                map.put(columnTags[2], "Data: " + DateUtil.format(agenda.getDataCompromisso()));
+                map.put(columnTags[2], "Data: " + DateUtil.format(agenda.getDataCompromisso(),
+                        DATE_AND_TIME));
                 map.put(columnTags[3], "Obs: " + agenda.getObservacao());
 
                 mListaAgenda.add(map);
