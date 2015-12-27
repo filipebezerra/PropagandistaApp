@@ -24,9 +24,6 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.google.common.base.Preconditions;
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
 import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
@@ -273,7 +270,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity
         mNomeSecretariaView.setText(medico.getSecretaria());
 
         if (!TextUtils.isEmpty(medico.getTelefone())) {
-            try {
+            /*try {
                 final PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
                 final Phonenumber.PhoneNumber phoneNumber = phoneNumberUtil
                         .parse(medico.getTelefone(), "BR");
@@ -283,7 +280,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity
                 mTelefoneView.setText(telefone);
             } catch (NumberParseException e) {
                 mTelefoneView.setText(medico.getTelefone());
-            }
+            }*/
         }
 
         mEmailView.setText(medico.getEmail());

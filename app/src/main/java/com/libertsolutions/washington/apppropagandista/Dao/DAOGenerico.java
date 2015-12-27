@@ -273,7 +273,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
         Preconditions.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        return listar(null, null);
+        return listar(null, null,null);
     }
 
     /**
