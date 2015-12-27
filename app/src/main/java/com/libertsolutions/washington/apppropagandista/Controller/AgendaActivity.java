@@ -20,6 +20,7 @@ import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
+import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PersonalAdapter;
@@ -29,6 +30,11 @@ import java.util.HashMap;
 import java.util.List;
 import org.joda.time.DateTime;
 
+/**
+ * @author Washington, Filipe Bezerra
+ * @version 0.1.0, 27/12/2015
+ * @since 0.1.0
+ */
 public class AgendaActivity extends AppCompatActivity {
     private ArrayList<HashMap<String, String>> mListaAgenda = new ArrayList<>();
     private PersonalAdapter mPersonalAdapter;
@@ -40,6 +46,7 @@ public class AgendaActivity extends AppCompatActivity {
 
     private AgendaDAO mAgendaDAO;
     private MedicoDAO mMedicoDAO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +68,8 @@ public class AgendaActivity extends AppCompatActivity {
                 (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+
+        DrawableUtil.tint(this, menu.findItem(R.id.action_novo).getIcon(), R.color.white);
 
         return true;
     }
@@ -84,13 +93,7 @@ public class AgendaActivity extends AppCompatActivity {
         mAgendaDAO.openDatabase();
         mMedicoDAO.openDatabase();
 
-        try {
-            CarregaGrid();
-        }
-        catch (Exception erro)
-        {
-            Mensagem.MensagemAlerta("Erro Start Produtos", erro.getMessage(), AgendaActivity.this);
-        }
+        CarregaGrid();
     }
 
     @Override
@@ -101,8 +104,7 @@ public class AgendaActivity extends AppCompatActivity {
     }
 
     //Carrega Grid
-    public void CarregaGrid()
-    {
+    public void CarregaGrid() {
         mStart = 0;
         mPersonalAdapter = null;
         mAgendasListView = (ListView)findViewById(R.id.lstAgenda);
