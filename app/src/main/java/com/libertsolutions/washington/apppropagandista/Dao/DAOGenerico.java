@@ -265,6 +265,18 @@ public abstract class DAOGenerico<T extends ModeloBase> {
     }
 
     /**
+     * Lista todos registros da tabela.
+     *
+     * @return o conjunto de entidades.
+     */
+    public @Nullable List<T> listar() {
+        Preconditions.checkState(mDatabase != null,
+                "é preciso chamar o método openDatabase() antes");
+
+        return listar(null, null);
+    }
+
+    /**
      * Especifica o nome da tabela usado no método {@link #query(String, String[], String, String)},
      * podendo ser usado também nas implementações dos métodos {@link #incluir(ModeloBase)},
      * {@link #alterar(ModeloBase)}, {@link #consultar(Integer)}, {@link #listar(Status)} e

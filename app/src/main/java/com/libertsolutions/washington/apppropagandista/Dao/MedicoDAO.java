@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
-import java.util.List;
 
 /**
  * Classe de acesso aos dados de {@link Medico}. Esta classe contém todas operações
@@ -209,12 +208,5 @@ public class MedicoDAO extends DAOGenerico<Medico> {
                 String.valueOf(medico.getId()) };
 
         return mDatabase.update(TABELA_MEDICO, valores, where, whereById);
-    }
-
-    public @Nullable List<Medico> listar() {
-        Preconditions.checkState(mDatabase != null,
-                "é preciso chamar o método openDatabase() antes");
-
-        return listar(null, null);
     }
 }
