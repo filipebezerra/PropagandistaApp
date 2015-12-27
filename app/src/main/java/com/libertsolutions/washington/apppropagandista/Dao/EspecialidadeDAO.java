@@ -19,7 +19,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Status;
  */
 public class EspecialidadeDAO extends DAOGenerico<Especialidade> {
     static final String TABELA_ESPECIALIDADE = "Especialidade";
-    static final String COLUNA_ID_ESPECIALIDADE = "id_especialidade";
+    public static final String COLUNA_ID_ESPECIALIDADE = "id_especialidade";
     private static final String COLUNA_NOME = "nome";
 
     private static final String[] PROJECAO_TODAS_COLUNAS = {

@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,7 +23,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnTouch;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -36,22 +37,19 @@ import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
-import java.util.Calendar;
 import java.util.List;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import static android.support.design.widget.Snackbar.LENGTH_LONG;
 import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
-import static org.joda.time.format.DateTimeFormat.forPattern;
 
 public class CadastroCompromissoActivity extends AppCompatActivity
     implements
@@ -156,6 +154,22 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         mAgendaDAO.closeDatabase();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_cadastro_compromisso, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_salvar) {
+            save();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
+
     @OnEditorAction(R.id.txtMedico)
     public boolean onTxtMedicoEditorAction(final int actionId) {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
@@ -202,8 +216,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         return null;
     }
 
-    @OnClick(R.id.btnSalvar)
-    public void onBtnSalvarClick() {
+    public void save() {
         boolean isFormValid = true;
 
         if (TextUtils.isEmpty(mMedicoView.getText())) {
@@ -260,6 +273,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
                 Snackbar.make(mRootLayout, "Houve um erro ao salvar a agenda. Tente novamente!",
                         LENGTH_LONG).show();
             } else {
+                novaAgenda.setId(idNovaAgenda);
                 sincronizarNovaAgenda(novaAgenda);
             }
         } else {
@@ -282,7 +296,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     private DateTime obtainDateFromField() {
         if (!TextUtils.isEmpty(mDataCompromissoView.getText())) {
             final String dateText = mDataCompromissoView.getText().toString();
-            return DateTime.parse(dateText, forPattern("dd/MM/yyyy"));
+            return DateUtil.toDate(dateText);
         }
 
         return null;
@@ -291,7 +305,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     private DateTime obtainTimeFromField() {
         if (!TextUtils.isEmpty(mHorarioCompromissoView.getText())) {
             final String timeText = mHorarioCompromissoView.getText().toString();
-            return DateTime.parse(timeText, forPattern("HH:mm"));
+            return DateUtil.toTime(timeText);
         }
 
         return null;
@@ -356,13 +370,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     @Override
     public void onDateSet(CalendarDatePickerDialogFragment dialog, int year, int monthOfYear,
             int dayOfMonth) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, monthOfYear);
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-        final String date = LocalDate.fromCalendarFields(calendar).toString("dd/MM/yyyy");
-        mDataCompromissoView.setText(date);
+        mDataCompromissoView.setText(DateUtil.format(year, monthOfYear, dayOfMonth));
 
         if (TextUtils.isEmpty(mHorarioCompromissoView.getText())) {
             showTimePicker();
@@ -371,12 +379,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
 
     @Override
     public void onTimeSet(RadialTimePickerDialogFragment dialog, int hourOfDay, int minute) {
-        final Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-
-        final String time = LocalTime.fromCalendarFields(calendar).toString("HH:mm");
-        mHorarioCompromissoView.setText(time);
+        mHorarioCompromissoView.setText(DateUtil.format(hourOfDay, minute));
 
         if (TextUtils.isEmpty(mObservacaoView.getText())) {
             mObservacaoView.requestFocus();

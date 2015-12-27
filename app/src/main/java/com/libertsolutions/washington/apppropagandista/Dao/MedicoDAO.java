@@ -215,6 +215,6 @@ public class MedicoDAO extends DAOGenerico<Medico> {
         Preconditions.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        return listar(null, null,null);
+        return listar(null, null);
     }
 }

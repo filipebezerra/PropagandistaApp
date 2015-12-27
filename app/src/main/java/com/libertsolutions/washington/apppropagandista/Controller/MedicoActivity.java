@@ -5,18 +5,14 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
@@ -30,15 +26,14 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MedicoActivity extends ActionBarActivity {
-    private ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<HashMap<String, String>>();
-    private PersonalAdapter arrayAdapter;
-    private ListView grdMedicos;
+    ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<HashMap<String, String>>();
+    PersonalAdapter arrayAdapter;
+    ListView grdMedicos;
     private boolean isLoadMore = false;
-    private ProgressDialog pDialog;
+    ProgressDialog pDialog;
     private MedicoDAO mMedicoDAO;
-    private int start = 0;
-    private int limit = 20;
-    private String filter;
+    int start = 0;
+    int limit = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,42 +48,13 @@ public class MedicoActivity extends ActionBarActivity {
         MenuInflater inflater = getMenuInflater();
         // Inflate menu to add items to action bar if it is present.
         inflater.inflate(R.menu.search_menu, menu);
-
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if(newText.length() > 2)
-                {
-                    filter = "(nome||telefone||secretaria) like '%"+newText+"%'";
-                    start = 0;
-                    limit = 20;
-                    arrayAdapter = null;
-                    grdMedicos = (ListView)findViewById(R.id.lstMedicos);
-                    lstMedicos = new ArrayList<HashMap<String, String>>();
-                    PreencheGrid(start,limit);
-                }else
-                {
-                    filter = null;
-                    start = 0;
-                    limit = 20;
-                    arrayAdapter = null;
-                    grdMedicos = (ListView)findViewById(R.id.lstMedicos);
-                    lstMedicos = new ArrayList<HashMap<String, String>>();
-                    PreencheGrid(start,limit);
-                }
-                return false;
-            }
-        });
-
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
 
         return true;
     }
@@ -177,7 +143,7 @@ public class MedicoActivity extends ActionBarActivity {
         try
         {
             List<Medico> lista = new ArrayList<Medico>();
-            lista = mMedicoDAO.listar(String.valueOf(start), String.valueOf(limit),filter);
+            lista = mMedicoDAO.listar(String.valueOf(start), String.valueOf(limit));
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] {"id","col1", "col2","col3"};
 

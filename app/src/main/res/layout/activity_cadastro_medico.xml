@@ -28,10 +28,10 @@
             <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <EditText android:id="@+id/txtNome" android:layout_width="match_parent"
+                <EditText android:id="@+id/txtNomeMedico" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:imeActionId="@+id/txtNome"
-                    android:hint="@string/txtNome"
+                    android:imeActionId="@+id/txtNomeMedico"
+                    android:hint="@string/hintNomeMedico"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPersonName"
                     android:maxLines="1" android:singleLine="true" />
@@ -43,7 +43,7 @@
                 <EditText android:id="@+id/txtDtAniversario" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeActionId="@+id/txtDtAniversario"
-                    android:hint="@string/txtDtAniversario"
+                    android:hint="@string/hintDtAniversario"
                     android:imeOptions="actionUnspecified"
                     android:inputType="date"
                     android:maxLines="1" android:singleLine="true" />
@@ -55,7 +55,7 @@
                 <EditText android:id="@+id/txtSecretaria" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeActionId="@+id/txtSecretaria"
-                    android:hint="@string/txtSecretaria"
+                    android:hint="@string/hintSecretaria"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPersonName"
                     android:maxLines="1" android:singleLine="true" />
@@ -67,7 +67,7 @@
                 <EditText android:id="@+id/txtTelefone" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeActionId="@+id/txtTelefone"
-                    android:hint="@string/txtTelefone"
+                    android:hint="@string/hintTelefone"
                     android:imeOptions="actionUnspecified"
                     android:inputType="phone"
                     android:maxLines="1" android:singleLine="true" />
@@ -78,7 +78,7 @@
                <EditText android:id="@+id/txtEmail" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeActionId="@+id/txtEmail"
-                    android:hint="@string/txtEmail"
+                    android:hint="@string/hintEmail"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textEmailAddress"
                     android:maxLines="1" android:singleLine="true" />
@@ -90,7 +90,7 @@
                 <EditText android:id="@+id/txtCrm" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeActionId="@+id/txtCrm"
-                    android:hint="@string/txtCrm"
+                    android:hint="@string/hintCrm"
                     android:imeOptions="actionUnspecified"
                     android:inputType="number"
                     android:maxLines="1" android:singleLine="true" />
@@ -102,7 +102,7 @@
                 <EditText android:id="@+id/txtEspecialidade" android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeActionId="@+id/txtEspecialidade"
-                    android:hint="@string/txtEspecialidade"
+                    android:hint="@string/hintEspecialidade"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textAutoComplete"
                     android:maxLines="1" android:singleLine="true" />

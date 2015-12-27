@@ -9,10 +9,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 
 /**
- * .
+ * Classe utilitária para realizar transformações, definir tons de cores em {@link Drawable}s.
  *
  * @author Filipe Bezerra
- * @version 01.0, 27/12/2015
+ * @version 0.1.0, 27/12/2015
  * @since 0.1.0
  */
 public class DrawableUtil {

@@ -1,6 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class Medico extends ModeloBase<Medico> {
                 .setIdEspecialidade(model.idEspecialidade);
     }
 
-    public static MedicoModel toModel(@NonNull Medico medico, @NonNull List<Endereco> enderecos) {
+    public static MedicoModel toModel(@NonNull Medico medico, @Nullable List<Endereco> enderecos) {
         Preconditions.checkNotNull(medico, "medico não pode ser nulo");
         Preconditions.checkNotNull(medico.getId(),
                 "medico.getId() não pode ser nulo");
@@ -87,7 +88,7 @@ public class Medico extends ModeloBase<Medico> {
         model.crm = medico.getCrm();
         model.idEspecialidade = medico.getIdEspecialidade();
 
-        if (enderecos.isEmpty()) {
+        if (enderecos == null || enderecos.isEmpty()) {
             model.enderecos = Collections.emptyList();
         } else {
             model.enderecos = new ArrayList<>();
