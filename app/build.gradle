@@ -34,7 +34,6 @@ dependencies {
     compile libs.support_v4
     compile libs.supportPreference_v7
     compile libs.supportCardView
-    compile libs.supportMultidex
     compile libs.butterKnife
     compile (libs.materialDialogs) { transitive = true }
     compile libs.retrofit
@@ -47,7 +46,6 @@ dependencies {
     compile libs.guava
     compile libs.jodaTime
     compile libs.betterPickers
-    compile libs.libphonenumber
 
     testCompile unitTests.junit
 }
