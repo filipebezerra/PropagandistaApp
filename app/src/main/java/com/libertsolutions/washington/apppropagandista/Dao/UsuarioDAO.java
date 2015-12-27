@@ -39,7 +39,7 @@ public class UsuarioDAO extends DAOGenerico<Usuario> {
                     COLUNA_EMAIL + " TEXT not null, " +
                     COLUNA_SENHA + " TEXT not null, " +
                     COLUNA_STATUS + " INTEGER, " +
-                    " UNIQUE (" + COLUNA_ID_USUARIO + ") ON CONFLICT REPLACE);";
+                    " UNIQUE (" + COLUNA_ID_USUARIO + ") ON CONFLICT IGNORE);";
 
     /**
      * Construtor padrão.
@@ -109,10 +109,10 @@ public class UsuarioDAO extends DAOGenerico<Usuario> {
         Preconditions.checkNotNull(usuario.getSenha(),
                 "usuario.getSenha() não pode ser nulo");
 
-        Preconditions.checkState(
-                usuario.getStatus() != Status.Importado
-                        || usuario.getIdUsuario() == null,
-                "usuario.getIdUsuario() não pode ser nulo");
+        if (usuario.getStatus() == Status.Importado ) {
+            Preconditions.checkNotNull(usuario.getIdUsuario(),
+                    "usuario.getIdUsuario() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 

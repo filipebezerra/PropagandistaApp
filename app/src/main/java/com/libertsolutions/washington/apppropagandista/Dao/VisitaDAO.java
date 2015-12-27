@@ -60,7 +60,7 @@ public class VisitaDAO extends DAOGenerico<Visita> {
             " FOREIGN KEY (" + COLUNA_RELACAO_AGENDA +
                 ") REFERENCES " + AgendaDAO.TABELA_AGENDA +
                 " (" + AgendaDAO.COLUNA_ID_AGENDA + "), " +
-            " UNIQUE (" + COLUNA_ID_VISITA + ") ON CONFLICT REPLACE);";
+            " UNIQUE (" + COLUNA_ID_VISITA + ") ON CONFLICT IGNORE);";
 
     /**
      * Construtor padrão.
@@ -146,9 +146,10 @@ public class VisitaDAO extends DAOGenerico<Visita> {
         Preconditions.checkNotNull(visita.getIdAgenda(),
                 "visita.getIdAgenda() não pode ser nula");
 
-        Preconditions.checkState(
-                visita.getStatus() != Status.Importado || visita.getIdVisita() == null,
-                "visita.getIdVisita() não pode ser nulo");
+        if (visita.getStatus() == Status.Importado ) {
+            Preconditions.checkNotNull(visita.getIdVisita(),
+                    "visita.getIdVisita() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 
@@ -197,11 +198,12 @@ public class VisitaDAO extends DAOGenerico<Visita> {
 
         Preconditions.checkNotNull(visita.getStatus(),
                 "visita.getStatus() não pode ser nula");
-        Preconditions.checkState(
-                ((visita.getStatus() == Status.Enviado
-                        || visita.getStatus() == Status.Importado)
-                        && visita.getIdVisita() == null),
-                "visita.getIdVisita() não pode ser nulo");
+
+        if (visita.getStatus() == Status.Enviado ||
+                visita.getStatus() == Status.Importado) {
+            Preconditions.checkNotNull(visita.getIdVisita(),
+                    "visita.getIdVisita() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 

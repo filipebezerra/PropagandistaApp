@@ -64,7 +64,7 @@ public class EnderecoDAO extends DAOGenerico<Endereco> {
             " FOREIGN KEY (" + COLUNA_RELACAO_MEDICO +
                 ") REFERENCES " + MedicoDAO.TABELA_MEDICO +
                 " (" + MedicoDAO.COLUNA_ID_MEDICO + "), " +
-            " UNIQUE (" + COLUNA_ID_ENDERECO + ") ON CONFLICT REPLACE);";
+            " UNIQUE (" + COLUNA_ID_ENDERECO + ") ON CONFLICT IGNORE);";
 
     /**
      * Construtor padrão.
@@ -140,9 +140,10 @@ public class EnderecoDAO extends DAOGenerico<Endereco> {
         Preconditions.checkNotNull(endereco.getIdMedico(),
                 "endereco.getIdMedico() não pode ser nula");
 
-        Preconditions.checkState(
-                endereco.getStatus() != Status.Importado || endereco.getIdEndereco() == null,
-                "endereco.getIdEndereco() não pode ser nulo");
+        if (endereco.getStatus() == Status.Importado ) {
+            Preconditions.checkNotNull(endereco.getIdEndereco(),
+                    "endereco.getIdEndereco() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 
@@ -183,11 +184,12 @@ public class EnderecoDAO extends DAOGenerico<Endereco> {
 
         Preconditions.checkNotNull(endereco.getStatus(),
                 "endereco.getStatus() não pode ser nula");
-        Preconditions.checkState(
-                ((endereco.getStatus() == Status.Enviado
-                        || endereco.getStatus() == Status.Importado)
-                        && endereco.getIdEndereco() == null),
-                "endereco.getIdEndereco() não pode ser nulo");
+
+        if (endereco.getStatus() == Status.Enviado ||
+                endereco.getStatus() == Status.Importado) {
+            Preconditions.checkNotNull(endereco.getIdEndereco(),
+                    "endereco.getIdEndereco() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 

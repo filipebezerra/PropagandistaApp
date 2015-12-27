@@ -48,7 +48,7 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
             " FOREIGN KEY (" + COLUNA_RELACAO_MEDICO +
                 ") REFERENCES " + MedicoDAO.TABELA_MEDICO +
                 " (" + MedicoDAO.COLUNA_ID_MEDICO + "), " +
-            " UNIQUE (" + COLUNA_ID_AGENDA + ") ON CONFLICT REPLACE);";
+            " UNIQUE (" + COLUNA_ID_AGENDA + ") ON CONFLICT IGNORE);";
 
     /**
      * Construtor padrão.
@@ -107,7 +107,8 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
     @Override
     public long incluir(@NonNull Agenda agenda) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Preconditions.checkState(mDatabase != null,
+                "é preciso chamar o método openDatabase() antes");
 
         Preconditions.checkNotNull(agenda, "agenda não pode ser nula");
         Preconditions.checkNotNull(agenda.getDataCompromisso(),
@@ -118,9 +119,11 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
                 "agenda.getStatus() não pode ser nulo");
         Preconditions.checkNotNull(agenda.getStatusAgenda(),
                 "agenda.getStatusAgenda() não pode ser nulo");
-        Preconditions.checkState(
-                agenda.getStatus() != Status.Importado || agenda.getIdAgenda() == null,
-                "agenda.getIdAgenda() não pode ser nulo");
+
+        if (agenda.getStatus() == Status.Importado ) {
+            Preconditions.checkNotNull(agenda.getIdAgenda(),
+                    "agenda.getIdAgenda() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 
@@ -158,11 +161,12 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
                 "agenda.getStatusAgenda() não pode ser nula");
         Preconditions.checkNotNull(agenda.getStatus(),
                 "agenda.getStatus() não pode ser nula");
-        Preconditions.checkState(
-                ((agenda.getStatus() == Status.Enviado
-                        || agenda.getStatus() == Status.Importado)
-                        && agenda.getIdAgenda() == null),
-                "agenda.getIdAgenda() não pode ser nulo");
+
+        if (agenda.getStatus() == Status.Enviado ||
+                agenda.getStatus() == Status.Importado) {
+            Preconditions.checkNotNull(agenda.getIdAgenda(),
+                    "agenda.getIdAgenda() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 

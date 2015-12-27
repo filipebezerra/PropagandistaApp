@@ -35,7 +35,7 @@ public class EspecialidadeDAO extends DAOGenerico<Especialidade> {
                     COLUNA_ID_ESPECIALIDADE + " INTEGER, " +
                     COLUNA_NOME + " TEXT, " +
                     COLUNA_STATUS + " INTEGER, " +
-            " UNIQUE (" + COLUNA_ID_ESPECIALIDADE + ") ON CONFLICT REPLACE);";
+            " UNIQUE (" + COLUNA_ID_ESPECIALIDADE + ") ON CONFLICT IGNORE);";
 
     /**
      * Construtor padrão.
@@ -91,10 +91,10 @@ public class EspecialidadeDAO extends DAOGenerico<Especialidade> {
         Preconditions.checkNotNull(especialidade.getNome(),
                 "especialidade.getNome() não pode ser nulo");
 
-        Preconditions.checkState(
-                especialidade.getStatus() != Status.Importado
-                        || especialidade.getIdEspecialidade() == null,
-                "especialidade.getIdEspecialidade() não pode ser nulo");
+        if (especialidade.getStatus() == Status.Importado ) {
+            Preconditions.checkNotNull(especialidade.getIdEspecialidade(),
+                    "especialidade.getIdEspecialidade() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 
@@ -122,11 +122,12 @@ public class EspecialidadeDAO extends DAOGenerico<Especialidade> {
 
         Preconditions.checkNotNull(especialidade.getStatus(),
                 "especialidade.getStatus() não pode ser nula");
-        Preconditions.checkState(
-                ((especialidade.getStatus() == Status.Enviado
-                        || especialidade.getStatus() == Status.Importado)
-                        && especialidade.getIdEspecialidade() == null),
-                "especialidade.getIdEspecialidade() não pode ser nulo");
+
+        if (especialidade.getStatus() == Status.Enviado ||
+                especialidade.getStatus() == Status.Importado) {
+            Preconditions.checkNotNull(especialidade.getIdEspecialidade(),
+                    "especialidade.getIdEspecialidade() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 

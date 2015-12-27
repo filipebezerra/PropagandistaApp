@@ -58,7 +58,7 @@ public class MedicoDAO extends DAOGenerico<Medico> {
             " FOREIGN KEY (" + COLUNA_RELACAO_ESPECIALIDADE +
                 ") REFERENCES " + EspecialidadeDAO.TABELA_ESPECIALIDADE +
                 " (" + EspecialidadeDAO.COLUNA_ID_ESPECIALIDADE + "), " +
-            " UNIQUE (" + COLUNA_ID_MEDICO + ") ON CONFLICT REPLACE);";
+            " UNIQUE (" + COLUNA_ID_MEDICO + ") ON CONFLICT IGNORE);";
 
 
     /**
@@ -133,9 +133,10 @@ public class MedicoDAO extends DAOGenerico<Medico> {
         Preconditions.checkNotNull(medico.getIdEspecialidade(),
                 "medico.getIdEspecialidade() não pode ser nula");
 
-        Preconditions.checkState(
-                medico.getStatus() != Status.Importado || medico.getIdMedico() == null,
-                "medico.getIdMedico() não pode ser nulo");
+        if (medico.getStatus() == Status.Importado ) {
+            Preconditions.checkNotNull(medico.getIdMedico(),
+                    "medico.getIdMedico() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 
@@ -175,11 +176,12 @@ public class MedicoDAO extends DAOGenerico<Medico> {
 
         Preconditions.checkNotNull(medico.getStatus(),
                 "medico.getStatus() não pode ser nula");
-        Preconditions.checkState(
-                ((medico.getStatus() == Status.Enviado
-                        || medico.getStatus() == Status.Importado)
-                        && medico.getIdMedico() == null),
-                "medico.getIdVisita() não pode ser nulo");
+
+        if (medico.getStatus() == Status.Enviado ||
+                medico.getStatus() == Status.Importado) {
+            Preconditions.checkNotNull(medico.getIdMedico(),
+                    "medico.getIdVisita() não pode ser nulo");
+        }
 
         ContentValues valores = new ContentValues();
 
