@@ -105,7 +105,13 @@
         <activity
             android:name=".Controller.CadastroCompromissoActivity"
             android:label="@string/title_agenda_cadastrar"
-            android:parentActivityName=".Controller.AgendaActivity" />
+            android:parentActivityName=".Controller.AgendaActivity"
+            android:windowSoftInputMode="stateVisible"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controller.AgendaActivity" />
+        </activity>
 
         <!-- Tela Consultar Médico -->
         <activity

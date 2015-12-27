@@ -188,10 +188,11 @@
     <string name="txtTelefone">Telefone</string>
     <string name="txtCrm">Crm</string>
     <string name="txtEspecialidade">Especialidade Médica</string>
-    <string name="txtData">Data</string>
-    <string name="txtHora">Hora</string>
-    <string name="txtObs">Observação</string>
-    <string name="txtMedico">Médico</string>
+
+    <string name="hintTxtMedico">Digite para selecionar qual médico</string>
+    <string name="hintTxtDataCompromisso">Toque aqui para selecionar a data</string>
+    <string name="hintTxtHorárioCompromisso">Toque aqui para selecionar o horário</string>
+    <string name="txtObservacao">Observações</string>
 
     <!-- Textos Botões -->
     <string name="btnSalvar">Salvar</string>
@@ -203,4 +204,5 @@
     <string name="pref_auth_key">Chave de autenticação</string>
     <string name="pref_auth_key_summary">Chave de acesso ao servidor de sincronização</string>
     <string name="title_activity_sincronizar">Sincronizar Dados</string>
+
 </resources>

@@ -105,7 +105,10 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
 
+        mMedicoDAO.openDatabase();
         final List<Medico> medicos = mMedicoDAO.listar();
+        mMedicoDAO.closeDatabase();
+
         mMedicosAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, medicos);
         mMedicosAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);

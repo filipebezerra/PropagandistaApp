@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="btnSalvar" type="id" />
+    <item name="frame" type="id" />
+    <item name="toolbar" type="id" />
+    <item name="root_layout" type="id" />
+</resources>
