@@ -1,6 +1,5 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,9 +17,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
+import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
+import com.libertsolutions.washington.apppropagandista.Model.Agenda;
+import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
 import com.libertsolutions.washington.apppropagandista.Util.Navigator;
 import com.libertsolutions.washington.apppropagandista.Util.PersonalAdapter;
@@ -28,6 +32,10 @@ import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import org.joda.time.DateTime;
+
+import static com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO.COLUNA_STATUS_AGENDA;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -39,13 +47,15 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
     @Bind(R.id.nav_view) NavigationView mNavigationView;
 
-    ArrayList<HashMap<String, String>> lstAgenda = new ArrayList<HashMap<String, String>>();
-    PersonalAdapter arrayAdapter;
-    private boolean isLoadMore = false;
-    ProgressDialog pDialog;
-    private AgendaDAO agendaDb;
-    int start = 0;
-    int limit = 20;
+    private ArrayList<HashMap<String, String>> mListaAgenda = new ArrayList<>();
+    private PersonalAdapter mPersonalAdapter;
+    private boolean mIsLoadMore = false;
+    private MaterialDialog mProgressDialog;
+    private int mStart = 0;
+    private int mLimit = 20;
+
+    private AgendaDAO mAgendaDAO;
+    private MedicoDAO mMedicoDAO;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,8 +85,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        this.agendaDb = new AgendaDAO(this);
+
+        mAgendaDAO = new AgendaDAO(this);
+        mAgendaDAO.openDatabase();
+
+        mMedicoDAO = new MedicoDAO(this);
+        mMedicoDAO.openDatabase();
+
         CarregaGrid();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAgendaDAO.closeDatabase();
+        mMedicoDAO.closeDatabase();
     }
 
     @Override
@@ -143,13 +166,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void CarregaGrid() {
-        start = 0;
-        arrayAdapter = null;
-        lstAgenda = new ArrayList<>();
+        mStart = 0;
+        mPersonalAdapter = null;
+        mListaAgenda = new ArrayList<>();
 
         //Preenche Grid com dados iniciais
-        PreencheGrid(start, limit);
-        start += 10;
+        PreencheGrid(mStart, mLimit);
+        mStart += 10;
 
         //Evento Click na Grid
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -172,8 +195,8 @@ public class MainActivity extends AppCompatActivity
                     int totalItemCount) {
                 int lastInScreen = firstVisibleItem + visibleItemCount;
                 if ((lastInScreen == totalItemCount)) {
-                    if (!isLoadMore) {
-                        isLoadMore = true;
+                    if (!mIsLoadMore) {
+                        mIsLoadMore = true;
                         new loadMoreListView().execute();
                     }
                 }
@@ -185,66 +208,59 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    //Metódo para preencher Grid
     private void PreencheGrid(int start, int limit) {
-        //TODO reimplementar
-        /*
-        try {
-            List<Agenda> lista = new ArrayList<>();
-            lista = agendaDb.listar(String.valueOf(start), String.valueOf(limit), "statusagenda=?",
-                    "1");
+        List<Agenda> lista = mAgendaDAO.listar(String.valueOf(mStart), String.valueOf(mLimit),
+                COLUNA_STATUS_AGENDA + " = ?", "1");
+
+        if (lista != null) {
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] { "id", "col1", "col2", "col3" };
-
             //Recupera id das colunas do layout list_itens_ped
             int[] columnIds = new int[] { R.id.id, R.id.column1, R.id.column2, R.id.column3 };
-            for (int i = 0; i < lista.size(); i++) {
-                Agenda agenda = lista.get(i);
-                HashMap<String, String> map = new HashMap<String, String>();
-                map.put(columnTags[0], String.valueOf(agenda.getId()));  //Id
-                map.put(columnTags[1], agenda.getIdMedico().getNome());  //Médico
-                map.put(columnTags[2],
-                        "Data: " + agenda.getData() + " " + agenda.getHora());  //Data e Horário
-                map.put(columnTags[3], "Obs: " + agenda.getObservacao());  //Observação
-                //Adiciona dados no Arraylist
-                lstAgenda.add(map);
+
+            for (Agenda agenda : lista) {
+                HashMap<String, String> map = new HashMap<>();
+                map.put(columnTags[0], String.valueOf(agenda.getId()));
+
+                final Medico medico = mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO + " = ?",
+                        String.valueOf(agenda.getIdMedico()));
+
+                map.put(columnTags[1], medico != null ? medico.getNome() : "");
+                map.put(columnTags[2], "Data: " + new DateTime(agenda.getDataCompromisso())
+                        .toString("dd/MM/yyyy - HH:mm"));
+                map.put(columnTags[3], "Obs: " + agenda.getObservacao());
+
+                mListaAgenda.add(map);
             }
 
             int currentPosition = mListView.getFirstVisiblePosition();
             //Função para realizar adptação necessária para inserir dados no ListView
-            arrayAdapter = new PersonalAdapter(this, lstAgenda, R.layout.cols_3, columnTags,
+            mPersonalAdapter = new PersonalAdapter(this, mListaAgenda, R.layout.cols_3, columnTags,
                     columnIds);
 
             //Adiciona Array no ListView
-            mListView.setAdapter(arrayAdapter);
-            if (start > 1) {
+            mListView.setAdapter(mPersonalAdapter);
+            if (mStart > 1) {
                 mListView.setSelectionFromTop(currentPosition + 1, 0);
             }
-        } catch (Exception error) {
-            Mensagem.MensagemAlerta("Preenche Grid", error.getMessage(), MainActivity.this);
         }
-        */
     }
 
     private class loadMoreListView extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
-            // Showing progress dialog before sending http request
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Carregando...");
-            pDialog.setIndeterminate(true);
-            pDialog.setCancelable(false);
-            pDialog.show();
+            mProgressDialog = Dialogos
+                    .mostrarProgresso(MainActivity.this, "Carregando compromissos...", false);
         }
 
         protected Void doInBackground(Void... unused) {
             runOnUiThread(new Runnable() {
                 public void run() {
-                    if (start > 1) {
-                        start += 10;
+                    if (mStart > 1) {
+                        mStart += 10;
                         // increment current page
-                        PreencheGrid(start, limit);
+                        PreencheGrid(mStart, mLimit);
                     }
                 }
             });
@@ -253,8 +269,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         protected void onPostExecute(Void unused) {
-            // closing progress dialog
-            pDialog.dismiss();
+            mProgressDialog.dismiss();
         }
     }
 }

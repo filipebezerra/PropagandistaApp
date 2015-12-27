@@ -177,7 +177,8 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * @return a entidade que corresponde.
      */
     public @Nullable T consultar(@NonNull Integer id) {
-        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Preconditions.checkState(mDatabase != null,
+                "é preciso chamar o método openDatabase() antes");
 
         Preconditions.checkNotNull(id, "id não deve ser nulo");
         Preconditions.checkState(id > 0, "id não deve ser menor que zero");
@@ -188,6 +189,20 @@ public abstract class DAOGenerico<T extends ModeloBase> {
         Cursor cursor = null;
         try {
             cursor = query(where, whereById, null, null);
+            return cursor != null ? toSingleEntity(cursor) : null;
+        } finally {
+            closeCursor(cursor);
+        }
+    }
+
+    public @Nullable T consultar(@NonNull String filter, @NonNull String... args) {
+        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Preconditions.checkNotNull(filter, "filter não pode ser nulo");
+        Preconditions.checkNotNull(args, "args não pode ser nulo");
+
+        Cursor cursor = null;
+        try {
+            cursor = query(filter, args, null, null);
             return cursor != null ? toSingleEntity(cursor) : null;
         } finally {
             closeCursor(cursor);

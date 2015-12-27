@@ -21,7 +21,7 @@ import java.util.List;
 
 public class MedicoDAO extends DAOGenerico<Medico> {
     static final String TABELA_MEDICO = "Medico";
-    static final String COLUNA_ID_MEDICO = "id_medico";
+    public static final String COLUNA_ID_MEDICO = "id_medico";
     private static final String COLUNA_NOME = "nome";
     private static final String COLUNA_DATA_ANIVERSARIO = "dt_aniversario";
     private static final String COLUNA_SECRETARIA = "secretaria";

@@ -23,7 +23,7 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
     static final String COLUNA_ID_AGENDA = "id_agenda";
     private static final String COLUNA_DT_COMPROMISSO = "dt_compromisso";
     private static final String COLUNA_OBSERVACAO = "observacao";
-    private static final String COLUNA_STATUS_AGENDA = "status_agenda";
+    public static final String COLUNA_STATUS_AGENDA = "status_agenda";
     private static final String COLUNA_RELACAO_MEDICO = "id_medico";
 
     private static final String[] PROJECAO_TODAS_COLUNAS = {
