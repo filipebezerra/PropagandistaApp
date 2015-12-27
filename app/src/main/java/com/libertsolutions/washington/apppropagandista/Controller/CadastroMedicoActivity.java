@@ -25,9 +25,6 @@ public class CadastroMedicoActivity extends AppCompatActivity {
     @Bind(R.id.txtCrm)
     EditText txtCrm;
 
-    @Bind(R.id.txtEspecialidade)
-    EditText txtEspecialidade;
-
     @Bind(R.id.btnSalvar)
     Button btnSalvar;
     DatePickerDialog dataAniversario;
@@ -131,11 +128,6 @@ public class CadastroMedicoActivity extends AppCompatActivity {
             medico.setCrm("");
         else
             medico.setCrm(this.txtCrm.getText().toString());
-
-        if(TextUtils.isEmpty(txtEspecialidade.getText().toString()))
-            medico.setEspecialidade("");
-        else
-            medico.setEspecialidade(this.txtEspecialidade.getText().toString());
 
         return medico;
     }
