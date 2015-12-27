@@ -63,7 +63,7 @@ public class MedicoActivity extends ActionBarActivity {
             public boolean onQueryTextChange(String newText) {
                 if(newText.length() > 2)
                 {
-                    filter = "(nome||telefone||secretaria) like '%"+newText+"%'";
+                    filter = "lower(nome||telefone||secretaria) like '%"+newText.toLowerCase()+"%'";
                     start = 0;
                     limit = 20;
                     arrayAdapter = null;
