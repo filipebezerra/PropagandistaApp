@@ -19,8 +19,8 @@ public class PreferencesUtils {
     private static final String USER_NAME_KEY = "user-name";
     private static final String USER_CPF_KEY = "user-cpf";
     private static final String USER_EMAIL_KEY = "user-email";
-    private static final String PREF_SERVER_URL = "pref_url";
-    private static final String PREF_AUTH_KEY = "pref_auth_key";
+    public static final String PREF_SERVER_URL = "pref_url";
+    public static final String PREF_AUTH_KEY = "pref_auth_key";
 
     public static boolean isUserLogged(@NonNull Context context) {
         final SharedPreferences preferences = PreferenceManager
