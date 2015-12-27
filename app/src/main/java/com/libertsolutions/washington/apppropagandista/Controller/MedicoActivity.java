@@ -5,7 +5,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PersonalAdapter;
@@ -25,15 +27,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MedicoActivity extends ActionBarActivity {
-    ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<HashMap<String, String>>();
-    PersonalAdapter arrayAdapter;
-    ListView grdMedicos;
+public class MedicoActivity extends AppCompatActivity {
+    private ArrayList<HashMap<String, String>> lstMedicos = new ArrayList<>();
+    private PersonalAdapter arrayAdapter;
+    private ListView grdMedicos;
     private boolean isLoadMore = false;
-    ProgressDialog pDialog;
+    private ProgressDialog pDialog;
     private MedicoDAO mMedicoDAO;
-    int start = 0;
-    int limit = 20;
+    private int start = 0;
+    private int limit = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +48,15 @@ public class MedicoActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        // Inflate menu to add items to action bar if it is present.
         inflater.inflate(R.menu.search_menu, menu);
-        // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView =
-                (SearchView) menu.findItem(R.id.menu_search).getActionView();
+                (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+
+        DrawableUtil.tint(this, menu.findItem(R.id.action_novo).getIcon(), R.color.white);
 
         return true;
     }
