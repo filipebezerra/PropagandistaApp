@@ -1,17 +1,21 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.CheckBox;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.EnderecoDAO;
+import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Endereco;
@@ -44,11 +48,17 @@ public class SincronizarActivity extends AppCompatActivity {
     private MedicoDAO mMedicoDAO;
     private EnderecoDAO mEnderecoDAO;
     private AgendaDAO mAgendaDAO;
+    private EspecialidadeDAO mEspecialidadeDAO;
 
     private MaterialDialog mProgressDialog;
 
     @Bind(R.id.chkMedicos) protected CheckBox mChkSincMedicos;
     @Bind(R.id.chkAgendas) protected CheckBox mChkSincAgendas;
+
+    private Propagandista mUsuarioLogado;
+
+    private MedicoService mMedicoService;
+    private AgendaService mAgendaService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +69,41 @@ public class SincronizarActivity extends AppCompatActivity {
         mMedicoDAO = new MedicoDAO(this);
         mEnderecoDAO = new EnderecoDAO(this);
         mAgendaDAO = new AgendaDAO(this);
+        mEspecialidadeDAO = new EspecialidadeDAO(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        mUsuarioLogado = PreferencesUtils.getUserLogged(this);
+
+        if (mUsuarioLogado == null || TextUtils.isEmpty(mUsuarioLogado.getCpf())) {
+            Dialogos.mostrarMensagem(this, "Não é possível continuar",
+                    "Não há usuário logado ou há erros no cpf configurado!",
+                    new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog materialDialog,
+                                @NonNull DialogAction dialogAction) {
+                            finish();
+                        }
+                    });
+        }
+
+        mMedicoService = createService(MedicoService.class, this);
+        mAgendaService = createService(AgendaService.class, this);
+
+        if (mMedicoService == null || mAgendaService == null) {
+            Dialogos.mostrarMensagem(this, "Não é possível continuar",
+                    "As configurações de sincronização não foram aplicadas corretamente.",
+                    new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog materialDialog,
+                                @NonNull DialogAction dialogAction) {
+                            finish();
+                        }
+                    });
+        }
     }
 
     @Override
@@ -68,6 +113,7 @@ public class SincronizarActivity extends AppCompatActivity {
         mMedicoDAO.openDatabase();
         mEnderecoDAO.openDatabase();
         mAgendaDAO.openDatabase();
+        mEspecialidadeDAO.openDatabase();
     }
 
     @Override
@@ -77,6 +123,7 @@ public class SincronizarActivity extends AppCompatActivity {
         mMedicoDAO.closeDatabase();
         mEnderecoDAO.closeDatabase();
         mAgendaDAO.closeDatabase();
+        mEspecialidadeDAO.closeDatabase();
     }
 
     @OnCheckedChanged(R.id.chkTodos)
@@ -106,29 +153,25 @@ public class SincronizarActivity extends AppCompatActivity {
         }
     }
 
+    private void importarEspecialidades() {
+
+    }
+
     /**
      * Faz uma requisição GET no servidor solicitando os médicos cadastradas para o
      * propagandista logado.
      */
     public void importarMedicos() {
-        final MedicoService service = createService(MedicoService.class, this);
-        final Propagandista propagandista = PreferencesUtils.getUserLogged(this);
+        dismissDialog();
+        mProgressDialog = Dialogos
+                .mostrarProgresso(this, "Por favor aguarde, importando cadastros de médicos",
+                        false);
 
-        if (service == null) {
-            Dialogos.mostrarMensagem(this, "Sincronização dos dados",
-                    "As configurações de sincronização não foram aplicadas corretamente.");
-        } else {
-            dismissDialog();
-            mProgressDialog = Dialogos
-                    .mostrarProgresso(this, "Por favor aguarde, importando cadastros de médicos",
-                            false);
-
-            // TODO extrair cpf para atributo e validar se o cpf esta presente
-            service.getByCpf(propagandista.getCpf())
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new ImportaMedicosSubscriber());
-        }
+        mMedicoService
+                .getByCpf(mUsuarioLogado.getCpf())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ImportaMedicosSubscriber());
     }
 
     private static final String LOG_IMPORTA_MEDICOS =
@@ -173,11 +216,7 @@ public class SincronizarActivity extends AppCompatActivity {
                         final Medico medico = Medico.fromModel(medicoModel);
                         medico.setStatus(Status.Importado);
 
-                        if (mMedicoDAO.existe(medico.getId())) {
-                            mMedicoDAO.alterar(medico);
-                        } else {
-                            mMedicoDAO.incluir(medico);
-                        }
+                        mMedicoDAO.incluir(medico);
                     }
                 }
             }
@@ -188,30 +227,22 @@ public class SincronizarActivity extends AppCompatActivity {
         final List<Medico> medicos = mMedicoDAO.listar(Status.Pendente);
 
         if (medicos != null && !medicos.isEmpty()) {
-            final MedicoService service = createService(MedicoService.class, this);
-            final Propagandista propagandista = PreferencesUtils.getUserLogged(this);
+            dismissDialog();
+            mProgressDialog = Dialogos
+                    .mostrarProgresso(this, "Por favor aguarde, enviando cadastros de médicos",
+                            false);
 
-            if (service == null) {
-                Dialogos.mostrarMensagem(this, "Sincronização dos dados",
-                        "As configurações de sincronização não foram aplicadas corretamente.");
-            } else {
-                dismissDialog();
-                mProgressDialog = Dialogos
-                        .mostrarProgresso(this, "Por favor aguarde, enviando cadastros de médicos",
-                                false);
-
-                for (Medico medico : medicos) {
-                    List<Endereco> enderecos = mEnderecoDAO.listar(medico);
-                    if (enderecos == null) {
-                        enderecos = Collections.emptyList();
-                    }
-
-                    // TODO extrair cpf para atributo e validar se o cpf esta presente
-                    service.put(propagandista.getCpf(), Medico.toModel(medico, enderecos))
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new EnviaMedicoSubscriber());
+            for (Medico medico : medicos) {
+                List<Endereco> enderecos = mEnderecoDAO.listar(medico);
+                if (enderecos == null) {
+                    enderecos = Collections.emptyList();
                 }
+
+                mMedicoService
+                        .put(mUsuarioLogado.getCpf(), Medico.toModel(medico, enderecos))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new EnviaMedicoSubscriber());
             }
         }
     }
@@ -272,24 +303,16 @@ public class SincronizarActivity extends AppCompatActivity {
      * o propagandista logado.
      */
     public void importarAgendas() {
-        final AgendaService service = createService(AgendaService.class, this);
-        final Propagandista propagandista = PreferencesUtils.getUserLogged(this);
+        dismissDialog();
+        mProgressDialog = Dialogos
+                .mostrarProgresso(this, "Por favor aguarde, importando cadastros de agendas",
+                        false);
 
-        if (service == null) {
-            Dialogos.mostrarMensagem(this, "Sincronização dos dados",
-                    "As configurações de sincronização não foram aplicadas corretamente.");
-        } else {
-            dismissDialog();
-            mProgressDialog = Dialogos
-                    .mostrarProgresso(this, "Por favor aguarde, importando cadastros de agendas",
-                            false);
-
-            // TODO extrair cpf para atributo e validar se o cpf esta presente
-            service.getByCpf(propagandista.getCpf())
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new ImportaAgendasSubscriber());
-        }
+        mAgendaService
+                .getByCpf(mUsuarioLogado.getCpf())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ImportaAgendasSubscriber());
     }
 
     private static final String LOG_IMPORTA_AGENDAS =
@@ -335,11 +358,7 @@ public class SincronizarActivity extends AppCompatActivity {
                         final Agenda agenda = Agenda.fromModel(agendaModel);
                         agenda.setStatus(Status.Importado);
 
-                        if(mAgendaDAO.existe(agenda.getIdAgenda())) {
-                            mAgendaDAO.alterar(agenda);
-                        } else {
-                            mAgendaDAO.incluir(agenda);
-                        }
+                        mAgendaDAO.incluir(agenda);
                     }
                 }
             }
