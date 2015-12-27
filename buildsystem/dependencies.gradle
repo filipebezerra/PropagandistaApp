@@ -10,6 +10,10 @@ ext {
     retrofitVersion = '2.0.0-beta2'
     okHttpVersion = '2.6.0'
     rxAndroidVersion = '1.0.1'
+    playServicesVersion = '8.3.0'
+    guavaVersion = '19.0'
+    jodaTimeVersion = '2.9.1'
+    betterPickersVersion = '2.2.2'
 
     libs = [
             supportDesign                   :   "com.android.support:design:${supportLibsVersion}",
@@ -24,6 +28,10 @@ ext {
             rxAndroid                       :   "io.reactivex:rxandroid:${rxAndroidVersion}",
             okHttp                          :   "com.squareup.okhttp:okhttp:${okHttpVersion}",
             okHttpLoggingInterceptor        :   "com.squareup.okhttp:logging-interceptor:${okHttpVersion}",
+            playServicesLocation            :   "com.google.android.gms:play-services-location:${playServicesVersion}",
+            guava                           :   "com.google.guava:guava:${guavaVersion}",
+            jodaTime                        :   "joda-time:joda-time:${jodaTimeVersion}",
+            betterPickers                   :   "com.code-troopers.betterpickers:library:${betterPickersVersion}",
     ]
 
     junitVersion = '4.12'

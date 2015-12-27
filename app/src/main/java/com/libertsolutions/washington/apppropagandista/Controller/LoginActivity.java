@@ -20,6 +20,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
+import com.libertsolutions.washington.apppropagandista.api.models.PropagandistaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.PropagandistaService;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -103,7 +104,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private class LoginSubscriber extends Subscriber<Propagandista> {
+    private class LoginSubscriber extends Subscriber<PropagandistaModel> {
         @Override
         public void onCompleted() {
             // vazio
@@ -120,11 +121,12 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onNext(Propagandista propagandista) {
+        public void onNext(PropagandistaModel model) {
             dismissDialog();
 
-            if (propagandista != null) {
-                PreferencesUtils.setUserLogged(LoginActivity.this, propagandista);
+            if (model != null) {
+                PreferencesUtils.setUserLogged(LoginActivity.this,
+                        Propagandista.fromModel(model));
                 finish();
             } else {
                 Mensagem.MensagemAlerta("Login", "CPF não cadastrado", LoginActivity.this);

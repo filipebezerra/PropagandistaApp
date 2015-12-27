@@ -9,9 +9,12 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
+import com.libertsolutions.washington.apppropagandista.Dao.EnderecoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
+import com.libertsolutions.washington.apppropagandista.Model.Endereco;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
@@ -19,8 +22,10 @@ import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
+import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
 import com.libertsolutions.washington.apppropagandista.api.services.MedicoService;
+import java.util.Collections;
 import java.util.List;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -37,6 +42,7 @@ import static com.libertsolutions.washington.apppropagandista.api.controller.Ret
  */
 public class SincronizarActivity extends AppCompatActivity {
     private MedicoDAO mMedicoDAO;
+    private EnderecoDAO mEnderecoDAO;
     private AgendaDAO mAgendaDAO;
 
     private MaterialDialog mProgressDialog;
@@ -51,6 +57,7 @@ public class SincronizarActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mMedicoDAO = new MedicoDAO(this);
+        mEnderecoDAO = new EnderecoDAO(this);
         mAgendaDAO = new AgendaDAO(this);
     }
 
@@ -59,6 +66,7 @@ public class SincronizarActivity extends AppCompatActivity {
         super.onResume();
 
         mMedicoDAO.openDatabase();
+        mEnderecoDAO.openDatabase();
         mAgendaDAO.openDatabase();
     }
 
@@ -67,6 +75,7 @@ public class SincronizarActivity extends AppCompatActivity {
         super.onPause();
 
         mMedicoDAO.closeDatabase();
+        mEnderecoDAO.closeDatabase();
         mAgendaDAO.closeDatabase();
     }
 
@@ -128,7 +137,7 @@ public class SincronizarActivity extends AppCompatActivity {
     /**
      * Observador e receptor dos cadastros de médicos recebidas do webservice.
      */
-    private class ImportaMedicosSubscriber extends Subscriber<List<Medico>> {
+    private class ImportaMedicosSubscriber extends Subscriber<List<MedicoModel>> {
         @Override
         public void onCompleted() {
             dismissDialog();
@@ -151,7 +160,7 @@ public class SincronizarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onNext(List<Medico> medicos) {
+        public void onNext(List<MedicoModel> medicos) {
             if (medicos == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
@@ -160,10 +169,11 @@ public class SincronizarActivity extends AppCompatActivity {
                             "Importação dos médicos cadastrados",
                             "A importação concluiu sem nenhum registro de médico importado!");
                 } else {
-                    for (Medico medico : medicos) {
-                        medico.setStatus(Status.Importado.ordinal());
+                    for (MedicoModel medicoModel : medicos) {
+                        final Medico medico = Medico.fromModel(medicoModel);
+                        medico.setStatus(Status.Importado);
 
-                        if (mMedicoDAO.existe(medico.getId_unico())) {
+                        if (mMedicoDAO.existe(medico.getId())) {
                             mMedicoDAO.alterar(medico);
                         } else {
                             mMedicoDAO.incluir(medico);
@@ -177,7 +187,7 @@ public class SincronizarActivity extends AppCompatActivity {
     public void enviarMedicos() {
         final List<Medico> medicos = mMedicoDAO.listar(Status.Pendente);
 
-        if (!medicos.isEmpty()) {
+        if (medicos != null && !medicos.isEmpty()) {
             final MedicoService service = createService(MedicoService.class, this);
             final Propagandista propagandista = PreferencesUtils.getUserLogged(this);
 
@@ -191,8 +201,13 @@ public class SincronizarActivity extends AppCompatActivity {
                                 false);
 
                 for (Medico medico : medicos) {
+                    List<Endereco> enderecos = mEnderecoDAO.listar(medico);
+                    if (enderecos == null) {
+                        enderecos = Collections.emptyList();
+                    }
+
                     // TODO extrair cpf para atributo e validar se o cpf esta presente
-                    service.put(propagandista.getCpf(), medico)
+                    service.put(propagandista.getCpf(), Medico.toModel(medico, enderecos))
                             .subscribeOn(Schedulers.newThread())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(new EnviaMedicoSubscriber());
@@ -208,7 +223,7 @@ public class SincronizarActivity extends AppCompatActivity {
      * Observador e receptor da resposta do webservice após processar o envio dos
      * cadastros de médicos feitos localmente.
      */
-    private class EnviaMedicoSubscriber extends Subscriber<Integer> {
+    private class EnviaMedicoSubscriber extends Subscriber<MedicoModel> {
         @Override
         public void onCompleted() {
             dismissDialog();
@@ -237,19 +252,17 @@ public class SincronizarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onNext(Integer idUnico) {
+        public void onNext(MedicoModel model) {
             dismissDialog();
 
-            // TODO totalmente incorreto esta aplicação, o correto é o servidor retornar também
-            // o código que o cliente gerou para controle interno
-            if (idUnico > 0) {
-                mMedico.setId_unico(idUnico);//Seta id unico
-                mMedico.setStatus(Status.Enviado.ordinal());
-                mMedicoDAO.alterar(mMedico);
+            if (model == null) {
+                onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
-                Dialogos.mostrarMensagem(SincronizarActivity.this,
-                        "Envio dos médicos cadastrados",
-                        "Ocorreu um erro ao enviar médico!");
+                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+
+                final Medico medicoEnviado = Medico.fromModel(model);
+                medicoEnviado.setStatus(Status.Enviado);
+                mMedicoDAO.alterar(medicoEnviado);
             }
         }
     }
@@ -320,6 +333,7 @@ public class SincronizarActivity extends AppCompatActivity {
                 } else {
                     for (AgendaModel agendaModel : agendas) {
                         final Agenda agenda = Agenda.fromModel(agendaModel);
+                        agenda.setStatus(Status.Importado);
 
                         if(mAgendaDAO.existe(agenda.getIdAgenda())) {
                             mAgendaDAO.alterar(agenda);

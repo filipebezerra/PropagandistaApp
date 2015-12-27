@@ -31,21 +31,16 @@ public class MedicoActivity extends ActionBarActivity {
     ListView grdMedicos;
     private boolean isLoadMore = false;
     ProgressDialog pDialog;
-    private MedicoDAO medicoDb;
+    private MedicoDAO mMedicoDAO;
     int start = 0;
     int limit = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try{
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_medico);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_medico);
 
-            this.medicoDb = new MedicoDAO(this);
-        }catch (Exception erro)
-        {
-            Mensagem.MensagemAlerta(this,erro.getMessage());
-        }
+        mMedicoDAO = new MedicoDAO(this);
     }
 
     @Override
@@ -80,6 +75,9 @@ public class MedicoActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        mMedicoDAO.openDatabase();
+
         try {
             CarregaGrid();
         }
@@ -87,6 +85,12 @@ public class MedicoActivity extends ActionBarActivity {
         {
             Mensagem.MensagemAlerta("Erro Start Produtos", erro.getMessage(), MedicoActivity.this);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mMedicoDAO.closeDatabase();
     }
 
     //Carrega Grid
@@ -139,7 +143,7 @@ public class MedicoActivity extends ActionBarActivity {
         try
         {
             List<Medico> lista = new ArrayList<Medico>();
-            lista = medicoDb.listar(String.valueOf(start), String.valueOf(limit));
+            lista = mMedicoDAO.listar(String.valueOf(start), String.valueOf(limit));
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] {"id","col1", "col2","col3"};
 
@@ -149,7 +153,7 @@ public class MedicoActivity extends ActionBarActivity {
             {
                 Medico medico = lista.get(i);
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put(columnTags[0],String.valueOf(medico.getId_medico()));  //Id
+                map.put(columnTags[0],String.valueOf(medico.getIdMedico()));  //Id
                 map.put(columnTags[1],medico.getNome());  //Nome
                 map.put(columnTags[2], "Telefone: " + medico.getTelefone());  //Telefone
                 map.put(columnTags[3], "Secretária: " + medico.getSecretaria());  //Secretária

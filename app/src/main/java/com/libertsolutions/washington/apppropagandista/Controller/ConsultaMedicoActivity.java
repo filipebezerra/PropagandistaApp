@@ -35,22 +35,28 @@ public class ConsultaMedicoActivity extends AppCompatActivity {
     ListView grdMedicos;
     private boolean isLoadMore = false;
     ProgressDialog pDialog;
-    private MedicoDAO medicoDb;
+    private MedicoDAO mMedicoDAO;
     int start = 0;
     int limit = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try{
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_consulta_medico);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_consulta_medico);
 
-            this.medicoDb = new MedicoDAO(this);
+        mMedicoDAO = new MedicoDAO(this);
+    }
 
-        }catch (Exception erro)
-        {
-            Mensagem.MensagemAlerta(this, erro.getMessage());
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mMedicoDAO.openDatabase();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mMedicoDAO.closeDatabase();
     }
 
     @Override
@@ -112,9 +118,9 @@ public class ConsultaMedicoActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
                     HashMap<String, Object> obj = (HashMap<String, Object>) grdMedicos.getAdapter().getItem(position);
-                    Medico medico = medicoDb.consultar(Integer.parseInt(obj.get("id").toString()));
+                    Medico medico = mMedicoDAO.consultar(Integer.parseInt(obj.get("id").toString()));
                     Intent param = new Intent();
-                    param.putExtra("id_medico", medico.getId_medico().toString());
+                    param.putExtra("id_medico", medico.getIdMedico().toString());
                     param.putExtra("nome", medico.getNome());
                     setResult(1,param);
                     onBackPressed();
@@ -152,7 +158,7 @@ public class ConsultaMedicoActivity extends AppCompatActivity {
         try
         {
             List<Medico> lista = new ArrayList<Medico>();
-            lista = medicoDb.listar(String.valueOf(start), String.valueOf(limit));
+            lista = mMedicoDAO.listar(String.valueOf(start), String.valueOf(limit));
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] {"id","col1", "col2","col3"};
 
@@ -162,7 +168,7 @@ public class ConsultaMedicoActivity extends AppCompatActivity {
             {
                 Medico medico = lista.get(i);
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put(columnTags[0],String.valueOf(medico.getId_medico()));  //Id
+                map.put(columnTags[0],String.valueOf(medico.getIdMedico()));  //Id
                 map.put(columnTags[1],medico.getNome());  //Nome
                 map.put(columnTags[2], "Telefone: " + medico.getTelefone());  //Telefone
                 map.put(columnTags[3], "Secretária: " + medico.getSecretaria());  //Secretária

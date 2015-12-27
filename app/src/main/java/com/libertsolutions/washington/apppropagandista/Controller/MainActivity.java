@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity
                             .setText(userLogged.getNome());
                     ButterKnife.<TextView>
                             findById(mNavigationView.getHeaderView(0), R.id.user_email)
-                            .setText(userLogged.getUsuario().getEmail());
+                            .setText(userLogged.getEmail());
                 } else {
                     finish();
                 }

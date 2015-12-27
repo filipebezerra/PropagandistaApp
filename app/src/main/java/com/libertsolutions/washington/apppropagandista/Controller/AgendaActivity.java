@@ -36,21 +36,16 @@ public class AgendaActivity extends AppCompatActivity {
     ListView grdAgenda;
     private boolean isLoadMore = false;
     ProgressDialog pDialog;
-    private AgendaDAO agendaDb;
+    private AgendaDAO mAgendaDAO;
     int start = 0;
     int limit = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        try{
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_agenda);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_agenda);
 
-            this.agendaDb = new AgendaDAO(this);
-        }catch (Exception erro)
-        {
-            Mensagem.MensagemAlerta(this, erro.getMessage());
-        }
+        this.mAgendaDAO = new AgendaDAO(this);
     }
 
     @Override
@@ -85,6 +80,8 @@ public class AgendaActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        mAgendaDAO.openDatabase();
+
         try {
             CarregaGrid();
         }
@@ -92,6 +89,12 @@ public class AgendaActivity extends AppCompatActivity {
         {
             Mensagem.MensagemAlerta("Erro Start Produtos", erro.getMessage(), AgendaActivity.this);
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAgendaDAO.closeDatabase();
     }
 
     //Carrega Grid
@@ -144,7 +147,7 @@ public class AgendaActivity extends AppCompatActivity {
         try
         {
             List<Agenda> lista = new ArrayList<Agenda>();
-            lista = agendaDb.listar(String.valueOf(start), String.valueOf(limit));
+            lista = mAgendaDAO.listar(String.valueOf(start), String.valueOf(limit));
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] {"id","col1", "col2","col3"};
 

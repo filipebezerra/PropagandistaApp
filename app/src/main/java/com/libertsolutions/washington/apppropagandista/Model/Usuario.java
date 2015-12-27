@@ -1,5 +1,12 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
+/**
+ * Classe modelo dos dados do usuário.
+ *
+ * @author Washington, Filipe Bezerra
+ * @version 0.1.0, 26/12/2015
+ * @since 0.1.0
+ */
 public class Usuario extends ModeloBase<Usuario> {
     private Integer mIdUsuario;
 
