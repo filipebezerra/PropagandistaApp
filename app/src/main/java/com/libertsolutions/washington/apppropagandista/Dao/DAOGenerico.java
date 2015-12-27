@@ -216,8 +216,8 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * @param end até que ponto da consulta.
      * @return o conjunto de entidades.
      */
-    public @Nullable List<T> listar(@Nullable String start, @Nullable String end) {
-        return listar(start, end, null, (String[]) null);
+    public @Nullable List<T> listar(@Nullable String start, @Nullable String end,@Nullable String filter) {
+        return listar(start, end, filter, (String[]) null);
     }
 
     /**

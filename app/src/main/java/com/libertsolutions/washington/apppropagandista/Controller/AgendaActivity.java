@@ -43,6 +43,7 @@ public class AgendaActivity extends AppCompatActivity {
     private MaterialDialog mProgressDialog;
     private int mStart = 0;
     private int mLimit = 20;
+    private String filter;
 
     private AgendaDAO mAgendaDAO;
     private MedicoDAO mMedicoDAO;
@@ -62,12 +63,40 @@ public class AgendaActivity extends AppCompatActivity {
         // Inflate menu to add items to action bar if it is present.
         inflater.inflate(R.menu.search_menu, menu);
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(getComponentName()));
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.menu_search));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.length() > 2)
+                {
+                    filter = "(id_agenda||dt_compromisso||observacao) like '%"+newText+"%'";
+                    mStart = 0;
+                    mLimit = 20;
+                    mPersonalAdapter = null;
+                    mAgendasListView = (ListView)findViewById(R.id.lstMedicos);
+                    mListaAgenda = new ArrayList<HashMap<String, String>>();
+                    PreencheGrid(mStart,mLimit);
+                }else
+                {
+                    filter = null;
+                    mStart = 0;
+                    mLimit = 20;
+                    mPersonalAdapter = null;
+                    mAgendasListView = (ListView)findViewById(R.id.lstAgenda);
+                    mListaAgenda = new ArrayList<HashMap<String, String>>();
+                    PreencheGrid(mStart,mLimit);
+                }
+                return false;
+            }
+        });
+
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         DrawableUtil.tint(this, menu.findItem(R.id.action_novo).getIcon(), R.color.white);
 
@@ -151,7 +180,7 @@ public class AgendaActivity extends AppCompatActivity {
     {
         try
         {
-            List<Agenda> lista = mAgendaDAO.listar(String.valueOf(start), String.valueOf(limit));
+            List<Agenda> lista = mAgendaDAO.listar(String.valueOf(start), String.valueOf(limit),filter);
             //Cria array com quantidade de colunas da ListView
             String[] columnTags = new String[] {"id","col1", "col2","col3"};
 
