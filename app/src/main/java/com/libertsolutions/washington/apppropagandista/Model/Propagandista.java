@@ -1,43 +1,65 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import android.support.annotation.NonNull;
+import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.api.models.PropagandistaModel;
 
 /**
- * Created by washington on 08/11/2015.
+ * Classe modelo dos dados do propagandista.
+ *
+ * @author Washington, Filipe Bezerra
+ * @version 0.1.0, 26/12/2015
+ * @since 0.1.0
  */
 public class Propagandista {
-    @Expose
     private String nome;
 
-    @Expose
     private String cpf;
 
-    @SerializedName("Usuario")
-    @Expose
-    private Usuario usuario;
+    private String email;
+
+    /**
+     * Obtém os dados do propagandista importados do webservice.
+     *
+     * @param model o modelo de dados do propagandista recuperado do webservice.
+     * @return o propagandista.
+     */
+    public static Propagandista fromModel(@NonNull PropagandistaModel model) {
+        Preconditions.checkNotNull(model, "model não pode ser nulo");
+        Preconditions.checkNotNull(model.nome, "model.nome não pode ser nulo");
+        Preconditions.checkNotNull(model.cpf, "model.cpf não pode ser nulo");
+        Preconditions.checkNotNull(model.usuario, "model.usuario não pode ser nulo");
+
+        return new Propagandista()
+                .setNome(model.nome)
+                .setCpf(model.cpf)
+                .setEmail(model.usuario.email);
+    }
 
     public String getNome() {
         return nome;
     }
 
-    public void setNome(String nome) {
+    public Propagandista setNome(String nome) {
         this.nome = nome;
+        return this;
     }
 
     public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(String cpf) {
+    public Propagandista setCpf(String cpf) {
         this.cpf = cpf;
+        return this;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public Propagandista setEmail(String email) {
+        this.email = email;
+        return this;
     }
 }

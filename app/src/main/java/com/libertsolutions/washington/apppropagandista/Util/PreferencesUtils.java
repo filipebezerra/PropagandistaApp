@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.SharedPreferencesCompat;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
-import com.libertsolutions.washington.apppropagandista.Model.Usuario;
 
 /**
  * .
@@ -43,7 +42,7 @@ public class PreferencesUtils {
         editor.putBoolean(USER_LOGGED_KEY, true);
         editor.putString(USER_NAME_KEY, propagandista.getNome());
         editor.putString(USER_CPF_KEY, propagandista.getCpf().replace("-","").replace(".",""));
-        editor.putString(USER_EMAIL_KEY, propagandista.getUsuario().getEmail());
+        editor.putString(USER_EMAIL_KEY, propagandista.getEmail());
         SharedPreferencesCompat.EditorCompat.getInstance().apply(editor);
     }
 
@@ -53,11 +52,9 @@ public class PreferencesUtils {
 
         if (isUserLogged(context)) {
             final Propagandista propagandista = new Propagandista();
-            final Usuario usuario = new Usuario();
-            usuario.setEmail(preferences.getString(USER_EMAIL_KEY, ""));
+            propagandista.setEmail(preferences.getString(USER_EMAIL_KEY, ""));
             propagandista.setNome(preferences.getString(USER_NAME_KEY, ""));
             propagandista.setCpf(preferences.getString(USER_CPF_KEY, ""));
-            propagandista.setUsuario(usuario);
 
             return propagandista;
         } else {
