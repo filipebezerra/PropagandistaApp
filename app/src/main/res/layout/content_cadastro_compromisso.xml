@@ -19,32 +19,39 @@
         android:orientation="vertical"
         >
 
-        <android.support.design.widget.TextInputLayout
+        <TextView
+            style="@style/TextAppearance.Design.Hint"
             android:id="@+id/hintMedico"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
+            android:layout_marginBottom="4dp"
+            android:text="@string/hintTxtMedico"
+            />
 
-            <AutoCompleteTextView
-                android:id="@+id/txtMedico"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName|textCapWords"
-                android:imeOptions="actionNext"
-                android:singleLine="true"
-                android:hint="@string/hintTxtMedico"
-                >
+        <Spinner
+            android:id="@+id/spinnerMedico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/hintMedico"
+            />
 
-                <requestFocus />
-            </AutoCompleteTextView>
-
-        </android.support.design.widget.TextInputLayout>
+        <TextView
+            style="@style/TextAppearance.Design.Error"
+            android:id="@+id/errorMedico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/spinnerMedico"
+            android:layout_marginTop="4dp"
+            android:text="@string/errorMedico"
+            android:visibility="gone"
+            tools:visibility="visible"
+            />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/hintDataCompromisso"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/hintMedico"
+            android:layout_below="@id/errorMedico"
             >
 
             <EditText

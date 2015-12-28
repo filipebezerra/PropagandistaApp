@@ -48,7 +48,7 @@
     <string name="hintCrm">CRM</string>
     <string name="hintEspecialidade">Especialidade médica</string>
 
-    <string name="hintTxtMedico">Digite para selecionar qual médico</string>
+    <string name="hintTxtMedico">Selecione o médico</string>
     <string name="hintTxtDataCompromisso">Toque aqui para selecionar a data</string>
     <string name="hintTxtHorárioCompromisso">Toque aqui para selecionar o horário</string>
     <string name="txtObservacao">Observações</string>
@@ -64,5 +64,6 @@
     <string name="pref_auth_key_summary">Chave de acesso ao servidor de sincronização</string>
     <string name="title_activity_sincronizar">Sincronizar Dados</string>
     <string name="action_salvar">Salvar</string>
+    <string name="errorMedico">Nenhum médico foi selecionado</string>
 
 </resources>

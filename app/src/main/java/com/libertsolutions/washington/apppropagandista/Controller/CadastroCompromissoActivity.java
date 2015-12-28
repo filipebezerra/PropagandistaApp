@@ -1,11 +1,13 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -15,16 +17,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnEditorAction;
-import butterknife.OnTouch;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
@@ -39,11 +38,19 @@ import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
+import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
-import java.util.List;
+
 import org.joda.time.DateTime;
+
+import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnItemSelected;
+import butterknife.OnTouch;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -59,8 +66,8 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     @Bind(R.id.root_layout) protected CoordinatorLayout mRootLayout;
     @Bind(R.id.toolbar) protected Toolbar mToolbar;
 
-    @Bind(R.id.hintMedico) protected TextInputLayout mMedicoHint;
-    @Bind(R.id.txtMedico) protected AutoCompleteTextView mMedicoView;
+    @Bind(R.id.errorMedico) protected TextView mMedicoHint;
+    @Bind(R.id.spinnerMedico) protected Spinner mMedicoView;
     @Bind(R.id.hintDataCompromisso) protected TextInputLayout mDataCompromissoHint;
     @Bind(R.id.txtDataCompromisso) protected EditText mDataCompromissoView;
     @Bind(R.id.hintHorarioCompromisso) protected TextInputLayout mHorarioCompromissoHint;
@@ -76,8 +83,6 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     private AgendaDAO mAgendaDAO;
 
     private MedicoDAO mMedicoDAO;
-    private Medico mMedicoSelecionado;
-
     private ArrayAdapter<Medico> mMedicosAdapter;
 
     private MaterialDialog mProgressDialog;
@@ -90,6 +95,9 @@ public class CadastroCompromissoActivity extends AppCompatActivity
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final Drawable upIndicator = ContextCompat.getDrawable(this, R.drawable.ic_close);
+        DrawableUtil.tint(this, upIndicator, R.color.white);
+        getSupportActionBar().setHomeAsUpIndicator(upIndicator);
 
         if (savedInstanceState == null) {
             mHasDialogFrame = findViewById(R.id.frame) != null;
@@ -107,24 +115,12 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         final List<Medico> medicos = mMedicoDAO.listar();
         mMedicoDAO.closeDatabase();
 
-        mMedicosAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, medicos);
-        mMedicosAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        mMedicoView.setThreshold(1);
-        mMedicoView.setAdapter(mMedicosAdapter);
-        mMedicoView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mMedicoSelecionado = mMedicosAdapter.getItem(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                InputMethodManager imm = (InputMethodManager) getSystemService(
-                        INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-            }
-        });
+        if (medicos != null) {
+            mMedicosAdapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, medicos);
+            mMedicosAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+            mMedicoView.setAdapter(mMedicosAdapter);
+        }
     }
 
     @Override
@@ -170,19 +166,15 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         }
     }
 
-    @OnEditorAction(R.id.txtMedico)
-    public boolean onTxtMedicoEditorAction(final int actionId) {
-        if (actionId == EditorInfo.IME_ACTION_NEXT) {
-            if (TextUtils.isEmpty(mDataCompromissoView.getText())) {
-                showDatePicker();
-            } else if (TextUtils.isEmpty(mHorarioCompromissoView.getText())) {
-                showTimePicker();
-            } else if (TextUtils.isEmpty(mObservacaoView.getText())) {
-                mObservacaoView.requestFocus();
-            }
-            return true;
+    @OnItemSelected(R.id.spinnerMedico)
+    public void onSpinnerMedicoSelected(final int position) {
+        if (TextUtils.isEmpty(mDataCompromissoView.getText())) {
+            showDatePicker();
+        } else if (TextUtils.isEmpty(mHorarioCompromissoView.getText())) {
+            showTimePicker();
+        } else if (TextUtils.isEmpty(mObservacaoView.getText())) {
+            mObservacaoView.requestFocus();
         }
-        return false;
     }
 
     @OnTouch({ R.id.txtDataCompromisso, R.id.txtHorarioCompromisso })
@@ -204,38 +196,21 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         return false;
     }
 
-    private Medico getMedicoByName(@NonNull String nomeMedico) {
-        for (int i = 0; i < mMedicosAdapter.getCount() - 1; i++) {
-            final Medico medico = mMedicosAdapter.getItem(i);
-
-            if (medico.getNome().equalsIgnoreCase(nomeMedico)) {
-                return medico;
-            }
-        }
-
-        return null;
+    private Medico obterMedicoSelecionado() {
+        return mMedicoView.getSelectedItemPosition()  == AdapterView.INVALID_POSITION ?
+                null : (Medico) mMedicoView.getSelectedItem();
     }
 
     public void save() {
         boolean isFormValid = true;
 
-        if (TextUtils.isEmpty(mMedicoView.getText())) {
-            isFormValid = false;
-            mMedicoHint.setError("Nenhum médico foi informado");
-            mMedicoHint.setEnabled(true);
-        } else {
-            if (mMedicoSelecionado == null) {
-                mMedicoSelecionado = getMedicoByName(mMedicoView.getText().toString());
-            }
+        final Medico medicoSelecionado = obterMedicoSelecionado();
 
-            if (mMedicoSelecionado == null) {
-                isFormValid = false;
-                mMedicoHint.setError("O médico informado não está cadastrado");
-                mMedicoHint.setEnabled(true);
-            } else {
-                mMedicoHint.setError(null);
-                mMedicoHint.setEnabled(false);
-            }
+        if (medicoSelecionado == null) {
+            isFormValid = false;
+            mMedicoHint.setVisibility(View.VISIBLE);
+        } else {
+            mMedicoHint.setVisibility(View.GONE);
         }
 
         if (TextUtils.isEmpty(mDataCompromissoView.getText())) {
@@ -258,7 +233,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
 
         if (isFormValid) {
             final Agenda novaAgenda = new Agenda();
-            novaAgenda.setIdMedico(mMedicoSelecionado.getIdMedico());
+            novaAgenda.setIdMedico(medicoSelecionado.getIdMedico());
             novaAgenda.setDataCompromisso(obtainDateInMillesFromFields());
             novaAgenda.setStatusAgenda(StatusAgenda.Pendente);
             novaAgenda.setStatus(Status.Pendente);
@@ -423,6 +398,14 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         public void onCompleted() {
             dismissDialog();
             Log.d(LOG_ENVIO_NOVA_AGENDA, "Sincronização da nova agenda concluído");
+            Dialogos.mostrarMensagem(CadastroCompromissoActivity.this, "Sincronização dos dados",
+                    "Sincronização concluída com sucesso!", new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                            @NonNull DialogAction which) {
+                            finish();
+                        }
+                    });
         }
 
         @Override
@@ -436,7 +419,14 @@ public class CadastroCompromissoActivity extends AppCompatActivity
             Dialogos.mostrarMensagem(CadastroCompromissoActivity.this,
                     "Sincronização da nova agenda",
                     String.format("Infelizmente houve um erro e a sincronização não "
-                            + "pôde ser completada. Erro: %s", e.getMessage()));
+                            + "pôde ser completada. Erro: %s", e.getMessage()),
+                    new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                            @NonNull DialogAction which) {
+                            finish();
+                        }
+                    });
         }
 
         @Override
@@ -449,6 +439,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
                 Preconditions.checkNotNull(model.statusAgenda,
                         "model.statusAgenda não pode ser nulo");
 
+                Agenda.fromModel(model);
                 mAgendaDAO.alterar(Agenda.fromModel(model));
             }
         }

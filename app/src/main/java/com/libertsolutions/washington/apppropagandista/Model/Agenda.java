@@ -69,11 +69,16 @@ public class Agenda extends ModeloBase<Agenda> {
 
         final AgendaModel model = new AgendaModel();
         model.idCliente = agenda.getId();
-        model.idAgenda = agenda.getIdAgenda();
+
+        if (agenda.getIdAgenda() != null) {
+            model.idAgenda = agenda.getIdAgenda();
+        }
+
         model.idMedico = agenda.getIdMedico();
         model.statusAgenda = agenda.getStatusAgenda().ordinal();
         model.dtCompromisso = new DateTime(agenda.getDataCompromisso())
                 .toString("yyyy-MM-dd'T'HH:mm:ss");
+
         model.observacao = agenda.getObservacao();
 
         return model;
