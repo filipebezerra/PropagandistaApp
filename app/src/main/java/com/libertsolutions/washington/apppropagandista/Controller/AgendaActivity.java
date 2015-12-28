@@ -18,6 +18,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
+import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
@@ -190,7 +191,9 @@ public class AgendaActivity extends AppCompatActivity {
             for (Agenda agenda : lista) {
                 HashMap<String, String> map = new HashMap<>();
                 map.put(columnTags[0], String.valueOf(agenda.getId()));
-                map.put(columnTags[1], mMedicoDAO.consultar(agenda.getIdMedico()).getNome());
+                Medico medico = mMedicoDAO.consultar(agenda.getIdMedico());
+                if(medico != null)
+                    map.put(columnTags[1], medico.getNome());
                 map.put(columnTags[2], "Data: " + new DateTime(agenda.getDataCompromisso()).toString("dd/MM/yyyy"));
                 map.put(columnTags[3], "Obs: " + agenda.getObservacao());
                 mListaAgenda.add(map);
