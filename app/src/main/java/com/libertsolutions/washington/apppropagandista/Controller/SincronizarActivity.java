@@ -19,6 +19,7 @@ import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Endereco;
+import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
@@ -26,8 +27,10 @@ import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
+import com.libertsolutions.washington.apppropagandista.api.models.EspecialidadeModel;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
+import com.libertsolutions.washington.apppropagandista.api.services.EspecialidadeService;
 import com.libertsolutions.washington.apppropagandista.api.services.MedicoService;
 import java.util.Collections;
 import java.util.List;
@@ -57,6 +60,7 @@ public class SincronizarActivity extends AppCompatActivity {
 
     private Propagandista mUsuarioLogado;
 
+    private EspecialidadeService mEspecialidadeService;
     private MedicoService mMedicoService;
     private AgendaService mAgendaService;
 
@@ -90,10 +94,11 @@ public class SincronizarActivity extends AppCompatActivity {
                     });
         }
 
+        mEspecialidadeService = createService(EspecialidadeService.class, this);
         mMedicoService = createService(MedicoService.class, this);
         mAgendaService = createService(AgendaService.class, this);
 
-        if (mMedicoService == null || mAgendaService == null) {
+        if (mMedicoService == null || mAgendaService == null || mEspecialidadeService == null) {
             Dialogos.mostrarMensagem(this, "Não é possível continuar",
                     "As configurações de sincronização não foram aplicadas corretamente.",
                     new MaterialDialog.SingleButtonCallback() {
@@ -147,14 +152,23 @@ public class SincronizarActivity extends AppCompatActivity {
         }
 
         if(mChkSincMedicos.isChecked()) {
-            importarMedicos();
+            importarEspecialidades();
         } else {
             importarAgendas();
         }
     }
 
     private void importarEspecialidades() {
+        dismissDialog();
+        mProgressDialog = Dialogos
+                .mostrarProgresso(this, "Por favor aguarde, importando especialidade médica",
+                        false);
 
+        mEspecialidadeService
+                .get()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ImportaEspecialidadesSubscriber());
     }
 
     /**
@@ -174,8 +188,56 @@ public class SincronizarActivity extends AppCompatActivity {
                 .subscribe(new ImportaMedicosSubscriber());
     }
 
+    private static final String LOG_IMPORTA_ESPECIALIDADES =
+            ImportaEspecialidadesSubscriber.class.getSimpleName();
+
     private static final String LOG_IMPORTA_MEDICOS =
             ImportaMedicosSubscriber.class.getSimpleName();
+
+
+    /**
+     * Observador e receptor dos cadastros de médicos recebidas do webservice.
+     */
+    private class ImportaEspecialidadesSubscriber extends Subscriber<List<EspecialidadeModel>> {
+        @Override
+        public void onCompleted() {
+            importarMedicos();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            dismissDialog();
+            Log.e(LOG_IMPORTA_ESPECIALIDADES, "Falha na importação dos cadastros de especialidades médicas", e);
+            if (e.getCause() != null) {
+                Log.e(LOG_IMPORTA_ESPECIALIDADES, "Causa da falha", e.getCause());
+            }
+
+            Dialogos.mostrarMensagem(SincronizarActivity.this,
+                    "Importação das especialidades médicas cadastradas",
+                    String.format("Infelizmente houve um erro e a importação não "
+                            + "pôde ser completada. Erro: %s", e.getMessage()));
+        }
+
+        @Override
+        public void onNext(List<EspecialidadeModel> especialidades) {
+            if (especialidades == null) {
+                onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
+            } else {
+                if (especialidades.isEmpty()) {
+                    Dialogos.mostrarMensagem(SincronizarActivity.this,
+                            "Importação das especialidades médicas cadastrados",
+                            "A importação concluiu sem nenhum registro de especialidade médica importada!");
+                } else {
+                    for (EspecialidadeModel especialidadeModel : especialidades) {
+                        final Especialidade especialidade = Especialidade.fromModel(especialidadeModel);
+                        especialidade.setStatus(Status.Importado);
+
+                        mEspecialidadeDAO.incluir(especialidade);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Observador e receptor dos cadastros de médicos recebidas do webservice.
