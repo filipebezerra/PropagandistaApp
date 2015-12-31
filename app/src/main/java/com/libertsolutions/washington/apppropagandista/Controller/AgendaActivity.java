@@ -191,7 +191,7 @@ public class AgendaActivity extends AppCompatActivity {
             for (Agenda agenda : lista) {
                 HashMap<String, String> map = new HashMap<>();
                 map.put(columnTags[0], String.valueOf(agenda.getId()));
-                Medico medico = mMedicoDAO.consultar(agenda.getIdMedico());
+                Medico medico = mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO +" = ?",agenda.getIdMedico().toString());
                 if(medico != null)
                     map.put(columnTags[1], medico.getNome());
                 map.put(columnTags[2], "Data: " + new DateTime(agenda.getDataCompromisso()).toString("dd/MM/yyyy"));
