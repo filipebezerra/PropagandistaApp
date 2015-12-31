@@ -52,8 +52,16 @@
     <string name="hintTxtDataCompromisso">Toque aqui para selecionar a data</string>
     <string name="hintTxtHorárioCompromisso">Toque aqui para selecionar o horário</string>
     <string name="txtObservacao">Observações</string>
+    <string name="txtEndereco">Endereço</string>
+    <string name="txtCep">Cep</string>
+    <string name="txtBairro">Bairro</string>
+    <string name="txtNumero">Número</string>
+    <string name="txtComplemento">Complemento</string>
+    <string name="txtCidade">Cidade</string>
+    <string name="txtEstado">Estado</string>
 
     <!-- Textos Botões -->
+    <string name="btnAdicionar">Adicionar</string>
     <string name="btnSalvar">Salvar</string>
     <string name="title_activity_item">item</string>
     <string name="action_novo">Cadastrar</string>
@@ -65,5 +73,8 @@
     <string name="title_activity_sincronizar">Sincronizar Dados</string>
     <string name="action_salvar">Salvar</string>
     <string name="errorMedico">Nenhum médico foi selecionado</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

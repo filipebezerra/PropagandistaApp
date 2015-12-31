@@ -86,7 +86,7 @@
 
             <Button
                 style="@style/Button"
-                android:id="@+id/acoes_visita"
+                android:id="@+id/btnIniciar"
                 android:text="Iniciar Visita"
                 android:layout_alignParentBottom="true"
                 />

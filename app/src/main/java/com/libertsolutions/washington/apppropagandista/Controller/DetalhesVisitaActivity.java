@@ -31,7 +31,10 @@ import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
+import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -100,7 +103,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     @Bind(R.id.data_hora_view) TextView mDataHoraView;
     @Bind(R.id.medico_view) TextView mMedicoView;
     @Bind(R.id.obs_view) TextView mObservacaoView;
-    @Bind(R.id.acoes_visita) Button mAcoesVisitaButton;
+    @Bind(R.id.btnIniciar) Button btnIniciarVisita;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,7 +140,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         super.onStart();
         mAgendaDAO.openDatabase();
         mMedicoDAO.openDatabase();
-
+        mAgenda = mAgendaDAO.consultar(mIdAgenda);
         PreencheTela();
 
         initiliazeAcoesVisitaButton();
@@ -278,36 +281,53 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         }
     }
 
-    @OnClick(R.id.acoes_visita)
-    public void acoesVisitaClick() {
-        //TODO reimplementar
-        /*
-        switch (StatusAgenda.status(mAgenda.getStatus())) {
+    @OnClick(R.id.btnIniciar)
+    public void onClickBtnIniciar() {
+        switch (mAgenda.getStatusAgenda()) {
             case Pendente:
+                btnIniciarVisita.setText("Finalizar Visita");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
+                mAgenda.setStatusAgenda(StatusAgenda.EmAtendimento);
+                Mensagem.MensagemAlerta(this, "Visita iniciada...");
                 break;
             case EmAtendimento:
-                break;
-            case Finalizado:
+                btnIniciarVisita.setText("Visita Finalizada");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_finalizada);
+                mAgenda.setStatusAgenda(StatusAgenda.Finalizado);
+                Mensagem.MensagemAlerta(this, "Visita Finalizada...");
                 break;
         }
-        */
+
+        //Salva Alterações tabela Agenda
+        //mAgendaDAO.alterar(mAgenda);
     }
 
     private void initiliazeAcoesVisitaButton() {
-        //TODO reimplementar
-        /*
-        switch (StatusAgenda.status(mAgenda.getStatus())) {
+        switch (mAgenda.getStatusAgenda()) {
             case Pendente:
-                mAcoesVisitaButton.setText("Iniciar Visita");
+                btnIniciarVisita.setText("Iniciar Visita");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_pendente);
                 break;
             case EmAtendimento:
-                mAcoesVisitaButton.setText("Finalizar Visita");
+                btnIniciarVisita.setText("Finalizar Visita");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
                 break;
             case Finalizado:
-                mAcoesVisitaButton.setText("Visita Finalizada");
+                btnIniciarVisita.setText("Visita Finalizada");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_finalizada);
+                btnIniciarVisita.setEnabled(false);
+                break;
+            case Cancelado:
+                btnIniciarVisita.setText("Visita Cancelada");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_cancelada);
+                btnIniciarVisita.setEnabled(false);
+                break;
+            case NaoVisita:
+                btnIniciarVisita.setText("Não Visita");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_naovisita);
+                btnIniciarVisita.setEnabled(false);
                 break;
         }
-        */
     }
 
     @Override
@@ -419,9 +439,8 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     //Metódo para preencher a tela com os dados da Agenda
     public void PreencheTela()
     {
-        Agenda agenda = mAgendaDAO.consultar(mIdAgenda);
-        mDataHoraView.setText(agenda.getDataCompromisso().toString());
-        mMedicoView.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO +" = ?",agenda.getIdMedico().toString()).getNome());
-        mObservacaoView.setText(agenda.getObservacao());
+        mDataHoraView.setText(mAgenda.getDataCompromisso().toString());
+        mMedicoView.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO +" = ?",mAgenda.getIdMedico().toString()).getNome());
+        mObservacaoView.setText(mAgenda.getObservacao());
     }
 }

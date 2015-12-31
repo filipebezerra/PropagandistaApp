@@ -4,7 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
-    
     <color name="material_ligtht_blue_800">#0277BD</color>
     <color name="material_ligtht_blue_900">#01579B</color>
+
+    <color name="visita_pendente">#01579B</color>
+    <color name="visita_ematendimento">#FF4500</color>
+    <color name="visita_cancelada">#FF0000</color>
+    <color name="visita_naovisita">#9400D3</color>
+    <color name="visita_finalizada">#008B00</color>
 </resources>
