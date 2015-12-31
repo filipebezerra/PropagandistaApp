@@ -23,6 +23,7 @@ import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
+import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
@@ -211,7 +212,7 @@ public class MainActivity extends AppCompatActivity
 
     private void PreencheGrid(int start, int limit) {
         List<Agenda> lista = mAgendaDAO.listar(String.valueOf(mStart), String.valueOf(mLimit),
-                COLUNA_STATUS_AGENDA + " = ?", "1");
+                COLUNA_STATUS_AGENDA + " in(?,?)", String.valueOf(StatusAgenda.Pendente.ordinal()),String.valueOf(StatusAgenda.EmAtendimento.ordinal()));
 
         if (lista != null) {
             //Cria array com quantidade de colunas da ListView
