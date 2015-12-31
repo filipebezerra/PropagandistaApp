@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
+import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.R;
@@ -92,8 +93,9 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     private Location mBestLocation;
 
     @NonNull private AgendaDAO mAgendaDAO;
-    @NonNull private VisitaDAO mVisitaDAO;
+    @NonNull private MedicoDAO mMedicoDAO;
     @NonNull private Agenda mAgenda;
+    private int mIdAgenda;
 
     @Bind(R.id.data_hora_view) TextView mDataHoraView;
     @Bind(R.id.medico_view) TextView mMedicoView;
@@ -104,14 +106,15 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int idAgenda;
-
         if (!getIntent().hasExtra("id") ||
                 getIntent().getExtras().getString("id") == null) {
             throw new IllegalStateException("O ID da agenda deve ser passado via putExtras()");
         } else {
-            idAgenda = Integer.valueOf(getIntent().getStringExtra("id"));
+            mIdAgenda = Integer.parseInt(getIntent().getStringExtra("id"));
         }
+
+        mAgendaDAO = new AgendaDAO(this);
+        mMedicoDAO = new MedicoDAO(this);
 
         setContentView(R.layout.activity_detalhes_visita);
         ButterKnife.bind(this);
@@ -127,28 +130,15 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         createLocationRequest();
         buildLocationSettingsRequest();
         checkLocationSettings();
-
-        mAgendaDAO = new AgendaDAO(this);
-        mVisitaDAO = new VisitaDAO(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        mAgendaDAO.openDatabase();
+        mMedicoDAO.openDatabase();
 
-        //TODO reimplementar
-        /*
-        final MedicoDAO medicoDAO = new MedicoDAO(this);
-        final Medico medico = medicoDAO.Consultar(mAgenda.getIdMedico().getId_medico());
-
-        mDataHoraView.setText(mAgenda.getData() + "/" + mAgenda.getHora());
-
-        if (medico != null) {
-            mMedicoView.setText(medico.getNome());
-        }
-
-        mObservacaoView.setText(mAgenda.getObservacao());
-        */
+        PreencheTela();
 
         initiliazeAcoesVisitaButton();
     }
@@ -173,6 +163,13 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
             mGoogleApiClient.disconnect();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mAgendaDAO.closeDatabase();
+        mMedicoDAO.closeDatabase();
     }
 
     /**
@@ -417,5 +414,14 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
     public static Intent getLauncherIntent(@NonNull Context context) {
         return new Intent(context, DetalhesVisitaActivity.class);
+    }
+
+    //Metódo para preencher a tela com os dados da Agenda
+    public void PreencheTela()
+    {
+        Agenda agenda = mAgendaDAO.consultar(mIdAgenda);
+        mDataHoraView.setText(agenda.getDataCompromisso().toString());
+        mMedicoView.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO +" = ?",agenda.getIdMedico().toString()).getNome());
+        mObservacaoView.setText(agenda.getObservacao());
     }
 }
