@@ -35,6 +35,7 @@ import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
+import com.libertsolutions.washington.apppropagandista.Util.Tela;
 
 import java.util.Calendar;
 import java.util.concurrent.Executors;
@@ -304,10 +305,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 Mensagem.MensagemAlerta(this, "Visita iniciada...");
                 break;
             case EmAtendimento:
-                btnIniciarVisita.setText("Visita Finalizada");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_finalizada);
-                mAgenda.setStatusAgenda(StatusAgenda.Finalizado);
-                Mensagem.MensagemAlerta(this, "Visita Finalizada...");
+                Tela.AbrirTela(this,FinalizarVisita.class);
                 break;
         }
 
