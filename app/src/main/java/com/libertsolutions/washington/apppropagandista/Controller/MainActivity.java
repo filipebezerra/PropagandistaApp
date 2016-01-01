@@ -216,28 +216,29 @@ public class MainActivity extends AppCompatActivity
 
         if (lista != null) {
             //Cria array com quantidade de colunas da ListView
-            String[] columnTags = new String[] { "id", "col1", "col2", "col3" };
+            String[] columnTags = new String[] { "status","id", "col1", "col2", "col3" };
             //Recupera id das colunas do layout list_itens_ped
-            int[] columnIds = new int[] { R.id.id, R.id.column1, R.id.column2, R.id.column3 };
+            int[] columnIds = new int[] {R.id.status, R.id.id, R.id.column1, R.id.column2, R.id.column3 };
 
             for (Agenda agenda : lista) {
                 HashMap<String, String> map = new HashMap<>();
-                map.put(columnTags[0], String.valueOf(agenda.getId()));
+                map.put(columnTags[0], agenda.getStatusAgenda().name());
+                map.put(columnTags[1], String.valueOf(agenda.getId()));
 
                 final Medico medico = mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO + " = ?",
                         String.valueOf(agenda.getIdMedico()));
 
-                map.put(columnTags[1], medico != null ? medico.getNome() : "");
-                map.put(columnTags[2], "Data: " + DateUtil.format(agenda.getDataCompromisso(),
+                map.put(columnTags[2], medico != null ? medico.getNome() : "");
+                map.put(columnTags[3], "Data: " + DateUtil.format(agenda.getDataCompromisso(),
                         DATE_AND_TIME));
-                map.put(columnTags[3], "Obs: " + agenda.getObservacao());
+                map.put(columnTags[4], "Obs: " + agenda.getObservacao());
 
                 mListaAgenda.add(map);
             }
 
             int currentPosition = mListView.getFirstVisiblePosition();
             //Função para realizar adptação necessária para inserir dados no ListView
-            mPersonalAdapter = new PersonalAdapter(this, mListaAgenda, R.layout.cols_3, columnTags,
+            mPersonalAdapter = new PersonalAdapter(this, mListaAgenda, R.layout.cols_3_status, columnTags,
                     columnIds);
 
             //Adiciona Array no ListView

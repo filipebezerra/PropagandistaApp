@@ -32,9 +32,11 @@ import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
+import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 
+import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -97,6 +99,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
     @NonNull private AgendaDAO mAgendaDAO;
     @NonNull private MedicoDAO mMedicoDAO;
+    @NonNull private VisitaDAO mVisitaDAO;
     @NonNull private Agenda mAgenda;
     private int mIdAgenda;
 
@@ -118,6 +121,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
         mAgendaDAO = new AgendaDAO(this);
         mMedicoDAO = new MedicoDAO(this);
+        mVisitaDAO = new VisitaDAO(this);
 
         setContentView(R.layout.activity_detalhes_visita);
         ButterKnife.bind(this);
@@ -140,6 +144,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         super.onStart();
         mAgendaDAO.openDatabase();
         mMedicoDAO.openDatabase();
+        mVisitaDAO.openDatabase();
         mAgenda = mAgendaDAO.consultar(mIdAgenda);
         PreencheTela();
 
@@ -173,6 +178,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         super.onStop();
         mAgendaDAO.closeDatabase();
         mMedicoDAO.closeDatabase();
+        mVisitaDAO.closeDatabase();
     }
 
     /**
@@ -288,6 +294,13 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 btnIniciarVisita.setText("Finalizar Visita");
                 btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
                 mAgenda.setStatusAgenda(StatusAgenda.EmAtendimento);
+                Visita mVisita = new Visita();
+                Calendar c = Calendar.getInstance();
+                mVisita.setDataInicio(c.getTimeInMillis());
+                mVisita.setLatInicial(123.12);
+                mVisita.setLongInicial(122.12);
+                mVisita.setIdAgenda(mAgenda.getIdAgenda());
+                mVisitaDAO.incluir(mVisita);
                 Mensagem.MensagemAlerta(this, "Visita iniciada...");
                 break;
             case EmAtendimento:
@@ -299,7 +312,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         }
 
         //Salva Alterações tabela Agenda
-        //mAgendaDAO.alterar(mAgenda);
+        mAgendaDAO.alterar(mAgenda);
     }
 
     private void initiliazeAcoesVisitaButton() {
