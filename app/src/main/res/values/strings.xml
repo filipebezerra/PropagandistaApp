@@ -47,6 +47,7 @@
     <string name="hintTelefone">Número do telefone</string>
     <string name="hintCrm">CRM</string>
     <string name="hintEspecialidade">Especialidade médica</string>
+    <string name="hintDetalhes">Detalhes da visita</string>
 
     <string name="hintTxtMedico">Selecione o médico</string>
     <string name="hintTxtDataCompromisso">Toque aqui para selecionar a data</string>

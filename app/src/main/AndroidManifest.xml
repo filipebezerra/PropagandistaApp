@@ -186,8 +186,7 @@
         <activity
             android:name=".Controller.FinalizarVisita"
             android:label="@string/title_activity_finalizar_visita"
-            android:parentActivityName=".Controller.DetalhesVisitaActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:parentActivityName=".Controller.AgendaActivity"></activity>
     </application>
 
 </manifest>

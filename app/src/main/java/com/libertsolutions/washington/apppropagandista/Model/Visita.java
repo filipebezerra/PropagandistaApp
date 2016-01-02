@@ -1,5 +1,17 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
+
+import org.joda.time.DateTime;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Classe modelo dos dados de visita.
  *
@@ -41,6 +53,61 @@ public class Visita extends ModeloBase<Visita> {
                 .setLatInicial(latitude)
                 .setLongInicial(longitude)
                 .setIdAgenda(idAgenda);
+    }
+
+    public static Visita fromModel(@NonNull VisitaModel model) {
+        Preconditions.checkNotNull(model, "model não pode ser nulo");
+        Preconditions.checkNotNull(model.idVisita, "model.idVisita não pode ser nulo");
+        Preconditions.checkNotNull(model.dtInicio, "model.dtInicio não pode ser nulo");
+        Preconditions.checkNotNull(model.latInicial, "model.latInicial não pode ser nulo");
+        Preconditions.checkNotNull(model.longFinal, "model.latInicial não pode ser nulo");
+        Preconditions.checkState(model.idAgenda != 0, "model.idAgenda é inválido");
+
+        return new Visita()
+                .setId(model.idCliente)
+                .setIdVisita(model.idVisita)
+                .setDataInicio(model.dtInicio != null ?
+                        DateTime.parse(model.dtInicio).getMillis() : null)
+                .setLatInicial(model.latInicial)
+                .setLongInicial(model.longInicial)
+                .setDataInicio(model.dtFim != null ?
+                        DateTime.parse(model.dtFim).getMillis() : null)
+                .setLatInicial(model.latFinal)
+                .setLongInicial(model.longFinal)
+                .setDetalhes(model.detalhes)
+                .setIdAgenda(model.idAgenda);
+    }
+
+    public static VisitaModel toModel(@NonNull Visita visita) {
+        Preconditions.checkNotNull(visita, "visita não pode ser nulo");
+        Preconditions.checkNotNull(visita.getId(),
+                "visita.getId() não pode ser nulo");
+        Preconditions.checkNotNull(visita.getDataInicio(),
+                "visita.getDataInicio() não pode ser nulo");
+        Preconditions.checkNotNull(visita.getLatInicial(),
+                "visita.getLatInicial() não pode ser nulo");
+        Preconditions.checkNotNull(visita.getLongInicial(),
+                "visita.getLongInicial() não pode ser nulo");
+        Preconditions.checkNotNull(visita.getIdAgenda(),
+                "visita.getIdAgenda() não pode ser nulo");
+
+        final VisitaModel model = new VisitaModel();
+        model.idCliente = visita.getId();
+        model.idVisita = visita.getIdVisita();
+        model.dtInicio = visita.getDataInicio() != null ?
+                new DateTime(visita.getDataInicio()).toString("yyyy-MM-dd'T'HH:mm:ss") :
+                null;
+        model.latInicial = visita.getLatInicial();
+        model.longInicial = visita.getLongInicial();
+        model.dtFim = visita.getDataFim() != null ?
+                new DateTime(visita.getDataFim()).toString("yyyy-MM-dd'T'HH:mm:ss") :
+                null;
+        model.latFinal = visita.getLatFinal();
+        model.longFinal = visita.getLongFinal();
+        model.detalhes = visita.getDetalhes();
+        model.idAgenda = visita.getIdAgenda();
+
+        return model;
     }
 
     @Override

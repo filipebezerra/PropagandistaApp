@@ -15,6 +15,11 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -27,6 +32,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
@@ -34,9 +40,15 @@ import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
+import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
+import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
+import com.libertsolutions.washington.apppropagandista.api.services.VisitaService;
 
+import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
+import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
 import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +58,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         ResultCallback<LocationSettingsResult> {
+    private MaterialDialog mProgressDialog;
 
     private static final String LOG = DetalhesVisitaActivity.class.getSimpleName();
 
@@ -292,17 +305,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     public void onClickBtnIniciar() {
         switch (mAgenda.getStatusAgenda()) {
             case Pendente:
-                btnIniciarVisita.setText("Finalizar Visita");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
-                mAgenda.setStatusAgenda(StatusAgenda.EmAtendimento);
-                Visita mVisita = new Visita();
-                Calendar c = Calendar.getInstance();
-                mVisita.setDataInicio(c.getTimeInMillis());
-                mVisita.setLatInicial(mBestLocation.getLatitude());
-                mVisita.setLongInicial(mBestLocation.getLongitude());
-                mVisita.setIdAgenda(mAgenda.getIdAgenda());
-                mVisitaDAO.incluir(mVisita);
-                Mensagem.MensagemAlerta(this, "Visita iniciada...");
+                save();
                 break;
             case EmAtendimento:
                 Bundle param = new Bundle();
@@ -452,8 +455,90 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     //Metódo para preencher a tela com os dados da Agenda
     public void PreencheTela()
     {
-        mDataHoraView.setText(mAgenda.getDataCompromisso().toString());
+        mDataHoraView.setText(DateUtil.format(mAgenda.getDataCompromisso(),DATE_AND_TIME));
         mMedicoView.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO +" = ?",mAgenda.getIdMedico().toString()).getNome());
         mObservacaoView.setText(mAgenda.getObservacao());
+    }
+
+    public void save() {
+        try {
+            Visita mVisita = new Visita();
+            Calendar c = Calendar.getInstance();
+            mVisita.setDataInicio(c.getTimeInMillis());
+            mVisita.setLatInicial(mBestLocation.getLatitude());
+            mVisita.setLongInicial(mBestLocation.getLongitude());
+            mVisita.setIdAgenda(mAgenda.getIdAgenda());
+            mVisitaDAO.incluir(mVisita);
+
+            final VisitaService service = createService(VisitaService.class, this);
+            if (service != null) {
+                service.post(Visita.toModel(mVisita))
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new EnviaVisitaSubscriber());
+            }
+            btnIniciarVisita.setText("Finalizar Visita");
+            btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
+            mAgenda.setStatusAgenda(StatusAgenda.EmAtendimento);
+            Mensagem.MensagemAlerta(this, "Visita iniciada...");
+        }catch (Exception erro)
+        {
+            Log.d(LOG_ENVIA_VISITA, "Erro ao salvar visita: "+erro.getMessage());
+        }
+    }
+
+    private static final String LOG_ENVIA_VISITA =
+            EnviaVisitaSubscriber.class.getSimpleName();
+
+    private class EnviaVisitaSubscriber extends Subscriber<VisitaModel> {
+        @Override
+        public void onCompleted() {
+            dismissDialog();
+            Log.d(LOG_ENVIA_VISITA, "Envio dos cadastros de médicos concluído");
+
+            Dialogos.mostrarMensagem(DetalhesVisitaActivity.this, "Sincronização dos dados",
+                    "Sincronização dos dados concluída com sucesso!",
+                    new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog materialDialog,
+                                            @NonNull DialogAction dialogAction) {
+                            finish();
+                        }
+                    });
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            dismissDialog();
+            Log.e(LOG_ENVIA_VISITA, "Falha no envio do cadastro de médico", e);
+            if (e.getCause() != null) {
+                Log.e(LOG_ENVIA_VISITA, "Causa da falha", e.getCause());
+            }
+
+            Dialogos.mostrarMensagem(DetalhesVisitaActivity.this,
+                    "Sincronização do cadastro do médico",
+                    String.format("Infelizmente houve um erro e a sincronização não "
+                            + "pôde ser completada. Erro: %s", e.getMessage()));
+        }
+
+        @Override
+        public void onNext(VisitaModel model) {
+            dismissDialog();
+
+            if (model == null) {
+                onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
+            } else {
+                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+
+                final Visita visitaEnviado = Visita.fromModel(model);
+                mVisitaDAO.alterar(visitaEnviado);
+            }
+        }
+
+        private void dismissDialog() {
+            if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                mProgressDialog.dismiss();
+            }
+        }
     }
 }

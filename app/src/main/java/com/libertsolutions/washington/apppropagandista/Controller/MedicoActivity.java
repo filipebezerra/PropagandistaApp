@@ -183,7 +183,7 @@ public class MedicoActivity extends ActionBarActivity {
             {
                 Medico medico = lista.get(i);
                 HashMap<String, String> map = new HashMap<String, String>();
-                map.put(columnTags[0],String.valueOf(medico.getIdMedico()));  //Id
+                map.put(columnTags[0],String.valueOf(medico.getId()));  //Id
                 map.put(columnTags[1],medico.getNome());  //Nome
                 map.put(columnTags[2], "Telefone: " + medico.getTelefone());  //Telefone
                 map.put(columnTags[3], "Secretária: " + medico.getSecretaria());  //Secretária
