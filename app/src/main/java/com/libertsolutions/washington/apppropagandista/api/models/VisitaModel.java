@@ -31,5 +31,5 @@ public class VisitaModel {
     public String detalhes;
 
     @SerializedName("id_agenda")
-    public int idAgenda;
+    public Long idAgenda;
 }

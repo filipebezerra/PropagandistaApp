@@ -116,7 +116,7 @@ public class VisitaDAO extends DAOGenerico<Visita> {
                 cursor.getColumnIndex(COLUNA_DETALHES)));
         visita.setStatus(Status.fromOrdinal(cursor.getInt(
                 cursor.getColumnIndex(COLUNA_STATUS))));
-        visita.setIdAgenda(cursor.getInt(
+        visita.setIdAgenda(cursor.getLong(
                 cursor.getColumnIndex(COLUNA_RELACAO_AGENDA)));
 
         return visita;

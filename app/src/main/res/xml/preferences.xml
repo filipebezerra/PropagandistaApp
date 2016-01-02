@@ -7,12 +7,13 @@
             android:key="pref_url"
             android:title="@string/pref_url"
             android:summary="@string/pref_url_summary"
-            android:defaultValue="http://"
+            android:defaultValue="http://vitalife.ind.br/portal/api/"
             />
         <EditTextPreference
             app:key="pref_auth_key"
             android:title="@string/pref_auth_key"
             android:summary="@string/pref_auth_key_summary"
+            android:defaultValue="626c6f63736b696e"
             />
     </PreferenceCategory>
 </PreferenceScreen>

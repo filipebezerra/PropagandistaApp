@@ -18,7 +18,6 @@ import butterknife.OnClick;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -41,12 +40,12 @@ import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
-import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
+import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
+import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
 import com.libertsolutions.washington.apppropagandista.api.services.VisitaService;
-
 import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
 import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
 import java.util.Calendar;
@@ -58,7 +57,6 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         ResultCallback<LocationSettingsResult> {
-    private MaterialDialog mProgressDialog;
 
     private static final String LOG = DetalhesVisitaActivity.class.getSimpleName();
 
@@ -465,10 +463,18 @@ public class DetalhesVisitaActivity extends AppCompatActivity
             Visita mVisita = new Visita();
             Calendar c = Calendar.getInstance();
             mVisita.setDataInicio(c.getTimeInMillis());
-            mVisita.setLatInicial(mBestLocation.getLatitude());
-            mVisita.setLongInicial(mBestLocation.getLongitude());
-            mVisita.setIdAgenda(mAgenda.getIdAgenda());
+            if(mBestLocation != null) {
+                mVisita.setLatInicial(mBestLocation.getLatitude());
+                mVisita.setLongInicial(mBestLocation.getLongitude());
+            }
+            mVisita.setIdAgenda(mAgenda.getId());
             mVisitaDAO.incluir(mVisita);
+            //Altera Agenda
+            mAgenda.setStatusAgenda(StatusAgenda.EmAtendimento);
+            mAgendaDAO.alterar(mAgenda);
+            btnIniciarVisita.setText("Finalizar Visita");
+            btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
+            Mensagem.MensagemAlerta(this, "Visita iniciada...");
 
             final VisitaService service = createService(VisitaService.class, this);
             if (service != null) {
@@ -477,10 +483,6 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new EnviaVisitaSubscriber());
             }
-            btnIniciarVisita.setText("Finalizar Visita");
-            btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
-            mAgenda.setStatusAgenda(StatusAgenda.EmAtendimento);
-            Mensagem.MensagemAlerta(this, "Visita iniciada...");
         }catch (Exception erro)
         {
             Log.d(LOG_ENVIA_VISITA, "Erro ao salvar visita: "+erro.getMessage());
@@ -493,38 +495,20 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     private class EnviaVisitaSubscriber extends Subscriber<VisitaModel> {
         @Override
         public void onCompleted() {
-            dismissDialog();
             Log.d(LOG_ENVIA_VISITA, "Envio dos cadastros de médicos concluído");
-
-            Dialogos.mostrarMensagem(DetalhesVisitaActivity.this, "Sincronização dos dados",
-                    "Sincronização dos dados concluída com sucesso!",
-                    new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog materialDialog,
-                                            @NonNull DialogAction dialogAction) {
-                            finish();
-                        }
-                    });
+            EnviaAgenda();
         }
 
         @Override
         public void onError(Throwable e) {
-            dismissDialog();
             Log.e(LOG_ENVIA_VISITA, "Falha no envio do cadastro de médico", e);
             if (e.getCause() != null) {
                 Log.e(LOG_ENVIA_VISITA, "Causa da falha", e.getCause());
             }
-
-            Dialogos.mostrarMensagem(DetalhesVisitaActivity.this,
-                    "Sincronização do cadastro do médico",
-                    String.format("Infelizmente houve um erro e a sincronização não "
-                            + "pôde ser completada. Erro: %s", e.getMessage()));
         }
 
         @Override
         public void onNext(VisitaModel model) {
-            dismissDialog();
-
             if (model == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
@@ -535,9 +519,52 @@ public class DetalhesVisitaActivity extends AppCompatActivity
             }
         }
 
-        private void dismissDialog() {
-            if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mProgressDialog.dismiss();
+        public void EnviaAgenda() {
+            final AgendaService service = createService(AgendaService.class, DetalhesVisitaActivity.this);
+            if (service == null) {
+                Mensagem.MensagemAlerta(DetalhesVisitaActivity.this, "As configurações de sincronização não foram aplicadas corretamente.");
+
+            } else {
+                final AgendaModel agendaModel = Agenda.toModel(mAgenda);
+
+                // TODO extrair cpf para atributo e validar se o cpf esta presente
+                service.post(agendaModel)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new EnvioAgendaSubscriber());
+            }
+        }
+
+        private class EnvioAgendaSubscriber extends Subscriber<AgendaModel> {
+            @Override
+            public void onCompleted() {
+                Log.d(LOG_ENVIA_VISITA, "Sincronização da nova agenda concluído");
+                Mensagem.MensagemAlerta(DetalhesVisitaActivity.this,"Dados enviados com sucesso.");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e(LOG_ENVIA_VISITA, "Falha na sincronização da nova agenda", e);
+                Mensagem.MensagemAlerta(DetalhesVisitaActivity.this, "Falha ao enviar Agenda.");
+                if (e.getCause() != null) {
+                    Log.e(LOG_ENVIA_VISITA, "Causa da falha", e.getCause());
+                    Mensagem.MensagemAlerta(DetalhesVisitaActivity.this,e.getCause().getMessage());
+                }
+            }
+
+            @Override
+            public void onNext(AgendaModel model) {
+                if (model == null) {
+                    onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
+                } else {
+                    Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+                    Preconditions.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
+                    Preconditions.checkNotNull(model.statusAgenda,
+                            "model.statusAgenda não pode ser nulo");
+
+                    Agenda.fromModel(model);
+                    mAgendaDAO.alterar(Agenda.fromModel(model));
+                }
             }
         }
     }

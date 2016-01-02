@@ -34,6 +34,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
 
@@ -45,6 +46,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
 
 public class FinalizarVisita extends AppCompatActivity
     implements GoogleApiClient.ConnectionCallbacks,
@@ -120,6 +123,8 @@ public class FinalizarVisita extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finalizar_visita);
 
+        ButterKnife.bind(this);
+
         mAgendaDAO = new AgendaDAO(this);
         mMedicoDAO = new MedicoDAO(this);
         mVisitaDAO = new VisitaDAO(this);
@@ -130,8 +135,6 @@ public class FinalizarVisita extends AppCompatActivity
         } else {
             mIdAgenda = Integer.parseInt(getIntent().getStringExtra("id"));
         }
-
-        ButterKnife.bind(this);
     }
 
     @Override
@@ -409,27 +412,17 @@ public class FinalizarVisita extends AppCompatActivity
             mVisita.setDetalhes(mDetalhes.getText().toString());
             Calendar c = Calendar.getInstance();
             mVisita.setDataFim(c.getTimeInMillis());
-            mVisita.setLatFinal(mBestLocation.getLatitude());
-            mVisita.setLongFinal(mBestLocation.getLongitude());
+            if(mBestLocation != null) {
+                mVisita.setLatFinal(mBestLocation.getLatitude());
+                mVisita.setLongFinal(mBestLocation.getLongitude());
+            }
             //Altera Visita
             final int alteracoes = mVisitaDAO.alterar(mVisita);
 
             //Altera Agenda
             mAgenda.setStatusAgenda(StatusAgenda.Finalizado);
             mAgendaDAO.alterar(mAgenda);
-
-            /*if (alteracoes > 0) {
-                Dialogos.mostrarMensagemFlutuante(mRootView, "Dados salvos com sucesso!", false);
-
-                final MedicoService service = createService(MedicoService.class, this);
-
-                if (service != null) {
-                    service.post(Medico.toModel(mMedicoSelecionado, null))
-                            .subscribeOn(Schedulers.newThread())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new EnviaMedicoSubscriber());
-                }
-            }*/
+            onBackPressed();
         }
     }
 
@@ -451,7 +444,7 @@ public class FinalizarVisita extends AppCompatActivity
     public void PreencheTela()
     {
         mNomeMedico.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO + " = ?", mAgenda.getIdMedico().toString()).getNome());
-        mDtCompromisso.setText(mAgenda.getDataCompromisso().toString());
+        mDtCompromisso.setText(DateUtil.format(mAgenda.getDataCompromisso(), DATE_AND_TIME));
     }
 }
 

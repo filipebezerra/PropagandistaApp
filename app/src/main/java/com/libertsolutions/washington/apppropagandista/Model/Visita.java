@@ -44,10 +44,10 @@ public class Visita extends ModeloBase<Visita> {
     private String mDetalhes;
 
     // id de relacionamento com tabela Agenda
-    private Integer mIdAgenda;
+    private Long mIdAgenda;
 
     public static Visita iniciar(final Long data, final Double latitude, final Double longitude,
-            final Integer idAgenda) {
+            final Long idAgenda) {
         return new Visita()
                 .setDataInicio(data)
                 .setLatInicial(latitude)
@@ -194,11 +194,11 @@ public class Visita extends ModeloBase<Visita> {
         return this;
     }
 
-    public Integer getIdAgenda() {
+    public Long getIdAgenda() {
         return mIdAgenda;
     }
 
-    public Visita setIdAgenda(Integer idAgenda) {
+    public Visita setIdAgenda(Long idAgenda) {
         mIdAgenda = idAgenda;
         return this;
     }

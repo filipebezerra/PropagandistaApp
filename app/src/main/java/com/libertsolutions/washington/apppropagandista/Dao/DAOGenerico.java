@@ -37,7 +37,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * Classes que descendem de {@link ModeloBase} já contém o atributo {@link ModeloBase#mId}
      * que será usado como coluna chave primária da tabela.
      */
-    static final String COLUNA_ID = "_id";
+    public static final String COLUNA_ID = "_id";
 
     /**
      * Todas entidades devem conter esta coluna como controle interno de sincronização.
