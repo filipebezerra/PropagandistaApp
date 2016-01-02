@@ -5,22 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import com.afollestad.materialdialogs.MaterialDialog;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,7 +26,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
@@ -42,19 +34,19 @@ import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
-import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
-import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
-import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
-import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
-import com.libertsolutions.washington.apppropagandista.api.services.VisitaService;
-import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
-import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
+
 import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class DetalhesVisitaActivity extends AppCompatActivity
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
+
+public class NaoVisita extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
@@ -111,21 +103,23 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
     private Location mBestLocation;
 
-    @NonNull private AgendaDAO mAgendaDAO;
-    @NonNull private MedicoDAO mMedicoDAO;
-    @NonNull private VisitaDAO mVisitaDAO;
-    @NonNull private Agenda mAgenda;
     private int mIdAgenda;
-
-    @Bind(R.id.status) TextView mStatus;
-    @Bind(R.id.data_hora_view) TextView mDataHoraView;
-    @Bind(R.id.medico_view) TextView mMedicoView;
-    @Bind(R.id.obs_view) TextView mObservacaoView;
+    @NonNull private Agenda mAgenda;
+    @NonNull private Visita mVisita;
+    @NonNull private AgendaDAO mAgendaDAO;
+    @NonNull private VisitaDAO mVisitaDAO;
+    @NonNull private MedicoDAO mMedicoDAO;
+    @Bind(R.id.txtNomeMedico) TextView mNomeMedico;
+    @Bind(R.id.txtDataCompromisso) TextView mDtCompromisso;
+    @Bind(R.id.txtDetalhes) TextView mDetalhes;
+    @Bind(R.id.hintDetalhes) TextInputLayout mDetalhesHint;
     @Bind(R.id.btnIniciar) Button btnIniciarVisita;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_nao_visita);
+        ButterKnife.bind(this);
 
         if (!getIntent().hasExtra("id") ||
                 getIntent().getExtras().getString("id") == null) {
@@ -137,21 +131,6 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         mAgendaDAO = new AgendaDAO(this);
         mMedicoDAO = new MedicoDAO(this);
         mVisitaDAO = new VisitaDAO(this);
-
-        setContentView(R.layout.activity_detalhes_visita);
-        ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        if (!servicesAvailable()) {
-            finish();
-        }
-
-        buildGoogleApiClient();
-        createLocationRequest();
-        buildLocationSettingsRequest();
-        checkLocationSettings();
     }
 
     @Override
@@ -161,9 +140,8 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         mMedicoDAO.openDatabase();
         mVisitaDAO.openDatabase();
         mAgenda = mAgendaDAO.consultar(mIdAgenda);
+        mVisita = mVisitaDAO.consultar("id_agenda = ?",String.valueOf(mIdAgenda));
         PreencheTela();
-
-        initiliazeAcoesVisitaButton();
     }
 
     @Override
@@ -194,41 +172,6 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         mAgendaDAO.closeDatabase();
         mMedicoDAO.closeDatabase();
         mVisitaDAO.closeDatabase();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_visita, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Bundle param = new Bundle();
-        param.putString("id", String.valueOf(mIdAgenda));
-        if (item.getItemId() == R.id.nav_edit) {
-            save();
-            return true;
-        } else if(item.getItemId() == R.id.nav_naovisita) {
-            if(mAgenda.getStatusAgenda() == StatusAgenda.EmAtendimento) {
-                Tela.AbrirTela(DetalhesVisitaActivity.this, NaoVisita.class, param);
-            }else
-            {
-                Mensagem.MensagemAlerta(this,"Somente agendas Em Atendimento podem ser classificadas como Não Visita!");
-            }
-        } else if(item.getItemId() == R.id.nav_cancelar) {
-            if(mAgenda.getStatusAgenda() == StatusAgenda.Pendente) {
-                Tela.AbrirTela(DetalhesVisitaActivity.this, CancelarVisita.class, param);
-            }else
-            {
-                Mensagem.MensagemAlerta(this,"Somente agendas Pendentes podem ser Canceladas!");
-            }
-        }
-        else
-        {
-            return super.onOptionsItemSelected(item);
-        }
-        return true;
     }
 
     /**
@@ -337,51 +280,6 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         }
     }
 
-    @OnClick(R.id.btnIniciar)
-    public void onClickBtnIniciar() {
-        switch (mAgenda.getStatusAgenda()) {
-            case Pendente:
-                save();
-                break;
-            case EmAtendimento:
-                Bundle param = new Bundle();
-                param.putString("id", mAgenda.getId().toString());
-                Tela.AbrirTela(this,FinalizarVisita.class,param);
-                break;
-        }
-
-        //Salva Alterações tabela Agenda
-        mAgendaDAO.alterar(mAgenda);
-    }
-
-    private void initiliazeAcoesVisitaButton() {
-        switch (mAgenda.getStatusAgenda()) {
-            case Pendente:
-                btnIniciarVisita.setText("Iniciar Visita");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_pendente);
-                break;
-            case EmAtendimento:
-                btnIniciarVisita.setText("Finalizar Visita");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
-                break;
-            case Finalizado:
-                btnIniciarVisita.setText("Visita Finalizada");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_finalizada);
-                btnIniciarVisita.setEnabled(false);
-                break;
-            case Cancelado:
-                btnIniciarVisita.setText("Visita Cancelada");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_cancelada);
-                btnIniciarVisita.setEnabled(false);
-                break;
-            case NaoVisita:
-                btnIniciarVisita.setText("Não Visita");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_naovisita);
-                btnIniciarVisita.setEnabled(false);
-                break;
-        }
-    }
-
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG, "Connected to GoogleApiClient");
@@ -405,7 +303,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                             @Override
                             public void run() {
                                 LocationServices.FusedLocationApi.removeLocationUpdates(
-                                        mGoogleApiClient, DetalhesVisitaActivity.this);
+                                        mGoogleApiClient, NaoVisita.this);
                                 mRequestingLocationUpdates = false;
                             }
                         }, ONE_MIN, TimeUnit.MILLISECONDS);
@@ -491,120 +389,32 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     //Metódo para preencher a tela com os dados da Agenda
     public void PreencheTela()
     {
-        mStatus.setText(mAgenda.getStatusAgenda().name());
-        mDataHoraView.setText(DateUtil.format(mAgenda.getDataCompromisso(),DATE_AND_TIME));
-        mMedicoView.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO +" = ?",mAgenda.getIdMedico().toString()).getNome());
-        mObservacaoView.setText(mAgenda.getObservacao());
+        mDtCompromisso.setText(DateUtil.format(mAgenda.getDataCompromisso(), DATE_AND_TIME));
+        mNomeMedico.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO + " = ?", mAgenda.getIdMedico().toString()).getNome());
     }
 
-    public void save() {
-        try {
-            Visita mVisita = new Visita();
-            Calendar c = Calendar.getInstance();
-            mVisita.setDataInicio(c.getTimeInMillis());
-            if(mBestLocation != null) {
-                mVisita.setLatInicial(mBestLocation.getLatitude());
-                mVisita.setLongInicial(mBestLocation.getLongitude());
-            }
-            mVisita.setIdAgenda(mAgenda.getId());
-            mVisitaDAO.incluir(mVisita);
-            //Altera Agenda
-            mAgenda.setStatusAgenda(StatusAgenda.EmAtendimento);
+    @OnClick(R.id.btnIniciar)
+    public void onClickBtnIniciar() {
+        if (TextUtils.isEmpty(mDetalhes.getText())) {
+            mDetalhesHint.setError("Informe o motivo.");
+            mDetalhesHint.setErrorEnabled(true);
+        } else {
+            mDetalhesHint.setError(null);
+            mDetalhesHint.setErrorEnabled(false);
+            mAgenda.setStatusAgenda(StatusAgenda.NaoVisita);
+            //Salva Alterações tabela Agenda
             mAgendaDAO.alterar(mAgenda);
-            btnIniciarVisita.setText("Finalizar Visita");
-            btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
-            Mensagem.MensagemAlerta(this, "Visita iniciada...");
 
-            final VisitaService service = createService(VisitaService.class, this);
-            if (service != null) {
-                service.post(Visita.toModel(mVisita))
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new EnviaVisitaSubscriber());
+            //Salva Dados da Não Visita
+            mVisita.setDetalhes(mDetalhes.getText().toString());
+            Calendar c = Calendar.getInstance();
+            mVisita.setDataFim(c.getTimeInMillis());
+            if(mBestLocation != null) {
+                mVisita.setLatFinal(mBestLocation.getLatitude());
+                mVisita.setLongFinal(mBestLocation.getLongitude());
             }
-        }catch (Exception erro)
-        {
-            Log.d(LOG_ENVIA_VISITA, "Erro ao salvar visita: "+erro.getMessage());
-        }
-    }
-
-    private static final String LOG_ENVIA_VISITA =
-            EnviaVisitaSubscriber.class.getSimpleName();
-
-    private class EnviaVisitaSubscriber extends Subscriber<VisitaModel> {
-        @Override
-        public void onCompleted() {
-            Log.d(LOG_ENVIA_VISITA, "Envio dos cadastros de médicos concluído");
-            EnviaAgenda();
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            Log.e(LOG_ENVIA_VISITA, "Falha no envio do cadastro de médico", e);
-            if (e.getCause() != null) {
-                Log.e(LOG_ENVIA_VISITA, "Causa da falha", e.getCause());
-            }
-        }
-
-        @Override
-        public void onNext(VisitaModel model) {
-            if (model == null) {
-                onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
-            } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
-
-                final Visita visitaEnviado = Visita.fromModel(model);
-                mVisitaDAO.alterar(visitaEnviado);
-            }
-        }
-
-        public void EnviaAgenda() {
-            final AgendaService service = createService(AgendaService.class, DetalhesVisitaActivity.this);
-            if (service == null) {
-                Mensagem.MensagemAlerta(DetalhesVisitaActivity.this, "As configurações de sincronização não foram aplicadas corretamente.");
-
-            } else {
-                final AgendaModel agendaModel = Agenda.toModel(mAgenda);
-
-                // TODO extrair cpf para atributo e validar se o cpf esta presente
-                service.post(agendaModel)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new EnvioAgendaSubscriber());
-            }
-        }
-
-        private class EnvioAgendaSubscriber extends Subscriber<AgendaModel> {
-            @Override
-            public void onCompleted() {
-                Log.d(LOG_ENVIA_VISITA, "Sincronização da nova agenda concluído");
-                Mensagem.MensagemAlerta(DetalhesVisitaActivity.this,"Dados enviados com sucesso.");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e(LOG_ENVIA_VISITA, "Falha na sincronização da nova agenda", e);
-                Mensagem.MensagemAlerta(DetalhesVisitaActivity.this, "Falha ao enviar Agenda.");
-                if (e.getCause() != null) {
-                    Log.e(LOG_ENVIA_VISITA, "Causa da falha", e.getCause());
-                    Mensagem.MensagemAlerta(DetalhesVisitaActivity.this,e.getCause().getMessage());
-                }
-            }
-
-            @Override
-            public void onNext(AgendaModel model) {
-                if (model == null) {
-                    onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
-                } else {
-                    Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
-                    Preconditions.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
-                    Preconditions.checkNotNull(model.statusAgenda,
-                            "model.statusAgenda não pode ser nulo");
-
-                    Agenda.fromModel(model);
-                    mAgendaDAO.alterar(Agenda.fromModel(model));
-                }
-            }
+            mVisitaDAO.alterar(mVisita);
+            onBackPressed();
         }
     }
 }

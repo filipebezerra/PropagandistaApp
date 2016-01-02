@@ -152,7 +152,7 @@ public class AgendaActivity extends AppCompatActivity {
                         .getItem(position);
                 Bundle param = new Bundle();
                 param.putString("id", obj.get("id").toString());
-                Tela.AbrirTela(AgendaActivity.this, CadastroCompromissoActivity.class, param);
+                Tela.AbrirTela(AgendaActivity.this, DetalhesVisitaActivity.class, param);
             }
         });
 

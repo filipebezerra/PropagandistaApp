@@ -48,6 +48,7 @@
     <string name="hintCrm">CRM</string>
     <string name="hintEspecialidade">Especialidade médica</string>
     <string name="hintDetalhes">Detalhes da visita</string>
+    <string name="hintMotivo">Motivo da não visita</string>
 
     <string name="hintTxtMedico">Selecione o médico</string>
     <string name="hintTxtDataCompromisso">Toque aqui para selecionar a data</string>
@@ -78,5 +79,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_finalizar_visita">Finalizar Visita</string>
+    <string name="title_activity_nao_visita">Não Visita</string>
+    <string name="title_activity_cancelar_visita">Cancelar Visita</string>
 
 </resources>

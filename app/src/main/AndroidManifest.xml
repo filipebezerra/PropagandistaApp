@@ -121,9 +121,6 @@
                 android:value=".Controller.MedicoActivity" />
         </activity>
 
-        <!-- Tela Detalhes do Médico -->
-
-
         <!-- Tela Cadastrar Agenda -->
         <activity
             android:name=".Controller.CadastroCompromissoActivity"
@@ -186,7 +183,17 @@
         <activity
             android:name=".Controller.FinalizarVisita"
             android:label="@string/title_activity_finalizar_visita"
-            android:parentActivityName=".Controller.AgendaActivity"></activity>
+            android:parentActivityName=".Controller.AgendaActivity" />
+
+        <!-- Tela Não Visita -->
+        <activity android:name=".Controller.NaoVisita"
+            android:parentActivityName=".Controller.DetalhesVisitaActivity"
+            android:label="@string/title_activity_nao_visita"/>
+
+        <!-- Tela Cancelar Visita -->
+        <activity android:name=".Controller.CancelarVisita"
+            android:parentActivityName=".Controller.DetalhesVisitaActivity"
+            android:label="@string/title_activity_cancelar_visita"/>
     </application>
 
 </manifest>
