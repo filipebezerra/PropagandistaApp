@@ -298,14 +298,16 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 Visita mVisita = new Visita();
                 Calendar c = Calendar.getInstance();
                 mVisita.setDataInicio(c.getTimeInMillis());
-                mVisita.setLatInicial(123.12);
-                mVisita.setLongInicial(122.12);
+                mVisita.setLatInicial(mBestLocation.getLatitude());
+                mVisita.setLongInicial(mBestLocation.getLongitude());
                 mVisita.setIdAgenda(mAgenda.getIdAgenda());
                 mVisitaDAO.incluir(mVisita);
                 Mensagem.MensagemAlerta(this, "Visita iniciada...");
                 break;
             case EmAtendimento:
-                Tela.AbrirTela(this,FinalizarVisita.class);
+                Bundle param = new Bundle();
+                param.putString("id", mAgenda.getId().toString());
+                Tela.AbrirTela(this,FinalizarVisita.class,param);
                 break;
         }
 
