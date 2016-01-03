@@ -147,7 +147,7 @@ public class ConsultaMedicoActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 try {
                     HashMap<String, Object> obj = (HashMap<String, Object>) grdMedicos.getAdapter().getItem(position);
-                    Medico medico = mMedicoDAO.consultar(Integer.parseInt(obj.get("id").toString()));
+                    Medico medico = mMedicoDAO.consultar(Long.valueOf(obj.get("id").toString()));
                     Intent param = new Intent();
                     param.putExtra("id_medico", medico.getIdMedico().toString());
                     param.putExtra("nome", medico.getNome());

@@ -66,7 +66,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity
     private Especialidade mEspecialidadeSelecionada;
 
     private MedicoDAO mMedicoDAO;
-    private int mIdMedico;
+    private Long mIdMedico;
     private Medico mMedicoSelecionado;
 
     private MaterialDialog mProgressDialog;
@@ -83,7 +83,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity
                     "O id do médico deve ser passado via putExtra(String)");
         }
 
-        mIdMedico = Integer.parseInt(getIntent().getStringExtra("id"));
+        mIdMedico = Long.valueOf(getIntent().getStringExtra("id"));
 
         setContentView(R.layout.activity_detalhes_medico);
         ButterKnife.bind(this);

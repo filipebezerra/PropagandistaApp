@@ -5,15 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -34,15 +36,9 @@ import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
-import com.libertsolutions.washington.apppropagandista.Util.Tela;
-
 import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
 
@@ -103,7 +99,7 @@ public class NaoVisita extends AppCompatActivity
 
     private Location mBestLocation;
 
-    private int mIdAgenda;
+    private Long mIdAgenda;
     @NonNull private Agenda mAgenda;
     @NonNull private Visita mVisita;
     @NonNull private AgendaDAO mAgendaDAO;
@@ -125,7 +121,7 @@ public class NaoVisita extends AppCompatActivity
                 getIntent().getExtras().getString("id") == null) {
             throw new IllegalStateException("O ID da agenda deve ser passado via putExtras()");
         } else {
-            mIdAgenda = Integer.parseInt(getIntent().getStringExtra("id"));
+            mIdAgenda = Long.valueOf(getIntent().getStringExtra("id"));
         }
 
         mAgendaDAO = new AgendaDAO(this);

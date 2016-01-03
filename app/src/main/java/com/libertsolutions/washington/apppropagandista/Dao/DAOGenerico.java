@@ -165,7 +165,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * @param id a ser consultado.
      * @return se existe registro para o {@code id}.
      */
-    public boolean existe(Integer id) {
+    public boolean existe(Long id) {
         return consultar(id) != null;
     }
 
@@ -176,7 +176,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * @param id a ser consultado.
      * @return a entidade que corresponde.
      */
-    public @Nullable T consultar(@NonNull Integer id) {
+    public @Nullable T consultar(@NonNull Long id) {
         Preconditions.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
@@ -279,7 +279,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
     /**
      * Especifica o nome da tabela usado no método {@link #query(String, String[], String, String)},
      * podendo ser usado também nas implementações dos métodos {@link #incluir(ModeloBase)},
-     * {@link #alterar(ModeloBase)}, {@link #consultar(Integer)}, {@link #listar(Status)} e
+     * {@link #alterar(ModeloBase)}, {@link #consultar(Long)}, {@link #listar(Status)} e
      * {@link #listar(String, String)}.
      *
      * @return o nome da tabela.
@@ -289,7 +289,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
     /**
      * Especifica a lista de colunas para seleção na tabela que serão recuperados ao usar métodos como
      * {@link #query(String, String[], String, String)} podendo ser usado nas implementações
-     * de {@link #incluir(ModeloBase)}, {@link #alterar(ModeloBase)}, {@link #consultar(Integer)},
+     * de {@link #incluir(ModeloBase)}, {@link #alterar(ModeloBase)}, {@link #consultar(Long)},
      * {@link #listar(Status)} e {@link #listar(String, String)}.
      *
      * @return a lista de colunas da seleção.

@@ -20,7 +20,7 @@ import butterknife.OnClick;
 import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
 
 public class CancelarVisita extends AppCompatActivity {
-    private int mIdAgenda;
+    private Long mIdAgenda;
     private Agenda mAgenda;
     @NonNull
     private AgendaDAO mAgendaDAO;
@@ -42,7 +42,7 @@ public class CancelarVisita extends AppCompatActivity {
                 getIntent().getExtras().getString("id") == null) {
             throw new IllegalStateException("O ID da agenda deve ser passado via putExtras()");
         } else {
-            mIdAgenda = Integer.parseInt(getIntent().getStringExtra("id"));
+            mIdAgenda = Long.valueOf(getIntent().getStringExtra("id"));
         }
 
         mAgendaDAO = new AgendaDAO(this);

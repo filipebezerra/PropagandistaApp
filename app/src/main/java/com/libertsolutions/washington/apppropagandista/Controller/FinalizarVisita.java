@@ -5,16 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -30,22 +31,14 @@ import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
-import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
-import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
-
 import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
 
@@ -116,7 +109,7 @@ public class FinalizarVisita extends AppCompatActivity
     @NonNull private VisitaDAO mVisitaDAO;
     @NonNull private Agenda mAgenda;
     @NonNull private Visita mVisita;
-    private int mIdAgenda;
+    private Long mIdAgenda;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +126,7 @@ public class FinalizarVisita extends AppCompatActivity
                 getIntent().getExtras().getString("id") == null) {
             throw new IllegalStateException("O ID da agenda deve ser passado via putExtras()");
         } else {
-            mIdAgenda = Integer.parseInt(getIntent().getStringExtra("id"));
+            mIdAgenda = Long.valueOf(getIntent().getStringExtra("id"));
         }
     }
 
