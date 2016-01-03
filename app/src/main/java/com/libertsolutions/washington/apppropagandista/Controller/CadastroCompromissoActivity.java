@@ -1,7 +1,9 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.CalendarContract.Events;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -22,7 +24,10 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnItemSelected;
+import butterknife.OnTouch;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
@@ -42,19 +47,14 @@ import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
-
-import org.joda.time.DateTime;
-
 import java.util.List;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnItemSelected;
-import butterknife.OnTouch;
+import org.joda.time.DateTime;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+import static android.os.Build.*;
+import static android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME;
 import static android.support.design.widget.Snackbar.LENGTH_LONG;
 import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
 
@@ -62,6 +62,8 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     implements
         CalendarDatePickerDialogFragment.OnDateSetListener,
         RadialTimePickerDialogFragment.OnTimeSetListener {
+
+    private static final int RC_ADICIONA_AGENDA = 1001;
 
     @Bind(R.id.root_layout) protected CoordinatorLayout mRootLayout;
     @Bind(R.id.toolbar) protected Toolbar mToolbar;
@@ -86,6 +88,8 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     private ArrayAdapter<Medico> mMedicosAdapter;
 
     private MaterialDialog mProgressDialog;
+
+    private Intent mInsertCalendarIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +253,18 @@ public class CadastroCompromissoActivity extends AppCompatActivity
                         LENGTH_LONG).show();
             } else {
                 novaAgenda.setId(idNovaAgenda);
+
+                if (VERSION.SDK_INT >= VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    mInsertCalendarIntent = new Intent(Intent.ACTION_INSERT)
+                            .setData(Events.CONTENT_URI)
+                            .putExtra(EXTRA_EVENT_BEGIN_TIME, novaAgenda.getDataCompromisso())
+                            .putExtra(Events.TITLE, String.format("Visita com %s", medicoSelecionado.getNome()))
+                            .putExtra(Events.DESCRIPTION, novaAgenda.getObservacao())
+                            .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY)
+                            .putExtra(Events.ACCESS_LEVEL, Events.ACCESS_PRIVATE)
+                            .putExtra(Intent.EXTRA_EMAIL, medicoSelecionado.getEmail());
+                }
+
                 sincronizarNovaAgenda(novaAgenda);
             }
         } else {
@@ -367,6 +383,32 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_ADICIONA_AGENDA) {
+            if (resultCode == RESULT_OK) {
+                Dialogos.mostrarMensagemFlutuante(mRootLayout,
+                        "Compromisso incluído com sucesso em sua agenda", true,
+                        new Snackbar.Callback() {
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                finish();
+                            }
+                        });
+            } else {
+                finish();
+            }
+        }
+    }
+
+    private void adicionarNaAgenda() {
+        if (mInsertCalendarIntent != null) {
+            startActivityForResult(mInsertCalendarIntent, RC_ADICIONA_AGENDA);
+        }
+    }
+
     private void sincronizarNovaAgenda(Agenda novaAgenda) {
         final AgendaService service = createService(AgendaService.class, this);
         final Propagandista propagandista = PreferencesUtils.getUserLogged(this);
@@ -403,7 +445,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog,
                                             @NonNull DialogAction which) {
-                            finish();
+                            adicionarNaAgenda();
                         }
                     });
         }
