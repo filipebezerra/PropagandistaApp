@@ -12,7 +12,21 @@ import android.support.annotation.IntRange;
  */
 
 public enum StatusAgenda {
-    Pendente, EmAtendimento, Cancelado, NaoVisita, Finalizado;
+    Pendente("Pendente"),
+    EmAtendimento("Em atendimento"),
+    Cancelado("Cancelado"),
+    NaoVisita("Não visita"),
+    Finalizado("Finalizado");
+
+    private final String mDescricao;
+
+    StatusAgenda(String descricao) {
+        mDescricao = descricao;
+    }
+
+    public String descricao() {
+        return mDescricao;
+    }
 
     public static StatusAgenda fromOrdinal(@IntRange(from = 0, to = 4) int ordinal) {
         switch (ordinal) {

@@ -7,6 +7,7 @@ import android.content.IntentSender;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,10 +18,6 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -42,17 +39,21 @@ import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
+import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
 import com.libertsolutions.washington.apppropagandista.api.services.VisitaService;
-import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
-import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
-import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
+import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
 
 public class DetalhesVisitaActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
@@ -109,14 +110,16 @@ public class DetalhesVisitaActivity extends AppCompatActivity
      */
     private Boolean mRequestingLocationUpdates = false;
 
-    private Location mBestLocation;
+    private Location mUserLocation;
 
-    @NonNull private AgendaDAO mAgendaDAO;
-    @NonNull private MedicoDAO mMedicoDAO;
-    @NonNull private VisitaDAO mVisitaDAO;
-    @NonNull private Agenda mAgenda;
-    private int mIdAgenda;
+    private AgendaDAO mAgendaDAO;
+    private MedicoDAO mMedicoDAO;
+    private VisitaDAO mVisitaDAO;
 
+    private Agenda mAgenda;
+    private long mIdAgenda;
+
+    @Bind(R.id.root_layout) CoordinatorLayout mRootLayout;
     @Bind(R.id.status) TextView mStatus;
     @Bind(R.id.data_hora_view) TextView mDataHoraView;
     @Bind(R.id.medico_view) TextView mMedicoView;
@@ -134,19 +137,12 @@ public class DetalhesVisitaActivity extends AppCompatActivity
             mIdAgenda = Integer.parseInt(getIntent().getStringExtra("id"));
         }
 
-        mAgendaDAO = new AgendaDAO(this);
-        mMedicoDAO = new MedicoDAO(this);
-        mVisitaDAO = new VisitaDAO(this);
-
         setContentView(R.layout.activity_detalhes_visita);
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        if (!servicesAvailable()) {
-            finish();
-        }
 
         buildGoogleApiClient();
         createLocationRequest();
@@ -157,13 +153,19 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        mAgendaDAO.openDatabase();
-        mMedicoDAO.openDatabase();
-        mVisitaDAO.openDatabase();
-        mAgenda = mAgendaDAO.consultar(mIdAgenda);
-        PreencheTela();
 
-        initiliazeAcoesVisitaButton();
+        mAgendaDAO = new AgendaDAO(this);
+        mAgendaDAO.openDatabase();
+
+        mMedicoDAO = new MedicoDAO(this);
+        mMedicoDAO.openDatabase();
+
+        mVisitaDAO = new VisitaDAO(this);
+        mVisitaDAO.openDatabase();
+
+        mAgenda = mAgendaDAO.consultar(mIdAgenda);
+
+        preencherDadosTela();
     }
 
     @Override
@@ -172,6 +174,10 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
+
+            if (mRequestingLocationUpdates) {
+                requestLocationUpdates();
+            }
         }
     }
 
@@ -206,29 +212,34 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         Bundle param = new Bundle();
         param.putString("id", String.valueOf(mIdAgenda));
-        if (item.getItemId() == R.id.nav_edit) {
-            save();
-            return true;
-        } else if(item.getItemId() == R.id.nav_naovisita) {
-            if(mAgenda.getStatusAgenda() == StatusAgenda.EmAtendimento) {
-                Tela.AbrirTela(DetalhesVisitaActivity.this, NaoVisita.class, param);
-            }else
-            {
-                Mensagem.MensagemAlerta(this,"Somente agendas Em Atendimento podem ser classificadas como Não Visita!");
-            }
-        } else if(item.getItemId() == R.id.nav_cancelar) {
-            if(mAgenda.getStatusAgenda() == StatusAgenda.Pendente) {
-                Tela.AbrirTela(DetalhesVisitaActivity.this, CancelarVisita.class, param);
-            }else
-            {
-                Mensagem.MensagemAlerta(this,"Somente agendas Pendentes podem ser Canceladas!");
-            }
+
+        switch (item.getItemId()) {
+            case R.id.nav_edit:
+                return true;
+
+            case R.id.nav_naovisita:
+                if(mAgenda.getStatusAgenda() == StatusAgenda.EmAtendimento) {
+                    Tela.AbrirTela(this, NaoVisita.class, param);
+                } else {
+                    Dialogos.mostrarMensagemFlutuante(mRootLayout,
+                            "Somente agendas Em Atendimento podem ser classificadas como Não Visita!",
+                            false);
+                }
+                return true;
+
+            case R.id.nav_cancelar:
+                if(mAgenda.getStatusAgenda() == StatusAgenda.Pendente) {
+                    Tela.AbrirTela(this, CancelarVisita.class, param);
+                } else {
+                    Dialogos.mostrarMensagemFlutuante(mRootLayout,
+                            "Somente agendas Pendentes podem ser Canceladas!",
+                            false);
+                }
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        else
-        {
-            return super.onOptionsItemSelected(item);
-        }
-        return true;
     }
 
     /**
@@ -341,43 +352,12 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     public void onClickBtnIniciar() {
         switch (mAgenda.getStatusAgenda()) {
             case Pendente:
-                save();
+                iniciarVisita();
                 break;
             case EmAtendimento:
                 Bundle param = new Bundle();
                 param.putString("id", mAgenda.getId().toString());
-                Tela.AbrirTela(this,FinalizarVisita.class,param);
-                break;
-        }
-
-        //Salva Alterações tabela Agenda
-        mAgendaDAO.alterar(mAgenda);
-    }
-
-    private void initiliazeAcoesVisitaButton() {
-        switch (mAgenda.getStatusAgenda()) {
-            case Pendente:
-                btnIniciarVisita.setText("Iniciar Visita");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_pendente);
-                break;
-            case EmAtendimento:
-                btnIniciarVisita.setText("Finalizar Visita");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
-                break;
-            case Finalizado:
-                btnIniciarVisita.setText("Visita Finalizada");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_finalizada);
-                btnIniciarVisita.setEnabled(false);
-                break;
-            case Cancelado:
-                btnIniciarVisita.setText("Visita Cancelada");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_cancelada);
-                btnIniciarVisita.setEnabled(false);
-                break;
-            case NaoVisita:
-                btnIniciarVisita.setText("Não Visita");
-                btnIniciarVisita.setBackgroundResource(R.color.visita_naovisita);
-                btnIniciarVisita.setEnabled(false);
+                Tela.AbrirTela(this, FinalizarVisita.class, param);
                 break;
         }
     }
@@ -389,28 +369,34 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         // Get first reading. Get additional location updates if necessary
         if (servicesAvailable()) {
             // Get best last location measurement meeting criteria
-            mBestLocation = bestLastKnownLocation(MIN_LAST_READ_ACCURACY, FIVE_MIN);
+            mUserLocation = bestLastKnownLocation(MIN_LAST_READ_ACCURACY, FIVE_MIN);
 
-            if (mBestLocation == null
-                    || mBestLocation.getAccuracy() > MIN_LAST_READ_ACCURACY
-                    || mBestLocation.getTime() < System.currentTimeMillis() - TWO_MIN) {
-
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                        mLocationRequest, this);
-                mRequestingLocationUpdates = true;
-
-                // Schedule a runnable to unregister location listeners
-                Executors.newScheduledThreadPool(1)
-                        .schedule(new Runnable() {
-                            @Override
-                            public void run() {
-                                LocationServices.FusedLocationApi.removeLocationUpdates(
-                                        mGoogleApiClient, DetalhesVisitaActivity.this);
-                                mRequestingLocationUpdates = false;
-                            }
-                        }, ONE_MIN, TimeUnit.MILLISECONDS);
+            if (mUserLocation == null
+                    || mUserLocation.getAccuracy() > MIN_LAST_READ_ACCURACY
+                    || mUserLocation.getTime() < System.currentTimeMillis() - TWO_MIN) {
+                requestLocationUpdates();
             }
         }
+    }
+
+    private void requestLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                mLocationRequest, this);
+        mRequestingLocationUpdates = true;
+
+        // Schedule a runnable to unregister location listeners
+        Executors
+                .newScheduledThreadPool(1)
+                .schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        LocationServices
+                                .FusedLocationApi
+                                .removeLocationUpdates(mGoogleApiClient,
+                                        DetalhesVisitaActivity.this);
+                        mRequestingLocationUpdates = false;
+                    }
+                }, ONE_MIN, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -431,10 +417,10 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
         // Determine whether new location is better than current best
         // estimate
-        if (mBestLocation == null || location.getAccuracy() < mBestLocation.getAccuracy()) {
-            mBestLocation = location;
+        if (mUserLocation == null || location.getAccuracy() < mUserLocation.getAccuracy()) {
+            mUserLocation = location;
 
-            if (mBestLocation.getAccuracy() < MIN_ACCURACY) {
+            if (mUserLocation.getAccuracy() < MIN_ACCURACY) {
                 LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
                 mRequestingLocationUpdates = false;
             }
@@ -475,9 +461,13 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         Log.i(LOG, "User agreed to make required location settings changes.");
+                        Dialogos.mostrarMensagemFlutuante(mRootLayout,
+                                "Configurações de localização aplicadas com sucesso!", true);
                         break;
                     case Activity.RESULT_CANCELED:
                         Log.i(LOG, "User chose not to make required location settings changes.");
+                        Dialogos.mostrarMensagem(this, "Localização desconhecida",
+                                "É necessário habilitar suas configurações de localização!");
                         break;
                 }
                 break;
@@ -489,42 +479,86 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     }
 
     //Metódo para preencher a tela com os dados da Agenda
-    public void PreencheTela()
-    {
-        mStatus.setText(mAgenda.getStatusAgenda().name());
+    private void preencherDadosTela() {
+        mStatus.setText(mAgenda.getStatusAgenda().descricao());
         mDataHoraView.setText(DateUtil.format(mAgenda.getDataCompromisso(),DATE_AND_TIME));
         mMedicoView.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO +" = ?",mAgenda.getIdMedico().toString()).getNome());
         mObservacaoView.setText(mAgenda.getObservacao());
+
+        switch (mAgenda.getStatusAgenda()) {
+            case Pendente:
+                btnIniciarVisita.setText("Iniciar Visita");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_pendente);
+                break;
+            case EmAtendimento:
+                btnIniciarVisita.setText("Finalizar Visita");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
+                break;
+            case Finalizado:
+                btnIniciarVisita.setText("Visita Finalizada");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_finalizada);
+                btnIniciarVisita.setEnabled(false);
+                break;
+            case Cancelado:
+                btnIniciarVisita.setText("Visita Cancelada");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_cancelada);
+                btnIniciarVisita.setEnabled(false);
+                break;
+            case NaoVisita:
+                btnIniciarVisita.setText("Não Visita");
+                btnIniciarVisita.setBackgroundResource(R.color.visita_naovisita);
+                btnIniciarVisita.setEnabled(false);
+                break;
+        }
     }
 
-    public void save() {
-        try {
-            Visita mVisita = new Visita();
-            Calendar c = Calendar.getInstance();
-            mVisita.setDataInicio(c.getTimeInMillis());
-            if(mBestLocation != null) {
-                mVisita.setLatInicial(mBestLocation.getLatitude());
-                mVisita.setLongInicial(mBestLocation.getLongitude());
+    private void iniciarVisita() {
+        Log.d(LOG, "Iniciando a visita");
+
+        if (mUserLocation == null) {
+            Log.d(LOG, "Localização do usuário desconhecida");
+
+            if (! servicesAvailable()) {
+                Log.d(LOG, "Google play services não está disponível");
+                Dialogos.mostrarMensagem(this, "Serviço indisponível",
+                        "O serviço para obter sua localização não está disponível!");
+                return;
             }
-            mVisita.setIdAgenda(mAgenda.getId());
-            mVisitaDAO.incluir(mVisita);
-            //Altera Agenda
+
+            mUserLocation = bestLastKnownLocation(MIN_LAST_READ_ACCURACY, FIVE_MIN);
+
+            if (mUserLocation == null) {
+                Dialogos.mostrarMensagem(this, "Localização não disponível",
+                        "Não foi possível obter sua localização!");
+                return;
+            }
+        }
+
+        final Visita visitaIniciada = Visita.iniciar(System.currentTimeMillis(),
+                mUserLocation.getLatitude(),
+                mUserLocation.getLongitude(), mIdAgenda);
+
+        final long id = mVisitaDAO.incluir(visitaIniciada);
+
+        Log.d(LOG, String.format("Visita incluída com id %d", id));
+        if (id != -1 ) {
+            visitaIniciada.setId(id);
             mAgenda.setStatusAgenda(StatusAgenda.EmAtendimento);
             mAgendaDAO.alterar(mAgenda);
+
+            mStatus.setText(mAgenda.getStatusAgenda().descricao());
             btnIniciarVisita.setText("Finalizar Visita");
             btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
-            Mensagem.MensagemAlerta(this, "Visita iniciada...");
+
+            Dialogos.mostrarMensagemFlutuante(mRootLayout, "Visita iniciada...", true);
 
             final VisitaService service = createService(VisitaService.class, this);
             if (service != null) {
-                service.post(Visita.toModel(mVisita))
+                service.post(Visita.toModel(visitaIniciada))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new EnviaVisitaSubscriber());
             }
-        }catch (Exception erro)
-        {
-            Log.d(LOG_ENVIA_VISITA, "Erro ao salvar visita: "+erro.getMessage());
         }
     }
 

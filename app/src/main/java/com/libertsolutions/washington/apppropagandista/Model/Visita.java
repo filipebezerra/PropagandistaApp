@@ -1,16 +1,9 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
-
 import org.joda.time.DateTime;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Classe modelo dos dados de visita.
@@ -52,7 +45,8 @@ public class Visita extends ModeloBase<Visita> {
                 .setDataInicio(data)
                 .setLatInicial(latitude)
                 .setLongInicial(longitude)
-                .setIdAgenda(idAgenda);
+                .setIdAgenda(idAgenda)
+                .setStatus(Status.Pendente);
     }
 
     public static Visita fromModel(@NonNull VisitaModel model) {
@@ -93,7 +87,7 @@ public class Visita extends ModeloBase<Visita> {
 
         final VisitaModel model = new VisitaModel();
         model.idCliente = visita.getId();
-        model.idVisita = visita.getIdVisita();
+        model.idVisita = visita.getIdVisita() != null ? visita.getIdVisita() : 0;
         model.dtInicio = visita.getDataInicio() != null ?
                 new DateTime(visita.getDataInicio()).toString("yyyy-MM-dd'T'HH:mm:ss") :
                 null;
