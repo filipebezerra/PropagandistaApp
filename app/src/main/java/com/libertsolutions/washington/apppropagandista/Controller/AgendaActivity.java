@@ -20,6 +20,7 @@ import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
@@ -30,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.joda.time.DateTime;
+
+import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
 
 /**
  * @author Washington, Filipe Bezerra
@@ -195,7 +198,7 @@ public class AgendaActivity extends AppCompatActivity {
                 Medico medico = mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO +" = ?",agenda.getIdMedico().toString());
                 if(medico != null)
                     map.put(columnTags[2], medico.getNome());
-                map.put(columnTags[3], "Data: " + new DateTime(agenda.getDataCompromisso()).toString("dd/MM/yyyy"));
+                map.put(columnTags[3], "Data: " + DateUtil.format(agenda.getDataCompromisso(),DATE_AND_TIME));
                 map.put(columnTags[4], "Obs: " + agenda.getObservacao());
                 mListaAgenda.add(map);
             }
