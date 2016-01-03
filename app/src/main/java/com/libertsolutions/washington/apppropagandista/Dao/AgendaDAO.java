@@ -171,7 +171,7 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
         ContentValues valores = new ContentValues();
 
         if (agenda.getStatus() == Status.Enviado || agenda.getStatus() == Status.Importado) {
-            valores.put(COLUNA_ID_AGENDA, agenda.getIdMedico());
+            valores.put(COLUNA_ID_AGENDA, agenda.getIdAgenda());
 
             if (agenda.getStatus() == Status.Importado) {
                 valores.put(COLUNA_RELACAO_MEDICO, agenda.getIdMedico());
