@@ -180,14 +180,17 @@
         </activity>
 
         <!-- Tela Não Visita -->
-        <activity android:name=".Controller.NaoVisita"
-            android:parentActivityName=".Controller.DetalhesVisitaActivity"
-            android:label="@string/title_activity_nao_visita"/>
+        <activity
+            android:name=".Controller.NaoVisita"
+            android:label="@string/title_activity_nao_visita"
+            android:parentActivityName=".Controller.DetalhesVisitaActivity" />
 
         <!-- Tela Cancelar Visita -->
-        <activity android:name=".Controller.CancelarVisita"
-            android:parentActivityName=".Controller.DetalhesVisitaActivity"
-            android:label="@string/title_activity_cancelar_visita"/>
+        <activity
+            android:name=".Controller.CancelarVisita"
+            android:label="@string/title_activity_cancelar_visita"
+            android:parentActivityName=".Controller.DetalhesVisitaActivity" />
+        <activity android:name=".Controller.AlterarCompromisso"></activity>
     </application>
 
 </manifest>

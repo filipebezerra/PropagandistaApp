@@ -137,7 +137,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 getIntent().getExtras().getString("id") == null) {
             throw new IllegalStateException("O ID da agenda deve ser passado via putExtras()");
         } else {
-            mIdAgenda = Integer.parseInt(getIntent().getStringExtra("id"));
+            mIdAgenda = Long.parseLong(getIntent().getStringExtra("id"));
         }
 
         setContentView(R.layout.activity_detalhes_visita);
@@ -538,17 +538,25 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
     private void iniciarVisita() {
         Log.d(LOG, "Iniciando a visita");
+        Double longtitude = 0.0;
+        Double latitude = 0.0;
 
-        if (!localizacaoDisponivel()) {
+        if(mUserLocation != null)
+        {
+            longtitude = mUserLocation.getLongitude();
+            latitude = mUserLocation.getLatitude();
+        }
+        /*if (!localizacaoDisponivel()) {
             return;
         } else {
             Log.d(LOG, "A localização do usuário é conhecida");
-        }
+        }*/
 
         final Visita visitaIniciada = Visita.iniciar(System.currentTimeMillis(),
-                mUserLocation.getLatitude(),
-                mUserLocation.getLongitude(), mIdAgenda);
-
+                latitude,
+                longtitude, mIdAgenda);
+        visitaIniciada.setLatFinal(0.0);
+        visitaIniciada.setLongFinal(0.0);
         final long id = mVisitaDAO.incluir(visitaIniciada);
 
         Log.d(LOG, String.format("Visita incluída com id %d", id));
@@ -565,7 +573,8 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
             final VisitaService service = createService(VisitaService.class, this);
             if (service != null) {
-                service.post(Visita.toModel(visitaIniciada))
+                visitaIniciada.setIdAgenda(Long.parseLong(mAgenda.getIdAgenda().toString()));
+                service.put(Visita.toModel(visitaIniciada))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new EnviaVisitaSubscriber());
@@ -579,11 +588,11 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     private void finalizarVisita() {
         Log.d(LOG, "Finalizando a visita");
 
-        if (!localizacaoDisponivel()) {
+        /*if (!localizacaoDisponivel()) {
             return;
         } else {
             Log.d(LOG, "A localização do usuário é conhecida");
-        }
+        }*/
 
         new MaterialDialog.Builder(this)
                 .title("Finalizando a visita...")
@@ -608,8 +617,10 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         if (visitaEmAndamento != null) {
             visitaEmAndamento.setDetalhes(detalhes);
             visitaEmAndamento.setDataFim(System.currentTimeMillis());
-            visitaEmAndamento.setLatFinal(mUserLocation.getLatitude());
-            visitaEmAndamento.setLongFinal(mUserLocation.getLongitude());
+            if(mUserLocation != null) {
+                visitaEmAndamento.setLatFinal(mUserLocation.getLatitude());
+                visitaEmAndamento.setLongFinal(mUserLocation.getLongitude());
+            }
 
             final int alteracoes = mVisitaDAO.alterar(visitaEmAndamento);
 
@@ -643,7 +654,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
         @Override
         public void onError(Throwable e) {
-            Log.e(LOG_ENVIA_VISITA, "Falha no envio do cadastro de médico", e);
+            Log.e(LOG_ENVIA_VISITA, "Falha no envio da Visita", e);
             if (e.getCause() != null) {
                 Log.e(LOG_ENVIA_VISITA, "Causa da falha", e.getCause());
             }
@@ -654,7 +665,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
             if (model == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+                Preconditions.checkNotNull(model.idCliente, "model.idVisita não pode ser nulo");
 
                 final Visita visitaEnviado = Visita.fromModel(model);
                 mVisitaDAO.alterar(visitaEnviado);
@@ -680,13 +691,13 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         private class EnvioAgendaSubscriber extends Subscriber<AgendaModel> {
             @Override
             public void onCompleted() {
-                Log.d(LOG_ENVIA_VISITA, "Sincronização da nova agenda concluído");
+                Log.d(LOG_ENVIA_VISITA, "Sincronização alteração da agenda concluída");
                 Mensagem.MensagemAlerta(DetalhesVisitaActivity.this,"Dados enviados com sucesso.");
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.e(LOG_ENVIA_VISITA, "Falha na sincronização da nova agenda", e);
+                Log.e(LOG_ENVIA_VISITA, "Falha na sincronização alteração da agenda", e);
                 Mensagem.MensagemAlerta(DetalhesVisitaActivity.this, "Falha ao enviar Agenda.");
                 if (e.getCause() != null) {
                     Log.e(LOG_ENVIA_VISITA, "Causa da falha", e.getCause());
@@ -699,7 +710,6 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 if (model == null) {
                     onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
                 } else {
-                    Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
                     Preconditions.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
                     Preconditions.checkNotNull(model.statusAgenda,
                             "model.statusAgenda não pode ser nulo");

@@ -192,13 +192,6 @@ public class VisitaDAO extends DAOGenerico<Visita> {
 
         Preconditions.checkNotNull(visita.getIdAgenda(), "visita.getIdAgenda() não pode ser nulo");
 
-        Preconditions.checkNotNull(visita.getDataFim(), "visita.getDataFim() não pode ser nula");
-        Preconditions.checkNotNull(visita.getLatFinal(), "visita.getLatFinal() não pode ser nula");
-        Preconditions.checkNotNull(visita.getLongFinal(), "visita.getLongFinal() não pode ser nula");
-
-        Preconditions.checkNotNull(visita.getStatus(),
-                "visita.getStatus() não pode ser nula");
-
         if (visita.getStatus() == Status.Enviado ||
                 visita.getStatus() == Status.Importado) {
             Preconditions.checkNotNull(visita.getIdVisita(),
