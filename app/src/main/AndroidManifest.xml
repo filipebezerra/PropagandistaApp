@@ -179,12 +179,6 @@
                 android:value=".Controller.MainActivity" />
         </activity>
 
-        <!-- Tela Finalizar Atendimento -->
-        <activity
-            android:name=".Controller.FinalizarVisita"
-            android:label="@string/title_activity_finalizar_visita"
-            android:parentActivityName=".Controller.AgendaActivity" />
-
         <!-- Tela Não Visita -->
         <activity android:name=".Controller.NaoVisita"
             android:parentActivityName=".Controller.DetalhesVisitaActivity"

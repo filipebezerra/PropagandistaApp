@@ -24,6 +24,13 @@ public class Dialogos {
                 .show();
     }
 
+    public static void mostrarMensagemFlutuante(@NonNull View view, @NonNull String texto,
+            boolean pequenaDuracao, Snackbar.Callback callback) {
+        Snackbar.make(view, texto, pequenaDuracao ? LENGTH_SHORT : LENGTH_LONG)
+                .setCallback(callback)
+                .show();
+    }
+
     public static void mostrarMensagem(@NonNull Context context, @NonNull String titulo,
             @NonNull String conteudo) {
         new MaterialDialog.Builder(context)

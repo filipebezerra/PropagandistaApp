@@ -8,8 +8,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -355,9 +358,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 iniciarVisita();
                 break;
             case EmAtendimento:
-                Bundle param = new Bundle();
-                param.putString("id", mAgenda.getId().toString());
-                Tela.AbrirTela(this, FinalizarVisita.class, param);
+                finalizarVisita();
                 break;
         }
     }
@@ -512,9 +513,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         }
     }
 
-    private void iniciarVisita() {
-        Log.d(LOG, "Iniciando a visita");
-
+    private boolean localizacaoDisponivel() {
         if (mUserLocation == null) {
             Log.d(LOG, "Localização do usuário desconhecida");
 
@@ -522,7 +521,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 Log.d(LOG, "Google play services não está disponível");
                 Dialogos.mostrarMensagem(this, "Serviço indisponível",
                         "O serviço para obter sua localização não está disponível!");
-                return;
+                return false;
             }
 
             mUserLocation = bestLastKnownLocation(MIN_LAST_READ_ACCURACY, FIVE_MIN);
@@ -530,8 +529,20 @@ public class DetalhesVisitaActivity extends AppCompatActivity
             if (mUserLocation == null) {
                 Dialogos.mostrarMensagem(this, "Localização não disponível",
                         "Não foi possível obter sua localização!");
-                return;
+                return false;
             }
+        }
+
+        return true;
+    }
+
+    private void iniciarVisita() {
+        Log.d(LOG, "Iniciando a visita");
+
+        if (!localizacaoDisponivel()) {
+            return;
+        } else {
+            Log.d(LOG, "A localização do usuário é conhecida");
         }
 
         final Visita visitaIniciada = Visita.iniciar(System.currentTimeMillis(),
@@ -558,6 +569,64 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new EnviaVisitaSubscriber());
+            }
+        } else {
+            Dialogos.mostrarMensagem(this, "Falha ao iniciar a vista",
+                    "Não foi possível salvar os dados ao iniciar a visita!");
+        }
+    }
+
+    private void finalizarVisita() {
+        Log.d(LOG, "Finalizando a visita");
+
+        if (!localizacaoDisponivel()) {
+            return;
+        } else {
+            Log.d(LOG, "A localização do usuário é conhecida");
+        }
+
+        new MaterialDialog.Builder(this)
+                .title("Finalizando a visita...")
+                .inputType(InputType.TYPE_CLASS_TEXT |
+                        InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE |
+                        InputType.TYPE_TEXT_FLAG_MULTI_LINE)
+                .input("Informe os detalhes da visita realizada.", null, false,
+                        new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(@NonNull MaterialDialog materialDialog,
+                                    CharSequence charSequence) {
+                                finalizarVisita(charSequence.toString());
+                            }
+                        })
+                .show();
+    }
+
+    private void finalizarVisita(@NonNull String detalhes) {
+        Visita visitaEmAndamento = mVisitaDAO
+                .consultar("id_agenda = ?", String.valueOf(mIdAgenda));
+
+        if (visitaEmAndamento != null) {
+            visitaEmAndamento.setDetalhes(detalhes);
+            visitaEmAndamento.setDataFim(System.currentTimeMillis());
+            visitaEmAndamento.setLatFinal(mUserLocation.getLatitude());
+            visitaEmAndamento.setLongFinal(mUserLocation.getLongitude());
+
+            final int alteracoes = mVisitaDAO.alterar(visitaEmAndamento);
+
+            if (alteracoes > 0) {
+                mAgenda.setStatusAgenda(StatusAgenda.Finalizado);
+                mAgendaDAO.alterar(mAgenda);
+
+                Dialogos.mostrarMensagemFlutuante(mRootLayout, "Visita finalizada com sucesso",
+                        true, new Snackbar.Callback() {
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                finish();
+                            }
+                        });
+            } else {
+                Dialogos.mostrarMensagem(this, "Falha ao finalizar a vista",
+                        "Não foi possível salvar os dados ao finalizar a visita!");
             }
         }
     }

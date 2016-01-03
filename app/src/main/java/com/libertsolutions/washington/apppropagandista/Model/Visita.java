@@ -39,8 +39,8 @@ public class Visita extends ModeloBase<Visita> {
     // id de relacionamento com tabela Agenda
     private Long mIdAgenda;
 
-    public static Visita iniciar(final Long data, final Double latitude, final Double longitude,
-            final Long idAgenda) {
+    public static Visita iniciar(@NonNull final Long data, @NonNull final Double latitude,
+            @NonNull final Double longitude, @NonNull final Long idAgenda) {
         return new Visita()
                 .setDataInicio(data)
                 .setLatInicial(latitude)
