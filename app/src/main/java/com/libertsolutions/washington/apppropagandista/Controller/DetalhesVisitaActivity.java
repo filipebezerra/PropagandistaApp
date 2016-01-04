@@ -247,27 +247,28 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 if(mAgenda.getStatusAgenda() == StatusAgenda.Pendente) {
                     Log.d(LOG, "Cancelar Compromisso");
                     new MaterialDialog.Builder(this)
-                            .title("Cancelar Compromisso...")
-                            .inputType(InputType.TYPE_CLASS_TEXT |
-                                    InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE |
-                                    InputType.TYPE_TEXT_FLAG_MULTI_LINE)
-                            .input("Caso tenha certeza que deseje cancelar o compromisso clique em OK.", null, false,
-                                    new MaterialDialog.InputCallback() {
-                                        @Override
-                                        public void onInput(@NonNull MaterialDialog materialDialog,
-                                                            CharSequence charSequence) {
-                                            mAgenda.setStatusAgenda(StatusAgenda.Cancelado);
-                                            mAgendaDAO.alterar(mAgenda);
+                            .title("Cancelar Compromisso")
+                            .autoDismiss(false)
+                            .content("Deseja cancelar o compromisso?")
+                            .positiveText("Confirmar")
+                            .negativeText("Cancelar")
+                            .callback(new MaterialDialog.ButtonCallback() {
+                                @Override
+                                public void onPositive(MaterialDialog dialog) {
+                                    mAgenda.setStatusAgenda(StatusAgenda.Cancelado);
+                                    mAgendaDAO.alterar(mAgenda);
+                                    btnIniciarVisita.setText("Visita Cancelada");
+                                    btnIniciarVisita.setBackgroundResource(R.color.visita_cancelada);
+                                    btnIniciarVisita.setEnabled(false);
+                                    dialog.dismiss();
+                                }
 
-                                            Dialogos.mostrarMensagemFlutuante(mRootLayout, "Compromisso cancelado.",
-                                                    true, new Snackbar.Callback() {
-                                                        @Override
-                                                        public void onDismissed(Snackbar snackbar, int event) {
-                                                            finish();
-                                                        }
-                                                    });
-                                        }
-                                    })
+                                @Override
+                                public void onNegative(MaterialDialog dialog) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .build()
                             .show();
                 }else {
                     Dialogos.mostrarMensagemFlutuante(mRootLayout,
