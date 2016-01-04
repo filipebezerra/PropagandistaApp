@@ -2,6 +2,7 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -217,12 +219,23 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         param.putString("id", String.valueOf(mIdAgenda));
 
         switch (item.getItemId()) {
-            case R.id.nav_edit:
-                return true;
-
             case R.id.nav_naovisita:
                 if(mAgenda.getStatusAgenda() == StatusAgenda.EmAtendimento) {
-                    Tela.AbrirTela(this, NaoVisita.class, param);
+                    Log.d(LOG, "Não Visita");
+                    new MaterialDialog.Builder(this)
+                            .title("Não Visita...")
+                            .inputType(InputType.TYPE_CLASS_TEXT |
+                                    InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE |
+                                    InputType.TYPE_TEXT_FLAG_MULTI_LINE)
+                            .input("Informe o motivo da não visita.", null, false,
+                                    new MaterialDialog.InputCallback() {
+                                        @Override
+                                        public void onInput(@NonNull MaterialDialog materialDialog,
+                                                            CharSequence charSequence) {
+                                            naoVisita(charSequence.toString());
+                                        }
+                                    })
+                            .show();
                 } else {
                     Dialogos.mostrarMensagemFlutuante(mRootLayout,
                             "Somente agendas Em Atendimento podem ser classificadas como Não Visita!",
@@ -232,8 +245,31 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
             case R.id.nav_cancelar:
                 if(mAgenda.getStatusAgenda() == StatusAgenda.Pendente) {
-                    Tela.AbrirTela(this, CancelarVisita.class, param);
-                } else {
+                    Log.d(LOG, "Cancelar Compromisso");
+                    new MaterialDialog.Builder(this)
+                            .title("Cancelar Compromisso...")
+                            .inputType(InputType.TYPE_CLASS_TEXT |
+                                    InputType.TYPE_TEXT_VARIATION_LONG_MESSAGE |
+                                    InputType.TYPE_TEXT_FLAG_MULTI_LINE)
+                            .input("Caso tenha certeza que deseje cancelar o compromisso clique em OK.", null, false,
+                                    new MaterialDialog.InputCallback() {
+                                        @Override
+                                        public void onInput(@NonNull MaterialDialog materialDialog,
+                                                            CharSequence charSequence) {
+                                            mAgenda.setStatusAgenda(StatusAgenda.Cancelado);
+                                            mAgendaDAO.alterar(mAgenda);
+
+                                            Dialogos.mostrarMensagemFlutuante(mRootLayout, "Compromisso cancelado.",
+                                                    true, new Snackbar.Callback() {
+                                                        @Override
+                                                        public void onDismissed(Snackbar snackbar, int event) {
+                                                            finish();
+                                                        }
+                                                    });
+                                        }
+                                    })
+                            .show();
+                }else {
                     Dialogos.mostrarMensagemFlutuante(mRootLayout,
                             "Somente agendas Pendentes podem ser Canceladas!",
                             false);
@@ -629,6 +665,38 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 mAgendaDAO.alterar(mAgenda);
 
                 Dialogos.mostrarMensagemFlutuante(mRootLayout, "Visita finalizada com sucesso",
+                        true, new Snackbar.Callback() {
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                finish();
+                            }
+                        });
+            } else {
+                Dialogos.mostrarMensagem(this, "Falha ao finalizar a vista",
+                        "Não foi possível salvar os dados ao finalizar a visita!");
+            }
+        }
+    }
+
+    private void naoVisita(@NonNull String detalhes) {
+        Visita visitaEmAndamento = mVisitaDAO
+                .consultar("id_agenda = ?", String.valueOf(mIdAgenda));
+
+        if (visitaEmAndamento != null) {
+            visitaEmAndamento.setDetalhes(detalhes);
+            visitaEmAndamento.setDataFim(System.currentTimeMillis());
+            if(mUserLocation != null) {
+                visitaEmAndamento.setLatFinal(mUserLocation.getLatitude());
+                visitaEmAndamento.setLongFinal(mUserLocation.getLongitude());
+            }
+
+            final int alteracoes = mVisitaDAO.alterar(visitaEmAndamento);
+
+            if (alteracoes > 0) {
+                mAgenda.setStatusAgenda(StatusAgenda.Finalizado);
+                mAgendaDAO.alterar(mAgenda);
+
+                Dialogos.mostrarMensagemFlutuante(mRootLayout, "Encerrado por não visita.",
                         true, new Snackbar.Callback() {
                             @Override
                             public void onDismissed(Snackbar snackbar, int event) {

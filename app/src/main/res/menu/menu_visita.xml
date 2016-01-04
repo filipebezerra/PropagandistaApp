@@ -3,11 +3,6 @@
 
     <group>
         <item
-            android:id="@+id/nav_edit"
-            android:icon="@android:drawable/ic_menu_edit"
-            android:title="Editar"
-            />
-        <item
             android:id="@+id/nav_naovisita"
             android:icon="@android:drawable/ic_menu_info_details"
             android:title="Não Visita"
