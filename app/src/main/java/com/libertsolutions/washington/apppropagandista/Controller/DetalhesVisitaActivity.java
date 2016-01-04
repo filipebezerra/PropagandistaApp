@@ -678,10 +678,8 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 Mensagem.MensagemAlerta(DetalhesVisitaActivity.this, "As configurações de sincronização não foram aplicadas corretamente.");
 
             } else {
-                final AgendaModel agendaModel = Agenda.toModel(mAgenda);
-
                 // TODO extrair cpf para atributo e validar se o cpf esta presente
-                service.post(agendaModel)
+                service.post(Agenda.toModel(mAgenda))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new EnvioAgendaSubscriber());
