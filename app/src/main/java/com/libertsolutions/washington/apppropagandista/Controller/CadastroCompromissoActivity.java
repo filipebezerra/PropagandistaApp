@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.CalendarContract.Events;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -28,8 +27,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemSelected;
 import butterknife.OnTouch;
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
 import com.google.common.base.Preconditions;
@@ -52,7 +49,6 @@ import org.joda.time.DateTime;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-
 import static android.os.Build.*;
 import static android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME;
 import static android.support.design.widget.Snackbar.LENGTH_LONG;
@@ -86,8 +82,6 @@ public class CadastroCompromissoActivity extends AppCompatActivity
 
     private MedicoDAO mMedicoDAO;
     private ArrayAdapter<Medico> mMedicosAdapter;
-
-    private MaterialDialog mProgressDialog;
 
     private Intent mInsertCalendarIntent;
 
@@ -377,12 +371,6 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         }
     }
 
-    private void dismissDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -414,13 +402,16 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         final Propagandista propagandista = PreferencesUtils.getUserLogged(this);
 
         if (service == null) {
-            Dialogos.mostrarMensagem(this, "Sincronização dos dados",
-                    "As configurações de sincronização não foram aplicadas corretamente.");
+            Dialogos.mostrarMensagemFlutuante(mRootLayout, "Sincronização dos dados As configurações de sincronização não foram aplicadas corretamente.",
+                    false);
         } else {
-            dismissDialog();
-            mProgressDialog = Dialogos
-                    .mostrarProgresso(this, "Por favor aguarde, sincronizando nova agenda...",
-                            false);
+            Dialogos.mostrarMensagemFlutuante(mRootLayout, "Por favor aguarde, sincronizando nova agenda...",
+            false,new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar snackbar, int event) {
+                            finish();
+                        }
+                    });
 
             final AgendaModel agendaModel = Agenda.toModel(novaAgenda);
 
@@ -438,34 +429,20 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     private class EnvioNovaAgendaSubscriber extends Subscriber<AgendaModel> {
         @Override
         public void onCompleted() {
-            dismissDialog();
-            Log.d(LOG_ENVIO_NOVA_AGENDA, "Sincronização da nova agenda concluído");
-            Dialogos.mostrarMensagem(CadastroCompromissoActivity.this, "Sincronização dos dados",
-                    "Sincronização concluída com sucesso!", new MaterialDialog.SingleButtonCallback() {
-                        @Override
-                        public void onClick(@NonNull MaterialDialog dialog,
-                                            @NonNull DialogAction which) {
-                            adicionarNaAgenda();
-                        }
-                    });
+            adicionarNaAgenda();
         }
 
         @Override
         public void onError(Throwable e) {
-            dismissDialog();
             Log.e(LOG_ENVIO_NOVA_AGENDA, "Falha na sincronização da nova agenda", e);
             if (e.getCause() != null) {
                 Log.e(LOG_ENVIO_NOVA_AGENDA, "Causa da falha", e.getCause());
             }
-
-            Dialogos.mostrarMensagem(CadastroCompromissoActivity.this,
-                    "Sincronização da nova agenda",
-                    String.format("Infelizmente houve um erro e a sincronização não "
-                            + "pôde ser completada. Erro: %s", e.getMessage()),
-                    new MaterialDialog.SingleButtonCallback() {
+            Dialogos.mostrarMensagemFlutuante(mRootLayout,"Infelizmente não foi possível sincronizar os dados: "+e.getMessage(),
+                    false,
+                    new Snackbar.Callback() {
                         @Override
-                        public void onClick(@NonNull MaterialDialog dialog,
-                                            @NonNull DialogAction which) {
+                        public void onDismissed(Snackbar snackbar, int event) {
                             finish();
                         }
                     });
