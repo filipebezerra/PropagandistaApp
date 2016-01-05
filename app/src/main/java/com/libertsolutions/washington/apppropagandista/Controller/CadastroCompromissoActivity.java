@@ -259,6 +259,9 @@ public class CadastroCompromissoActivity extends AppCompatActivity
                             .putExtra(Intent.EXTRA_EMAIL, medicoSelecionado.getEmail());
                 }
 
+                //Adiciona Agenda no Calendário do google
+                adicionarNaAgenda();
+                //Sincroniza com o WebService a agenda adicionada
                 sincronizarNovaAgenda(novaAgenda);
             }
         } else {
@@ -429,7 +432,6 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     private class EnvioNovaAgendaSubscriber extends Subscriber<AgendaModel> {
         @Override
         public void onCompleted() {
-            adicionarNaAgenda();
         }
 
         @Override
