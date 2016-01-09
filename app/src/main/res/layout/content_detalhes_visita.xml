@@ -26,6 +26,17 @@
                 android:shrinkColumns="1"
                 >
 
+                <TableRow android:textAlignment="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:text="Dados da Agenda"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/abc_dialog_padding_top_material" />
+                </TableRow>
+
                 <TableRow>
 
                     <TextView
@@ -98,6 +109,84 @@
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         tools:text="Devo chegar com 10 minutos de antecedência"
+                        />
+                </TableRow>
+
+                <TableRow android:textAlignment="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/abc_dialog_padding_top_material" />
+                </TableRow>
+
+                <TableRow android:textAlignment="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:text="Detalhes da Visita"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/abc_dialog_padding_top_material" />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/data_hora_ini_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:text="Data/Hora Início:"
+                        />
+
+                    <TextView
+                        android:id="@+id/data_hora_ini_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        tools:text="17-10-2015/11:30"
+                        />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/data_hora_final_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:text="Data/Hora Final:"
+                        />
+
+                    <TextView
+                        android:id="@+id/data_hora_final_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        tools:text="17-10-2015/11:30"
+                        />
+                </TableRow>
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/detail_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        android:text="Detalhes:"
+                        />
+
+                    <TextView
+                        android:id="@+id/details_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                        tools:text="Detalhes final da visita"
                         />
                 </TableRow>
             </TableLayout>

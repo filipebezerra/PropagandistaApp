@@ -2,7 +2,6 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -45,8 +43,6 @@ import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
-import com.libertsolutions.washington.apppropagandista.Util.Mensagem;
-import com.libertsolutions.washington.apppropagandista.Util.Tela;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
@@ -122,14 +118,27 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     private VisitaDAO mVisitaDAO;
 
     private Agenda mAgenda;
+    private Visita mVisita;
     private long mIdAgenda;
 
-    @Bind(R.id.root_layout) CoordinatorLayout mRootLayout;
-    @Bind(R.id.status) TextView mStatus;
-    @Bind(R.id.data_hora_view) TextView mDataHoraView;
-    @Bind(R.id.medico_view) TextView mMedicoView;
-    @Bind(R.id.obs_view) TextView mObservacaoView;
-    @Bind(R.id.btnIniciar) Button btnIniciarVisita;
+    @Bind(R.id.root_layout)
+    CoordinatorLayout mRootLayout;
+    @Bind(R.id.status)
+    TextView mStatus;
+    @Bind(R.id.data_hora_view)
+    TextView mDataHoraView;
+    @Bind(R.id.medico_view)
+    TextView mMedicoView;
+    @Bind(R.id.obs_view)
+    TextView mObservacaoView;
+    @Bind(R.id.data_hora_ini_view)
+    TextView mDataHoraInilView;
+    @Bind(R.id.data_hora_final_view)
+    TextView mDataHoraFinalView;
+    @Bind(R.id.details_view)
+    TextView mDetalhesView;
+    @Bind(R.id.btnIniciar)
+    Button btnIniciarVisita;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,6 +178,11 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         mVisitaDAO.openDatabase();
 
         mAgenda = mAgendaDAO.consultar(mIdAgenda);
+        if(mAgenda.getStatusAgenda() == StatusAgenda.EmAtendimento || mAgenda.getStatusAgenda() == StatusAgenda.NaoVisita
+                || mAgenda.getStatusAgenda() == StatusAgenda.Finalizado)
+        {
+            mVisita = mVisitaDAO.consultar(VisitaDAO.COLUNA_RELACAO_AGENDA+" = ?",String.valueOf(mIdAgenda));
+        }
 
         preencherDadosTela();
     }
@@ -220,7 +234,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.nav_naovisita:
-                if(mAgenda.getStatusAgenda() == StatusAgenda.EmAtendimento) {
+                if (mAgenda.getStatusAgenda() == StatusAgenda.EmAtendimento) {
                     Log.d(LOG, "Não Visita");
                     new MaterialDialog.Builder(this)
                             .title("Não Visita...")
@@ -244,7 +258,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 return true;
 
             case R.id.nav_cancelar:
-                if(mAgenda.getStatusAgenda() == StatusAgenda.Pendente) {
+                if (mAgenda.getStatusAgenda() == StatusAgenda.Pendente) {
                     Log.d(LOG, "Cancelar Compromisso");
                     new MaterialDialog.Builder(this)
                             .title("Cancelar Compromisso")
@@ -270,7 +284,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                             })
                             .build()
                             .show();
-                }else {
+                } else {
                     Dialogos.mostrarMensagemFlutuante(mRootLayout,
                             "Somente agendas Pendentes podem ser Canceladas!",
                             false);
@@ -519,8 +533,8 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     //Metódo para preencher a tela com os dados da Agenda
     private void preencherDadosTela() {
         mStatus.setText(mAgenda.getStatusAgenda().descricao());
-        mDataHoraView.setText(DateUtil.format(mAgenda.getDataCompromisso(),DATE_AND_TIME));
-        mMedicoView.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO +" = ?",mAgenda.getIdMedico().toString()).getNome());
+        mDataHoraView.setText(DateUtil.format(mAgenda.getDataCompromisso(), DATE_AND_TIME));
+        mMedicoView.setText(mMedicoDAO.consultar(MedicoDAO.COLUNA_ID_MEDICO + " = ?", mAgenda.getIdMedico().toString()).getNome());
         mObservacaoView.setText(mAgenda.getObservacao());
 
         switch (mAgenda.getStatusAgenda()) {
@@ -529,10 +543,14 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 btnIniciarVisita.setBackgroundResource(R.color.visita_pendente);
                 break;
             case EmAtendimento:
+                mDataHoraInilView.setText(DateUtil.format(mVisita.getDataInicio(), DATE_AND_TIME));
                 btnIniciarVisita.setText("Finalizar Visita");
                 btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
                 break;
             case Finalizado:
+                mDataHoraInilView.setText(DateUtil.format(mVisita.getDataInicio(), DATE_AND_TIME));
+                mDataHoraFinalView.setText(DateUtil.format(mVisita.getDataFim(), DATE_AND_TIME));
+                mDetalhesView.setText(mVisita.getDetalhes());
                 btnIniciarVisita.setText("Visita Finalizada");
                 btnIniciarVisita.setBackgroundResource(R.color.visita_finalizada);
                 btnIniciarVisita.setEnabled(false);
@@ -543,6 +561,9 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 btnIniciarVisita.setEnabled(false);
                 break;
             case NaoVisita:
+                mDataHoraInilView.setText(DateUtil.format(mVisita.getDataInicio(), DATE_AND_TIME));
+                mDataHoraFinalView.setText(DateUtil.format(mVisita.getDataFim(), DATE_AND_TIME));
+                mDetalhesView.setText(mVisita.getDetalhes());
                 btnIniciarVisita.setText("Não Visita");
                 btnIniciarVisita.setBackgroundResource(R.color.visita_naovisita);
                 btnIniciarVisita.setEnabled(false);
@@ -554,7 +575,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         if (mUserLocation == null) {
             Log.d(LOG, "Localização do usuário desconhecida");
 
-            if (! servicesAvailable()) {
+            if (!servicesAvailable()) {
                 Log.d(LOG, "Google play services não está disponível");
                 Dialogos.mostrarMensagem(this, "Serviço indisponível",
                         "O serviço para obter sua localização não está disponível!");
@@ -578,27 +599,21 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         Double longtitude = 0.0;
         Double latitude = 0.0;
 
-        if(mUserLocation != null)
-        {
+        if (mUserLocation != null) {
             longtitude = mUserLocation.getLongitude();
             latitude = mUserLocation.getLatitude();
         }
-        /*if (!localizacaoDisponivel()) {
-            return;
-        } else {
-            Log.d(LOG, "A localização do usuário é conhecida");
-        }*/
-
-        final Visita visitaIniciada = Visita.iniciar(System.currentTimeMillis(),
+        mVisita = new Visita();
+        mVisita = Visita.iniciar(System.currentTimeMillis(),
                 latitude,
                 longtitude, mIdAgenda);
-        visitaIniciada.setLatFinal(0.0);
-        visitaIniciada.setLongFinal(0.0);
-        final long id = mVisitaDAO.incluir(visitaIniciada);
+        mVisita.setLatFinal(0.0);
+        mVisita.setLongFinal(0.0);
+        final long id = mVisitaDAO.incluir(mVisita);
 
         Log.d(LOG, String.format("Visita incluída com id %d", id));
-        if (id != -1 ) {
-            visitaIniciada.setId(id);
+        if (id != -1) {
+            mVisita.setId(id);
             mAgenda.setStatusAgenda(StatusAgenda.EmAtendimento);
             mAgendaDAO.alterar(mAgenda);
 
@@ -608,14 +623,16 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
             Dialogos.mostrarMensagemFlutuante(mRootLayout, "Visita iniciada...", true);
 
-            final VisitaService service = createService(VisitaService.class, this);
-            if (service != null) {
-                visitaIniciada.setIdAgenda(Long.parseLong(mAgenda.getIdAgenda().toString()));
-                service.put(Visita.toModel(visitaIniciada))
+            // TODO extrair cpf para atributo e validar se o cpf esta presente
+            final AgendaService service = createService(AgendaService.class, this);
+            if(service != null) {
+                final AgendaModel agendaModel = Agenda.toModel(mAgenda);
+                service.post(agendaModel)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new EnviaVisitaSubscriber());
+                        .subscribe(new AlteraAgendaSubscriber());
             }
+
         } else {
             Dialogos.mostrarMensagem(this, "Falha ao iniciar a vista",
                     "Não foi possível salvar os dados ao iniciar a visita!");
@@ -624,12 +641,6 @@ public class DetalhesVisitaActivity extends AppCompatActivity
 
     private void finalizarVisita() {
         Log.d(LOG, "Finalizando a visita");
-
-        /*if (!localizacaoDisponivel()) {
-            return;
-        } else {
-            Log.d(LOG, "A localização do usuário é conhecida");
-        }*/
 
         new MaterialDialog.Builder(this)
                 .title("Finalizando a visita...")
@@ -640,7 +651,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                         new MaterialDialog.InputCallback() {
                             @Override
                             public void onInput(@NonNull MaterialDialog materialDialog,
-                                    CharSequence charSequence) {
+                                                CharSequence charSequence) {
                                 finalizarVisita(charSequence.toString());
                             }
                         })
@@ -654,7 +665,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         if (visitaEmAndamento != null) {
             visitaEmAndamento.setDetalhes(detalhes);
             visitaEmAndamento.setDataFim(System.currentTimeMillis());
-            if(mUserLocation != null) {
+            if (mUserLocation != null) {
                 visitaEmAndamento.setLatFinal(mUserLocation.getLatitude());
                 visitaEmAndamento.setLongFinal(mUserLocation.getLongitude());
             }
@@ -686,7 +697,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         if (visitaEmAndamento != null) {
             visitaEmAndamento.setDetalhes(detalhes);
             visitaEmAndamento.setDataFim(System.currentTimeMillis());
-            if(mUserLocation != null) {
+            if (mUserLocation != null) {
                 visitaEmAndamento.setLatFinal(mUserLocation.getLatitude());
                 visitaEmAndamento.setLongFinal(mUserLocation.getLongitude());
             }
@@ -711,9 +722,87 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         }
     }
 
-    private static final String LOG_ENVIA_VISITA =
-            EnviaVisitaSubscriber.class.getSimpleName();
+    private static final String LOG_ENVIO_VISITA =
+            AlteraAgendaSubscriber.class.getSimpleName();
 
+    private class AlteraAgendaSubscriber extends Subscriber<AgendaModel> {
+        @Override
+        public void onCompleted() {
+            EnviaVisita();
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(LOG_ENVIO_VISITA, "Falha na sincronização da alteração da agenda", e);
+            if (e.getCause() != null) {
+                Log.e(LOG_ENVIO_VISITA, "Causa da falha", e.getCause());
+            }
+            Dialogos.mostrarMensagemFlutuante(mRootLayout, "Infelizmente não foi possível sincronizar os dados: " + e.getMessage(),
+                    false,
+                    new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar snackbar, int event) {
+                            finish();
+                        }
+                    });
+        }
+
+        @Override
+        public void onNext(AgendaModel model) {
+            if (model == null) {
+                onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
+            } else {
+                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+                Preconditions.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
+                Preconditions.checkNotNull(model.statusAgenda,
+                        "model.statusAgenda não pode ser nulo");
+
+                Agenda.fromModel(model);
+                mAgendaDAO.alterar(Agenda.fromModel(model));
+            }
+        }
+    }
+
+    public void EnviaVisita() {
+        final VisitaService visitaService = createService(VisitaService.class, this);
+        if(visitaService != null) {
+            final VisitaModel visitaModel = Visita.toModel(mVisita);
+            visitaService.put(visitaModel)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new EnviaVisitaSubscriber());
+        }
+    }
+
+    private class EnviaVisitaSubscriber extends Subscriber<VisitaModel> {
+        @Override
+        public void onCompleted() {
+            Log.d(LOG_ENVIO_VISITA, "Envio dos cadastros de médicos concluído");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(LOG_ENVIO_VISITA, "Falha no envio da Visita", e);
+            if (e.getCause() != null) {
+                Log.e(LOG_ENVIO_VISITA, "Causa da falha", e.getCause());
+            }
+        }
+
+        @Override
+        public void onNext(VisitaModel model) {
+            if (model == null) {
+                onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
+            } else {
+                Preconditions.checkNotNull(model.idCliente, "model.idVisita não pode ser nulo");
+
+                final Visita visitaEnviado = Visita.fromModel(model);
+                mVisitaDAO.alterar(visitaEnviado);
+            }
+        }
+    }
+}
+
+    /*
     private class EnviaVisitaSubscriber extends Subscriber<VisitaModel> {
         @Override
         public void onCompleted() {
@@ -788,3 +877,4 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         }
     }
 }
+*/
