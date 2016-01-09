@@ -275,6 +275,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                                     btnIniciarVisita.setBackgroundResource(R.color.visita_cancelada);
                                     btnIniciarVisita.setEnabled(false);
                                     dialog.dismiss();
+                                    enviaAgendaService();
                                 }
 
                                 @Override
@@ -622,20 +623,23 @@ public class DetalhesVisitaActivity extends AppCompatActivity
             btnIniciarVisita.setBackgroundResource(R.color.visita_ematendimento);
 
             Dialogos.mostrarMensagemFlutuante(mRootLayout, "Visita iniciada...", true);
-
-            // TODO extrair cpf para atributo e validar se o cpf esta presente
-            final AgendaService service = createService(AgendaService.class, this);
-            if(service != null) {
-                final AgendaModel agendaModel = Agenda.toModel(mAgenda);
-                service.post(agendaModel)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new AlteraAgendaSubscriber());
-            }
-
+            enviaAgendaService();
         } else {
             Dialogos.mostrarMensagem(this, "Falha ao iniciar a vista",
                     "Não foi possível salvar os dados ao iniciar a visita!");
+        }
+    }
+
+    private void enviaAgendaService()
+    {
+        // TODO extrair cpf para atributo e validar se o cpf esta presente
+        final AgendaService service = createService(AgendaService.class, this);
+        if(service != null) {
+            final AgendaModel agendaModel = Agenda.toModel(mAgenda);
+            service.post(agendaModel)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new AlteraAgendaSubscriber());
         }
     }
 
@@ -681,6 +685,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                             @Override
                             public void onDismissed(Snackbar snackbar, int event) {
                                 finish();
+                                enviaAgendaService();
                             }
                         });
             } else {
@@ -713,6 +718,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                             @Override
                             public void onDismissed(Snackbar snackbar, int event) {
                                 finish();
+                                enviaAgendaService();
                             }
                         });
             } else {
@@ -728,7 +734,12 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     private class AlteraAgendaSubscriber extends Subscriber<AgendaModel> {
         @Override
         public void onCompleted() {
-            EnviaVisita();
+            if(mAgenda.getStatusAgenda() == StatusAgenda.EmAtendimento) {
+                EnviaVisita();
+            }else if(mAgenda.getStatusAgenda() == StatusAgenda.NaoVisita || mAgenda.getStatusAgenda() == StatusAgenda.Finalizado)
+            {
+                AlteraVisita();
+            }
         }
 
         @Override
@@ -763,11 +774,24 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         }
     }
 
+    //Inclui visita no webservice
     public void EnviaVisita() {
         final VisitaService visitaService = createService(VisitaService.class, this);
         if(visitaService != null) {
             final VisitaModel visitaModel = Visita.toModel(mVisita);
             visitaService.put(visitaModel)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new EnviaVisitaSubscriber());
+        }
+    }
+
+    //Envia Web Service Alteração Visita
+    public void AlteraVisita() {
+        final VisitaService visitaService = createService(VisitaService.class, this);
+        if(visitaService != null) {
+            final VisitaModel visitaModel = Visita.toModel(mVisita);
+            visitaService.post(visitaModel)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new EnviaVisitaSubscriber());

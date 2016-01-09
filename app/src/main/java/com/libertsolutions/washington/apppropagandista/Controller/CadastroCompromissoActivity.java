@@ -460,8 +460,8 @@ public class CadastroCompromissoActivity extends AppCompatActivity
                 Preconditions.checkNotNull(model.statusAgenda,
                         "model.statusAgenda não pode ser nulo");
 
-                Agenda.fromModel(model);
-                mAgendaDAO.alterar(Agenda.fromModel(model));
+                Agenda agenda = Agenda.fromModel(model);
+                mAgendaDAO.alterar(agenda);
             }
         }
     }
