@@ -128,7 +128,7 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
         ContentValues valores = new ContentValues();
 
         if (agenda.getIdAgenda() != null) {
-            valores.put(COLUNA_ID_AGENDA, agenda.getIdMedico());
+            valores.put(COLUNA_ID_AGENDA, agenda.getIdAgenda());
         }
 
         valores.put(COLUNA_DT_COMPROMISSO, agenda.getDataCompromisso());
