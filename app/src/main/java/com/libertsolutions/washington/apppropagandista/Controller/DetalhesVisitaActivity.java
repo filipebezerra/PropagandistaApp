@@ -270,6 +270,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                                 @Override
                                 public void onPositive(MaterialDialog dialog) {
                                     mAgenda.setStatusAgenda(StatusAgenda.Cancelado);
+                                    mAgenda.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Alterado);
                                     mAgendaDAO.alterar(mAgenda);
                                     btnIniciarVisita.setText("Visita Cancelada");
                                     btnIniciarVisita.setBackgroundResource(R.color.visita_cancelada);
@@ -674,10 +675,13 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 visitaEmAndamento.setLongFinal(mUserLocation.getLongitude());
             }
 
+            visitaEmAndamento.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Alterado);
+            mVisita = visitaEmAndamento;
             final int alteracoes = mVisitaDAO.alterar(visitaEmAndamento);
 
             if (alteracoes > 0) {
                 mAgenda.setStatusAgenda(StatusAgenda.Finalizado);
+                mAgenda.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Alterado);
                 mAgendaDAO.alterar(mAgenda);
 
                 Dialogos.mostrarMensagemFlutuante(mRootLayout, "Visita finalizada com sucesso",
@@ -707,10 +711,13 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 visitaEmAndamento.setLongFinal(mUserLocation.getLongitude());
             }
 
+            visitaEmAndamento.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Alterado);
+            mVisita = visitaEmAndamento;
             final int alteracoes = mVisitaDAO.alterar(visitaEmAndamento);
 
             if (alteracoes > 0) {
                 mAgenda.setStatusAgenda(StatusAgenda.Finalizado);
+                mAgenda.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Alterado);
                 mAgendaDAO.alterar(mAgenda);
 
                 Dialogos.mostrarMensagemFlutuante(mRootLayout, "Encerrado por não visita.",
@@ -768,8 +775,9 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 Preconditions.checkNotNull(model.statusAgenda,
                         "model.statusAgenda não pode ser nulo");
 
-                Agenda.fromModel(model);
-                mAgendaDAO.alterar(Agenda.fromModel(model));
+                Agenda agendaModel = Agenda.fromModel(model);
+                agendaModel.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Enviado);
+                mAgendaDAO.alterar(agendaModel);
             }
         }
     }
@@ -820,85 +828,9 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 Preconditions.checkNotNull(model.idCliente, "model.idVisita não pode ser nulo");
 
                 final Visita visitaEnviado = Visita.fromModel(model);
+                visitaEnviado.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Enviado);
                 mVisitaDAO.alterar(visitaEnviado);
             }
         }
     }
 }
-
-    /*
-    private class EnviaVisitaSubscriber extends Subscriber<VisitaModel> {
-        @Override
-        public void onCompleted() {
-            Log.d(LOG_ENVIA_VISITA, "Envio dos cadastros de médicos concluído");
-            EnviaAgenda();
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            Log.e(LOG_ENVIA_VISITA, "Falha no envio da Visita", e);
-            if (e.getCause() != null) {
-                Log.e(LOG_ENVIA_VISITA, "Causa da falha", e.getCause());
-            }
-        }
-
-        @Override
-        public void onNext(VisitaModel model) {
-            if (model == null) {
-                onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
-            } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idVisita não pode ser nulo");
-
-                final Visita visitaEnviado = Visita.fromModel(model);
-                mVisitaDAO.alterar(visitaEnviado);
-            }
-        }
-
-        public void EnviaAgenda() {
-            final AgendaService service = createService(AgendaService.class, DetalhesVisitaActivity.this);
-            if (service == null) {
-                Mensagem.MensagemAlerta(DetalhesVisitaActivity.this, "As configurações de sincronização não foram aplicadas corretamente.");
-
-            } else {
-                // TODO extrair cpf para atributo e validar se o cpf esta presente
-                service.post(Agenda.toModel(mAgenda))
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new EnvioAgendaSubscriber());
-            }
-        }
-
-        private class EnvioAgendaSubscriber extends Subscriber<AgendaModel> {
-            @Override
-            public void onCompleted() {
-                Log.d(LOG_ENVIA_VISITA, "Sincronização alteração da agenda concluída");
-                Mensagem.MensagemAlerta(DetalhesVisitaActivity.this,"Dados enviados com sucesso.");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Log.e(LOG_ENVIA_VISITA, "Falha na sincronização alteração da agenda", e);
-                Mensagem.MensagemAlerta(DetalhesVisitaActivity.this, "Falha ao enviar Agenda.");
-                if (e.getCause() != null) {
-                    Log.e(LOG_ENVIA_VISITA, "Causa da falha", e.getCause());
-                    Mensagem.MensagemAlerta(DetalhesVisitaActivity.this,e.getCause().getMessage());
-                }
-            }
-
-            @Override
-            public void onNext(AgendaModel model) {
-                if (model == null) {
-                    onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
-                } else {
-                    Preconditions.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
-                    Preconditions.checkNotNull(model.statusAgenda,
-                            "model.statusAgenda não pode ser nulo");
-
-                    Agenda.fromModel(model);
-                    mAgendaDAO.alterar(Agenda.fromModel(model));
-                }
-            }
-        }
-    }
-}
-*/
