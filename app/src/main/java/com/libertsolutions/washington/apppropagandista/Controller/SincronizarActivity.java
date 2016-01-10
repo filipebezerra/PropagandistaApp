@@ -432,8 +432,11 @@ public class SincronizarActivity extends AppCompatActivity {
                     for (AgendaModel agendaModel : agendas) {
                         final Agenda agenda = Agenda.fromModel(agendaModel);
                         agenda.setStatus(Status.Importado);
-
-                        mAgendaDAO.incluir(agenda);
+                        //Valida se Agenda já existe
+                        if(mAgendaDAO.consultar(AgendaDAO.COLUNA_ID_AGENDA+" = ?",String.valueOf(agendaModel.idAgenda)) == null);
+                        {
+                            mAgendaDAO.incluir(agenda);
+                        }
                     }
                 }
             }
@@ -453,12 +456,15 @@ public class SincronizarActivity extends AppCompatActivity {
             for (Agenda agenda : agendaNovo) {
                 mAgenda = agenda;
                 mVisita = mVisitaDAO.consultar(VisitaDAO.COLUNA_RELACAO_AGENDA+" = ?",mAgenda.getId().toString());
-                final AgendaModel agendaModel = Agenda.toModel(mAgenda);
-                mAgendaService
-                        .put(propagandista.getCpf(),agendaModel)
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new AlteraAgendaSubscriber());
+                //Se for diferente de null
+                if(mVisita != null) {
+                    final AgendaModel agendaModel = Agenda.toModel(mAgenda);
+                    mAgendaService
+                            .put(propagandista.getCpf(), agendaModel)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new AlteraAgendaSubscriber());
+                }
             }
         }
 
