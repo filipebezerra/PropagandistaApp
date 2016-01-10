@@ -775,7 +775,8 @@ public class DetalhesVisitaActivity extends AppCompatActivity
                 Preconditions.checkNotNull(model.statusAgenda,
                         "model.statusAgenda não pode ser nulo");
 
-                Agenda agendaModel = Agenda.fromModel(model);
+                Agenda agendaModel =
+                        Agenda.fromModel(model);
                 agendaModel.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Enviado);
                 mAgendaDAO.alterar(agendaModel);
             }

@@ -2,6 +2,7 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -17,21 +18,27 @@ import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.EnderecoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
+import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Endereco;
 import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
+import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
+import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.models.EspecialidadeModel;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
+import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
 import com.libertsolutions.washington.apppropagandista.api.services.EspecialidadeService;
 import com.libertsolutions.washington.apppropagandista.api.services.MedicoService;
+import com.libertsolutions.washington.apppropagandista.api.services.VisitaService;
+
 import java.util.Collections;
 import java.util.List;
 import rx.Subscriber;
@@ -49,9 +56,12 @@ import static com.libertsolutions.washington.apppropagandista.api.controller.Ret
  */
 public class SincronizarActivity extends AppCompatActivity {
     private MedicoDAO mMedicoDAO;
+    private VisitaDAO mVisitaDAO;
     private EnderecoDAO mEnderecoDAO;
     private AgendaDAO mAgendaDAO;
     private EspecialidadeDAO mEspecialidadeDAO;
+    private Agenda mAgenda;
+    private Visita mVisita;
 
     private MaterialDialog mProgressDialog;
 
@@ -71,6 +81,7 @@ public class SincronizarActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mMedicoDAO = new MedicoDAO(this);
+        mVisitaDAO = new VisitaDAO(this);
         mEnderecoDAO = new EnderecoDAO(this);
         mAgendaDAO = new AgendaDAO(this);
         mEspecialidadeDAO = new EspecialidadeDAO(this);
@@ -116,6 +127,7 @@ public class SincronizarActivity extends AppCompatActivity {
         super.onResume();
 
         mMedicoDAO.openDatabase();
+        mVisitaDAO.openDatabase();
         mEnderecoDAO.openDatabase();
         mAgendaDAO.openDatabase();
         mEspecialidadeDAO.openDatabase();
@@ -126,6 +138,7 @@ public class SincronizarActivity extends AppCompatActivity {
         super.onPause();
 
         mMedicoDAO.closeDatabase();
+        mVisitaDAO.closeDatabase();
         mEnderecoDAO.closeDatabase();
         mAgendaDAO.closeDatabase();
         mEspecialidadeDAO.closeDatabase();
@@ -431,5 +444,126 @@ public class SincronizarActivity extends AppCompatActivity {
         dismissDialog();
         Dialogos.mostrarMensagem(this, "Sincronização de dados",
                 "Sincronização concluída com sucesso");
+
+        //Envia Inclusão de Agendas
+        List<Agenda>  agendaNovo = mAgendaDAO.listar(Status.Pendente);
+        final Propagandista propagandista = PreferencesUtils.getUserLogged(this);
+        if(agendaNovo != null)
+        {
+            for (Agenda agenda : agendaNovo) {
+                mAgenda = agenda;
+                mVisita = mVisitaDAO.consultar(VisitaDAO.COLUNA_RELACAO_AGENDA+" = ?",mAgenda.getId().toString());
+                final AgendaModel agendaModel = Agenda.toModel(mAgenda);
+                mAgendaService
+                        .put(propagandista.getCpf(),agendaModel)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new AlteraAgendaSubscriber());
+            }
+        }
+
+        //Envia Alteração das Agendas
+        List<Agenda> agendaAlterada = mAgendaDAO.listar(Status.Alterado);
+        if(agendaAlterada != null)
+        {
+            for (Agenda agenda : agendaAlterada) {
+                mAgenda = agenda;
+                mVisita = mVisitaDAO.consultar(VisitaDAO.COLUNA_RELACAO_AGENDA+" = ?",mAgenda.getId().toString());
+                final AgendaModel agendaModel = Agenda.toModel(mAgenda);
+                mAgendaService
+                        .post(agendaModel)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new AlteraAgendaSubscriber());
+            }
+        }
+    }
+
+    private class AlteraAgendaSubscriber extends Subscriber<AgendaModel> {
+        @Override
+        public void onCompleted() {
+            if(mAgenda.getStatusAgenda() == StatusAgenda.EmAtendimento) {
+                EnviaVisita();
+            }else if(mAgenda.getStatusAgenda() == StatusAgenda.NaoVisita || mAgenda.getStatusAgenda() == StatusAgenda.Finalizado)
+            {
+                AlteraVisita();
+            }
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(LOG_IMPORTA_AGENDAS, "Falha na sincronização da alteração da agenda", e);
+            if (e.getCause() != null) {
+                Log.e(LOG_IMPORTA_AGENDAS, "Causa da falha", e.getCause());
+            }
+        }
+
+        @Override
+        public void onNext(AgendaModel model) {
+            if (model == null) {
+                onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
+            } else {
+                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+                Preconditions.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
+                Preconditions.checkNotNull(model.statusAgenda,
+                        "model.statusAgenda não pode ser nulo");
+
+                Agenda agendaModel = Agenda.fromModel(model);
+                agendaModel.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Enviado);
+                mAgendaDAO.alterar(agendaModel);
+            }
+        }
+    }
+
+    //Inclui visita no webservice
+    public void EnviaVisita() {
+        final VisitaService visitaService = createService(VisitaService.class, this);
+        if(visitaService != null) {
+            final VisitaModel visitaModel = Visita.toModel(mVisita);
+            visitaService.put(visitaModel)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new EnviaVisitaSubscriber());
+        }
+    }
+
+    //Envia Web Service Alteração Visita
+    public void AlteraVisita() {
+        final VisitaService visitaService = createService(VisitaService.class, this);
+        if(visitaService != null) {
+            final VisitaModel visitaModel = Visita.toModel(mVisita);
+            visitaService.post(visitaModel)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new EnviaVisitaSubscriber());
+        }
+    }
+
+    private class EnviaVisitaSubscriber extends Subscriber<VisitaModel> {
+        @Override
+        public void onCompleted() {
+            Log.d(LOG_IMPORTA_AGENDAS, "Envio dos cadastros de médicos concluído");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(LOG_IMPORTA_AGENDAS, "Falha no envio da Visita", e);
+            if (e.getCause() != null) {
+                Log.e(LOG_IMPORTA_AGENDAS, "Causa da falha", e.getCause());
+            }
+        }
+
+        @Override
+        public void onNext(VisitaModel model) {
+            if (model == null) {
+                onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
+            } else {
+                Preconditions.checkNotNull(model.idCliente, "model.idVisita não pode ser nulo");
+
+                final Visita visitaEnviado = Visita.fromModel(model);
+                visitaEnviado.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Enviado);
+                mVisitaDAO.alterar(visitaEnviado);
+            }
+        }
     }
 }
