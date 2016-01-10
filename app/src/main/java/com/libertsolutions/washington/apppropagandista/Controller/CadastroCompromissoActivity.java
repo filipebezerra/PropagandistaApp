@@ -110,8 +110,8 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         super.onStart();
 
         mMedicoDAO.openDatabase();
+        mAgendaDAO.openDatabase();
         final List<Medico> medicos = mMedicoDAO.listar();
-        mMedicoDAO.closeDatabase();
 
         if (medicos != null) {
             mMedicosAdapter = new ArrayAdapter<>(this,
