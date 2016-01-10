@@ -5,6 +5,7 @@ import java.util.List;
 
 import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Query;
 import rx.Observable;
@@ -23,6 +24,6 @@ public interface AgendaService {
     @PUT("AgendaApi/Put/")
     Observable<AgendaModel> put(@Query("cpf") String cpf,@Body AgendaModel model);
 
-    @PUT("AgendaApi/Post/")
+    @POST("AgendaApi/Post/")
     Observable<AgendaModel> post(@Body AgendaModel model);
 }

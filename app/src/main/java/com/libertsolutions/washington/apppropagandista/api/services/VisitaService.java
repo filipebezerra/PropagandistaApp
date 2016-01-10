@@ -6,6 +6,7 @@ import java.util.List;
 
 import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Query;
 import rx.Observable;
@@ -20,6 +21,6 @@ public interface VisitaService {
     @PUT("VisitaApi/Put/")
     Observable<VisitaModel> put(@Body VisitaModel model);
 
-    @PUT("VisitaApi/Post/")
+    @POST("VisitaApi/Post/")
     Observable<VisitaModel> post(@Body VisitaModel model);
 }

@@ -4,6 +4,7 @@ import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
 import java.util.List;
 import retrofit.http.Body;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.PUT;
 import retrofit.http.Query;
 import rx.Observable;
@@ -22,6 +23,6 @@ public interface MedicoService {
     @PUT("MedicoApi/Put/")
     Observable<MedicoModel> put(@Query("cpf") String cpf,@Body MedicoModel model);
 
-    @PUT("MedicoApi/Post/")
+    @POST("MedicoApi/Post/")
     Observable<MedicoModel> post(@Body MedicoModel model);
 }
