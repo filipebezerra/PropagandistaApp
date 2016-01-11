@@ -41,7 +41,8 @@ public class MedicoModel {
     @SerializedName("Endereco")
     public List<EnderecoModel> enderecos;
 
-    public static class EnderecoModel {
+    public static class
+            EnderecoModel {
         @SerializedName("id_endereco")
         public int idEndereco;
 

@@ -81,5 +81,17 @@
     <string name="title_activity_finalizar_visita">Finalizar Visita</string>
     <string name="title_activity_nao_visita">Não Visita</string>
     <string name="title_activity_cancelar_visita">Cancelar Visita</string>
+    <string name="title_activity_cadastro_medico">Cadastrando médico</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_fragment_detalhes_medico">Detalhes</string>
+    <string name="title_fragment_enderecos_medico">Endereços</string>
+    <string name="action_adicionar">Adicionar</string>
+    <string name="hintEndereco">Endereço</string>
+    <string name="hintCep">CEP</string>
+    <string name="hintNumero">Número</string>
+    <string name="hintBairro">Bairro</string>
+    <string name="hintComplemento">Complemento</string>
+    <string name="hintObservação">Observação</string>
+    <string name="enderecos_adicionados">Endereços adicionados</string>
 
 </resources>
