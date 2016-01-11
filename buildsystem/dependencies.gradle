@@ -14,6 +14,7 @@ ext {
     guavaVersion = '19.0'
     jodaTimeVersion = '2.9.1'
     betterPickersVersion = '2.2.2'
+    libphonenumberVersion = '7.2.2'
 
     libs = [
             supportDesign                   :   "com.android.support:design:${supportLibsVersion}",
@@ -32,6 +33,7 @@ ext {
             guava                           :   "com.google.guava:guava:${guavaVersion}",
             jodaTime                        :   "joda-time:joda-time:${jodaTimeVersion}",
             betterPickers                   :   "com.code-troopers.betterpickers:library:${betterPickersVersion}",
+            libphonenumber                  :   "com.googlecode.libphonenumber:libphonenumber:${libphonenumberVersion}",
     ]
 
     junitVersion = '4.12'

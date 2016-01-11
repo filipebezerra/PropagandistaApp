@@ -46,6 +46,7 @@ dependencies {
     compile libs.guava
     compile libs.jodaTime
     compile libs.betterPickers
+    compile libs.libphonenumber
 
     testCompile unitTests.junit
     compile 'com.android.support:support-v4:23.1.1'

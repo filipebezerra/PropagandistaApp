@@ -93,5 +93,6 @@
     <string name="hintComplemento">Complemento</string>
     <string name="hintObservação">Observação</string>
     <string name="enderecos_adicionados">Endereços adicionados</string>
+    <string name="error_invalid_phone_number">Número de telefone inválido</string>
 
 </resources>

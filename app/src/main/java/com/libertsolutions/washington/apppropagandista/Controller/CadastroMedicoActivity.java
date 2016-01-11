@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -24,8 +25,12 @@ import android.widget.EditText;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnEditorAction;
+import butterknife.OnFocusChange;
 import butterknife.OnTouch;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import java.util.ArrayList;
@@ -69,9 +74,10 @@ public class CadastroMedicoActivity extends AppCompatActivity {
         @Bind(R.id.txtNomeMedico) protected EditText mNomeMedicoView;
         @Bind(R.id.txtDtAniversario) protected EditText mDataAniversarioView;
         @Bind(R.id.txtSecretaria) protected EditText mSecretariaView;
+        @Bind(R.id.hintTelefone) protected TextInputLayout mTelefoneHint;
+        @Bind(R.id.txtTelefone) protected EditText mTelefoneView;
 
         private boolean mHasDialogFrame;
-
         private static final String FRAG_TAG_DATE_PICKER = "fragment_date_picker_name";
 
         public DetalhesMedicoFragment() {}
@@ -157,6 +163,32 @@ public class CadastroMedicoActivity extends AppCompatActivity {
                 return true;
             }
             return false;
+        }
+
+        private PhoneNumberUtil mPhoneNumberUtil = PhoneNumberUtil.getInstance();
+
+        @OnFocusChange(R.id.txtTelefone)
+        public void onFocusChangeTxtTelefone(final boolean focused) {
+            if (!focused && !TextUtils.isEmpty(mTelefoneView.getText())) {
+                mTelefoneHint.setError(null);
+                mTelefoneHint.setErrorEnabled(false);
+
+                try {
+                    final Phonenumber.PhoneNumber number = mPhoneNumberUtil.parse(
+                            mTelefoneView.getText().toString(), "BR");
+
+                    if (mPhoneNumberUtil.isValidNumber(number)) {
+                        mTelefoneView.setText(mPhoneNumberUtil.format(number,
+                                PhoneNumberUtil.PhoneNumberFormat.NATIONAL));
+                    } else {
+                        mTelefoneHint.setError(getString(R.string.error_invalid_phone_number));
+                        mTelefoneHint.setErrorEnabled(true);
+                    }
+                } catch (NumberParseException e) {
+                    mTelefoneHint.setError(e.getMessage());
+                    mTelefoneHint.setErrorEnabled(true);
+                }
+            }
         }
 
         private DateTime obtainDateFromField() {
