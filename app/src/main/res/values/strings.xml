@@ -94,5 +94,6 @@
     <string name="hintObservação">Observação</string>
     <string name="enderecos_adicionados">Endereços adicionados</string>
     <string name="error_invalid_phone_number">Número de telefone inválido</string>
+    <string name="errorEspecialidade">Nenhuma especialidade foi selecionada</string>
 
 </resources>

@@ -21,7 +21,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnEditorAction;
@@ -31,6 +33,8 @@ import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialo
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
+import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import java.util.ArrayList;
@@ -76,9 +80,13 @@ public class CadastroMedicoActivity extends AppCompatActivity {
         @Bind(R.id.txtSecretaria) protected EditText mSecretariaView;
         @Bind(R.id.hintTelefone) protected TextInputLayout mTelefoneHint;
         @Bind(R.id.txtTelefone) protected EditText mTelefoneView;
+        @Bind(R.id.spinnerEspecialidade) protected Spinner mEspecialidadeView;
 
-        private boolean mHasDialogFrame;
         private static final String FRAG_TAG_DATE_PICKER = "fragment_date_picker_name";
+        private boolean mHasDialogFrame;
+
+        private EspecialidadeDAO mEspecialidadeDAO;
+        private ArrayAdapter<Especialidade> mEspecialidadesAdapter;
 
         public DetalhesMedicoFragment() {}
 
@@ -90,6 +98,7 @@ public class CadastroMedicoActivity extends AppCompatActivity {
         public void onCreate(Bundle inState) {
             super.onCreate(inState);
             setHasOptionsMenu(true);
+            mEspecialidadeDAO = new EspecialidadeDAO(getContext());
         }
 
         @Override
@@ -119,6 +128,16 @@ public class CadastroMedicoActivity extends AppCompatActivity {
         public void onViewCreated(View view, Bundle inState) {
             super.onViewCreated(view, inState);
 
+            mEspecialidadeDAO.openDatabase();
+            final List<Especialidade> especialidades = mEspecialidadeDAO.listar();
+            if (especialidades != null) {
+                mEspecialidadesAdapter = new ArrayAdapter<>(getActivity(),
+                        android.R.layout.simple_list_item_1, especialidades);
+                mEspecialidadesAdapter.setDropDownViewResource(
+                        android.R.layout.simple_dropdown_item_1line);
+                mEspecialidadeView.setAdapter(mEspecialidadesAdapter);
+            }
+
             if (inState == null) {
                 mHasDialogFrame = view.findViewById(R.id.frame) != null;
             }
@@ -140,6 +159,9 @@ public class CadastroMedicoActivity extends AppCompatActivity {
         public void onDestroyView() {
             super.onDestroyView();
             ButterKnife.unbind(this);
+            if (mEspecialidadeDAO != null) {
+                mEspecialidadeDAO.closeDatabase();
+            }
         }
 
         @OnEditorAction(R.id.txtNomeMedico)

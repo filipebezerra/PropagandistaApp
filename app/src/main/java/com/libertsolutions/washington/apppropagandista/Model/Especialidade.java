@@ -82,4 +82,9 @@ public class Especialidade extends ModeloBase<Especialidade> {
         mNome = nome;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return getNome();
+    }
 }

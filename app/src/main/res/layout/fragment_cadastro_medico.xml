@@ -120,22 +120,30 @@
             />
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <TextView
+        style="@style/TextAppearance.Design.Hint"
         android:id="@+id/hintEspecialidade"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:layout_marginBottom="4dp"
+        android:text="@string/hintEspecialidade"
+        />
 
-        <AutoCompleteTextView
-            android:id="@+id/txtEspecialidade"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="textAutoComplete|textCapWords"
-            android:singleLine="true"
-            android:selectAllOnFocus="true"
-            android:hint="@string/hintEspecialidade"
-            />
-    </android.support.design.widget.TextInputLayout>
+    <Spinner
+        android:id="@+id/spinnerEspecialidade"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <TextView
+        style="@style/TextAppearance.Design.Error"
+        android:id="@+id/errorMedico"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/errorEspecialidade"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 
 </LinearLayout>
