@@ -1,24 +1,36 @@
 package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnEditorAction;
+import butterknife.OnTouch;
+import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.libertsolutions.washington.apppropagandista.R;
+import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import java.util.ArrayList;
 import java.util.List;
+import org.joda.time.DateTime;
 
 public class CadastroMedicoActivity extends AppCompatActivity {
 
@@ -51,7 +63,17 @@ public class CadastroMedicoActivity extends AppCompatActivity {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
     }
 
-    public static class DetalhesMedicoFragment extends Fragment {
+    public static class DetalhesMedicoFragment extends Fragment
+            implements CalendarDatePickerDialogFragment.OnDateSetListener {
+
+        @Bind(R.id.txtNomeMedico) protected EditText mNomeMedicoView;
+        @Bind(R.id.txtDtAniversario) protected EditText mDataAniversarioView;
+        @Bind(R.id.txtSecretaria) protected EditText mSecretariaView;
+
+        private boolean mHasDialogFrame;
+
+        private static final String FRAG_TAG_DATE_PICKER = "fragment_date_picker_name";
+
         public DetalhesMedicoFragment() {}
 
         public static DetalhesMedicoFragment newInstance() {
@@ -59,8 +81,8 @@ public class CadastroMedicoActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+        public void onCreate(Bundle inState) {
+            super.onCreate(inState);
             setHasOptionsMenu(true);
         }
 
@@ -88,9 +110,98 @@ public class CadastroMedicoActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onViewCreated(View view, Bundle inState) {
+            super.onViewCreated(view, inState);
+
+            if (inState == null) {
+                mHasDialogFrame = view.findViewById(R.id.frame) != null;
+            }
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            final CalendarDatePickerDialogFragment calendarDialogFragment =
+                    (CalendarDatePickerDialogFragment) getChildFragmentManager()
+                            .findFragmentByTag(FRAG_TAG_DATE_PICKER);
+            if (calendarDialogFragment != null) {
+                calendarDialogFragment.setOnDateSetListener(this);
+            }
+        }
+
+        @Override
         public void onDestroyView() {
             super.onDestroyView();
             ButterKnife.unbind(this);
+        }
+
+        @OnEditorAction(R.id.txtNomeMedico)
+        public boolean onEditorActionTxtNomeMedico(final int actionId) {
+            if (actionId == EditorInfo.IME_ACTION_NEXT)  {
+                if (!mDataAniversarioView.requestFocusFromTouch()) {
+                    final long downTime = SystemClock.uptimeMillis();
+                    final long eventTime = SystemClock.uptimeMillis() + 100;
+                    mDataAniversarioView.dispatchTouchEvent(MotionEvent.obtain(downTime, eventTime,
+                            MotionEvent.ACTION_UP, 0.0f, 0.0f, 0));
+                }
+                return true;
+            }
+            return false;
+        }
+
+        @OnTouch(R.id.txtDtAniversario)
+        public boolean onTouchTxtDtAniversario(final MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                showDatePicker();
+                return true;
+            }
+            return false;
+        }
+
+        private DateTime obtainDateFromField() {
+            if (!TextUtils.isEmpty(mDataAniversarioView.getText())) {
+                final String dateText = mDataAniversarioView.getText().toString();
+                return DateUtil.toDate(dateText);
+            }
+
+            return null;
+        }
+
+        private void showDatePicker() {
+            int year, monthOfYear, dayOfMonth;
+            final DateTime dateSet = obtainDateFromField();
+
+            if (dateSet != null) {
+                year = dateSet.getYear();
+                monthOfYear = dateSet.getMonthOfYear();
+                dayOfMonth = dateSet.getDayOfMonth();
+            } else {
+                final DateTime now = DateTime.now();
+                year = now.getYear();
+                monthOfYear = now.getMonthOfYear();
+                dayOfMonth = now.getDayOfMonth();
+            }
+
+            final CalendarDatePickerDialogFragment dialogFragment = CalendarDatePickerDialogFragment
+                    .newInstance(this, year, monthOfYear - 1, dayOfMonth);
+
+            if (mHasDialogFrame) {
+                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+
+                ft.add(R.id.frame, dialogFragment, FRAG_TAG_DATE_PICKER)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            } else {
+                dialogFragment.show(getChildFragmentManager(), FRAG_TAG_DATE_PICKER);
+            }
+        }
+
+        @Override
+        public void onDateSet(CalendarDatePickerDialogFragment dialog, int year,
+                int monthOfYear, int dayOfMonth) {
+            mDataAniversarioView.setText(DateUtil.format(year, monthOfYear, dayOfMonth));
+            mSecretariaView.requestFocus();
         }
     }
 
