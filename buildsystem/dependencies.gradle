@@ -14,7 +14,7 @@ ext {
     guavaVersion = '19.0'
     jodaTimeVersion = '2.9.1'
     betterPickersVersion = '2.2.2'
-    libphonenumberVersion = '7.2.2'
+    libphonenumberVersion = '7.1.1'
 
     libs = [
             supportDesign                   :   "com.android.support:design:${supportLibsVersion}",
