@@ -3,6 +3,7 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -21,9 +22,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnEditorAction;
@@ -34,12 +37,16 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
+import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
+import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.joda.time.DateTime;
+
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 
 public class CadastroMedicoActivity extends AppCompatActivity {
 
@@ -75,15 +82,21 @@ public class CadastroMedicoActivity extends AppCompatActivity {
     public static class DetalhesMedicoFragment extends Fragment
             implements CalendarDatePickerDialogFragment.OnDateSetListener {
 
+        @Bind(R.id.hintNomeMedico) protected TextInputLayout mNomeMedicoHint;
         @Bind(R.id.txtNomeMedico) protected EditText mNomeMedicoView;
         @Bind(R.id.txtDtAniversario) protected EditText mDataAniversarioView;
         @Bind(R.id.txtSecretaria) protected EditText mSecretariaView;
         @Bind(R.id.hintTelefone) protected TextInputLayout mTelefoneHint;
         @Bind(R.id.txtTelefone) protected EditText mTelefoneView;
+        @Bind(R.id.txtEmail) protected EditText mEmailView;
+        @Bind(R.id.txtCrm) protected EditText mCrmView;
         @Bind(R.id.spinnerEspecialidade) protected Spinner mEspecialidadeView;
+        @Bind(R.id.errorEspecialidade) protected TextView mEspecialidadeHint;
 
         private static final String FRAG_TAG_DATE_PICKER = "fragment_date_picker_name";
         private boolean mHasDialogFrame;
+
+        private MedicoDAO mMedicoDAO;
 
         private EspecialidadeDAO mEspecialidadeDAO;
         private ArrayAdapter<Especialidade> mEspecialidadesAdapter;
@@ -109,10 +122,91 @@ public class CadastroMedicoActivity extends AppCompatActivity {
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             if (item.getItemId() == R.id.action_salvar) {
+                saveFormData();
                 return true;
             } else {
                 return super.onOptionsItemSelected(item);
             }
+        }
+
+        private void saveFormData() {
+            boolean isFormValid = true;
+
+            if (TextUtils.isEmpty(mNomeMedicoView.getText())) {
+                isFormValid = false;
+                mNomeMedicoHint.setError("O nome do médico deve ser informado");
+                mNomeMedicoHint.setErrorEnabled(true);
+            } else {
+                mNomeMedicoHint.setError(null);
+                mNomeMedicoHint.setErrorEnabled(false);
+            }
+
+            if (TextUtils.isEmpty(mTelefoneView.getText())) {
+                isFormValid = false;
+                mTelefoneHint.setError("O telefone deve ser informado");
+                mTelefoneHint.setErrorEnabled(true);
+            } else {
+                mTelefoneHint.setError(null);
+                mTelefoneHint.setErrorEnabled(false);
+            }
+
+            final Especialidade especialidadeSelecionada = obterEspecialidadeSelecionada();
+
+            if (especialidadeSelecionada == null) {
+                isFormValid = false;
+                mEspecialidadeHint.setVisibility(View.VISIBLE);
+            } else {
+                mEspecialidadeHint.setVisibility(View.GONE);
+            }
+
+            if (isFormValid) {
+                final Medico novoMedico = new Medico()
+                        .setNome(mNomeMedicoView.getText().toString())
+                        .setTelefone(mTelefoneView.getText().toString())
+                        .setIdEspecialidade(especialidadeSelecionada.getIdEspecialidade());
+
+                if (!TextUtils.isEmpty(mDataAniversarioView.getText())) {
+                    final String dateText = mDataAniversarioView.getText().toString();
+                    novoMedico.setDataAniversario(DateUtil.toDate(dateText).getMillis());
+                }
+
+                if (!TextUtils.isEmpty(mSecretariaView.getText())) {
+                    novoMedico.setSecretaria(mSecretariaView.getText().toString());
+                }
+
+                if (!TextUtils.isEmpty(mEmailView.getText())) {
+                    novoMedico.setEmail(mEmailView.getText().toString());
+                }
+
+                if (!TextUtils.isEmpty(mCrmView.getText())) {
+                    novoMedico.setCrm(mCrmView.getText().toString());
+                }
+
+                final long idNovoMedico = mMedicoDAO.incluir(novoMedico);
+
+                if (idNovoMedico == -1) {
+                    Snackbar.make(getView(),
+                            "Houve um erro ao salvar a agenda. Tente novamente!",
+                            LENGTH_LONG)
+                            .show();
+                } else {
+                    novoMedico.setId(idNovoMedico);
+
+                    Snackbar.make(getView(),
+                            "Médico cadastrado com sucesso!",
+                            LENGTH_LONG)
+                            .show();
+                }
+            } else {
+                Snackbar.make(getView(),
+                        "Preencha os campos requeridos para salvar!", LENGTH_LONG)
+                        .show();
+            }
+        }
+
+        private Especialidade obterEspecialidadeSelecionada() {
+            return mEspecialidadeView.getSelectedItemPosition()  == AdapterView.INVALID_POSITION ?
+                    null : (Especialidade) mEspecialidadeView.getSelectedItem();
         }
 
         @Override
@@ -121,6 +215,10 @@ public class CadastroMedicoActivity extends AppCompatActivity {
             final View view = inflater.inflate(R.layout.fragment_cadastro_medico,
                     container, false);
             ButterKnife.bind(this, view);
+
+            mMedicoDAO = new MedicoDAO(getContext());
+            mMedicoDAO.openDatabase();
+
             return view;
         }
 
@@ -162,6 +260,9 @@ public class CadastroMedicoActivity extends AppCompatActivity {
             if (mEspecialidadeDAO != null) {
                 mEspecialidadeDAO.closeDatabase();
             }
+            if (mMedicoDAO != null) {
+                mMedicoDAO.closeDatabase();
+            }
         }
 
         @OnEditorAction(R.id.txtNomeMedico)
@@ -173,6 +274,15 @@ public class CadastroMedicoActivity extends AppCompatActivity {
                     mDataAniversarioView.dispatchTouchEvent(MotionEvent.obtain(downTime, eventTime,
                             MotionEvent.ACTION_UP, 0.0f, 0.0f, 0));
                 }
+                return true;
+            }
+            return false;
+        }
+
+        @OnEditorAction(R.id.txtCrm)
+        public boolean onEditorActionTxtCrm(final int actionId) {
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                mEspecialidadeView.performClick();
                 return true;
             }
             return false;
