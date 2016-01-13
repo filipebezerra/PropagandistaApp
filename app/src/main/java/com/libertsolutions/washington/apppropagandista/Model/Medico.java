@@ -1,8 +1,11 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.common.base.Preconditions;
+import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,25 +19,26 @@ import org.joda.time.DateTime;
  * @version 0.1.0, 26/12/2015
  * @since 0.1.0
  */
-public class Medico extends ModeloBase<Medico> {
+@ParcelablePlease
+public class Medico extends ModeloBase<Medico> implements Parcelable {
     // id do médico no servidor
-    private Integer mIdMedico;
+    Integer mIdMedico;
 
-    private String mNome;
+    String mNome;
 
     // data de aniversário, armazenado como milessegundos
-    private Long mDataAniversario;
+    Long mDataAniversario;
 
-    private String mSecretaria;
+    String mSecretaria;
 
-    private String mTelefone;
+    String mTelefone;
 
-    private String mEmail;
+    String mEmail;
 
-    private String mCrm;
+    String mCrm;
 
     // id de relacionamento com tabela Especialidade
-    private Integer mIdEspecialidade;
+    Integer mIdEspecialidade;
 
     /**
      * Obtém os dados da agenda importados do webservice.
@@ -189,4 +193,26 @@ public class Medico extends ModeloBase<Medico> {
     public String toString() {
         return getNome();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        MedicoParcelablePlease.writeToParcel(this, dest, flags);
+    }
+
+    public static final Creator<Medico> CREATOR = new Creator<Medico>() {
+        public Medico createFromParcel(Parcel source) {
+            Medico target = new Medico();
+            MedicoParcelablePlease.readFromParcel(target, source);
+            return target;
+        }
+
+        public Medico[] newArray(int size) {
+            return new Medico[size];
+        }
+    };
 }

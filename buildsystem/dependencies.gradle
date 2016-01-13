@@ -15,6 +15,7 @@ ext {
     jodaTimeVersion = '2.9.1'
     betterPickersVersion = '2.2.2'
     libphonenumberVersion = '7.1.1'
+    parcelablePleaseVersion = '1.0.2'
 
     libs = [
             supportDesign                   :   "com.android.support:design:${supportLibsVersion}",
@@ -34,6 +35,8 @@ ext {
             jodaTime                        :   "joda-time:joda-time:${jodaTimeVersion}",
             betterPickers                   :   "com.code-troopers.betterpickers:library:${betterPickersVersion}",
             libphonenumber                  :   "com.googlecode.libphonenumber:libphonenumber:${libphonenumberVersion}",
+            parcelablePlease                :   "com.hannesdorfmann.parcelableplease:annotation:${parcelablePleaseVersion}",
+            parcelablePleaseApt             :   "com.hannesdorfmann.parcelableplease:processor:${parcelablePleaseVersion}",
     ]
 
     junitVersion = '4.12'
