@@ -35,6 +35,7 @@ import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
+import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
@@ -178,6 +179,8 @@ public class DetalhesMedicoFragment extends Fragment
                 mNovoMedico.setCrm(mCrmView.getText().toString());
             }
 
+            mNovoMedico.setStatus(Status.Pendente);
+
             String mensagemConfirmacao;
             final AtomicBoolean isNotificarInclusao = new AtomicBoolean(false);
 
@@ -188,6 +191,8 @@ public class DetalhesMedicoFragment extends Fragment
                     mensagemConfirmacao = "Houve um erro ao incluir o médico. Tente novamente!";
                 } else {
                     mNovoMedico.setId(idNovoMedico);
+                    //TODO (Filipe Bezerra): Campo IdMedico deve ser Integer ou Long como o campo Id?
+                    mNovoMedico.setIdMedico((int) idNovoMedico);
 
                     isNotificarInclusao.set(true);
 

@@ -1,6 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel.EnderecoModel;
 
@@ -72,9 +73,11 @@ public class Endereco extends ModeloBase<Endereco> {
         Preconditions.checkNotNull(endereco.getId(), "endereco.getId() não pode ser nulo");
         Preconditions.checkNotNull(endereco.getIdEndereco(),
                 "endereco.getIdEndereco() não pode ser nulo");
-        Preconditions.checkNotNull(endereco.getEndereco(), "endereco.getEndereco() não pode ser nulo");
+        Preconditions.checkNotNull(endereco.getEndereco(),
+                "endereco.getEndereco() não pode ser nulo");
         Preconditions.checkNotNull(endereco.getBairro(), "endereco.getBairro() não pode ser nulo");
-        Preconditions.checkNotNull(endereco.getIdMedico(), "endereco.getIdMedico() não pode ser nulo");
+        Preconditions.checkNotNull(endereco.getIdMedico(),
+                "endereco.getIdMedico() não pode ser nulo");
 
         final EnderecoModel model = new EnderecoModel();
         model.idCliente = endereco.getId();
@@ -192,5 +195,13 @@ public class Endereco extends ModeloBase<Endereco> {
     public Endereco setIdMedico(Integer idMedico) {
         this.idMedico = idMedico;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return getEndereco() + ", " +
+                (TextUtils.isEmpty(getNumero()) ? "" : (getNumero() + ", ")) +
+                (TextUtils.isEmpty(getCep()) ? "" : (getCep() + ", ")) +
+                getBairro();
     }
 }

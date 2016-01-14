@@ -20,9 +20,10 @@ import butterknife.ButterKnife;
 import com.libertsolutions.washington.apppropagandista.Dao.EnderecoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Endereco;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
+import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
-import java.util.Collections;
+import java.util.ArrayList;
 
 /**
  * .
@@ -98,7 +99,7 @@ public class EnderecosMedicoFragment extends Fragment {
         mPersistenciaEndereco.openDatabase();
 
         mEnderecosAdapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_list_item_1, Collections.<Endereco>emptyList());
+                android.R.layout.simple_list_item_1, new ArrayList<Endereco>());
         mEnderecosAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         mEnderecosAdicionadosView.setAdapter(mEnderecosAdapter);
     }
@@ -160,6 +161,8 @@ public class EnderecosMedicoFragment extends Fragment {
             if (!TextUtils.isEmpty(mObservacaoView.getText())) {
                 novoEndereco.setObservacao(mObservacaoView.getText().toString());
             }
+
+            novoEndereco.setStatus(Status.Pendente);
 
             final long idNovoEndereco = mPersistenciaEndereco.incluir(novoEndereco);
 
