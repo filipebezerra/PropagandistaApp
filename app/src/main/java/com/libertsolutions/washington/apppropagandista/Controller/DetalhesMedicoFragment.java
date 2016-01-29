@@ -255,6 +255,10 @@ public class DetalhesMedicoFragment extends Fragment
             especialidadesAdapter.setDropDownViewResource(
                     android.R.layout.simple_dropdown_item_1line);
             mEspecialidadeView.setAdapter(especialidadesAdapter);
+
+            if (especialidadesAdapter.isEmpty()) {
+                mCrmView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+            }
         }
         persistenciaEspecialista.closeDatabase();
 
