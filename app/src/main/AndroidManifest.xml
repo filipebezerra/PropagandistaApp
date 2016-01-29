@@ -133,7 +133,7 @@
             android:label="@string/title_agenda_cadastrar"
             android:parentActivityName=".Controller.AgendaActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateVisible"
+            android:windowSoftInputMode="stateHidden"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

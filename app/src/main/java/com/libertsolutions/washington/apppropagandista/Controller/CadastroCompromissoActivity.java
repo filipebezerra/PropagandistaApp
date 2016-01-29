@@ -18,22 +18,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnItemSelected;
 import butterknife.OnTouch;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
 import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
-import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
-import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
@@ -44,12 +37,13 @@ import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
-import java.util.List;
 import org.joda.time.DateTime;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import static android.os.Build.*;
+
+import static android.os.Build.VERSION;
+import static android.os.Build.VERSION_CODES;
 import static android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME;
 import static android.support.design.widget.Snackbar.LENGTH_LONG;
 import static com.libertsolutions.washington.apppropagandista.api.controller.RetrofitController.createService;
@@ -60,12 +54,13 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         RadialTimePickerDialogFragment.OnTimeSetListener {
 
     private static final int RC_ADICIONA_AGENDA = 1001;
+    private static final int RC_SELECIONAR_MEDICO = 1002;
 
     @Bind(R.id.root_layout) protected CoordinatorLayout mRootLayout;
     @Bind(R.id.toolbar) protected Toolbar mToolbar;
 
-    @Bind(R.id.errorMedico) protected TextView mMedicoHint;
-    @Bind(R.id.spinnerMedico) protected Spinner mMedicoView;
+    @Bind(R.id.hintMedico) protected TextInputLayout mMedicoHint;
+    @Bind(R.id.txtMedico) protected EditText mMedicoView;
     @Bind(R.id.hintDataCompromisso) protected TextInputLayout mDataCompromissoHint;
     @Bind(R.id.txtDataCompromisso) protected EditText mDataCompromissoView;
     @Bind(R.id.hintHorarioCompromisso) protected TextInputLayout mHorarioCompromissoHint;
@@ -80,10 +75,11 @@ public class CadastroCompromissoActivity extends AppCompatActivity
 
     private AgendaDAO mAgendaDAO;
 
-    private MedicoDAO mMedicoDAO;
-    private ArrayAdapter<Medico> mMedicosAdapter;
-
     private Intent mInsertCalendarIntent;
+
+    private Integer mCodigoMedico;
+    private String mNomeMedico;
+    private String mEmailMedico;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +97,6 @@ public class CadastroCompromissoActivity extends AppCompatActivity
             mHasDialogFrame = findViewById(R.id.frame) != null;
         }
 
-        mMedicoDAO = new MedicoDAO(this);
         mAgendaDAO = new AgendaDAO(this);
     }
 
@@ -109,16 +104,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
 
-        mMedicoDAO.openDatabase();
         mAgendaDAO.openDatabase();
-        final List<Medico> medicos = mMedicoDAO.listar();
-
-        if (medicos != null) {
-            mMedicosAdapter = new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, medicos);
-            mMedicosAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-            mMedicoView.setAdapter(mMedicosAdapter);
-        }
     }
 
     @Override
@@ -148,7 +134,6 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         mAgendaDAO.closeDatabase();
-        mMedicoDAO.closeDatabase();
     }
 
     @Override
@@ -167,21 +152,19 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         }
     }
 
-    @OnItemSelected(R.id.spinnerMedico)
-    public void onSpinnerMedicoSelected(final int position) {
-        if (TextUtils.isEmpty(mDataCompromissoView.getText())) {
-            showDatePicker();
-        } else if (TextUtils.isEmpty(mHorarioCompromissoView.getText())) {
-            showTimePicker();
-        } else if (TextUtils.isEmpty(mObservacaoView.getText())) {
-            mObservacaoView.requestFocus();
-        }
-    }
-
-    @OnTouch({ R.id.txtDataCompromisso, R.id.txtHorarioCompromisso })
+    @OnTouch({
+            R.id.txtMedico,
+            R.id.txtDataCompromisso,
+            R.id.txtHorarioCompromisso
+    })
     public boolean onTouchInView(final View v, final MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             switch (v.getId()) {
+                case R.id.txtMedico:
+                    startActivityForResult(new Intent(this, ConsultaMedicoActivity.class),
+                            RC_SELECIONAR_MEDICO);
+                    return true;
+
                 case R.id.txtDataCompromisso:
                     showDatePicker();
                     return true;
@@ -197,23 +180,17 @@ public class CadastroCompromissoActivity extends AppCompatActivity
         return false;
     }
 
-    private Medico obterMedicoSelecionado() {
-        return mMedicoView.getSelectedItemPosition()  == AdapterView.INVALID_POSITION ?
-                null : (Medico) mMedicoView.getSelectedItem();
-    }
-
     public void save() {
         boolean isFormValid = true;
 
-        final Medico medicoSelecionado = obterMedicoSelecionado();
-
-        if (medicoSelecionado == null) {
+        if (TextUtils.isEmpty(mMedicoView.getText())) {
             isFormValid = false;
-            mMedicoHint.setVisibility(View.VISIBLE);
+            mMedicoHint.setError("Nenhum médico foi selecionado");
+            mMedicoHint.setErrorEnabled(true);
         } else {
-            mMedicoHint.setVisibility(View.GONE);
+            mMedicoHint.setError(null);
+            mMedicoHint.setErrorEnabled(false);
         }
-
         if (TextUtils.isEmpty(mDataCompromissoView.getText())) {
             isFormValid = false;
             mDataCompromissoHint.setError("Nenhuma data foi informada");
@@ -234,7 +211,7 @@ public class CadastroCompromissoActivity extends AppCompatActivity
 
         if (isFormValid) {
             final Agenda novaAgenda = new Agenda();
-            novaAgenda.setIdMedico(medicoSelecionado.getIdMedico());
+            novaAgenda.setIdMedico(mCodigoMedico);
             novaAgenda.setDataCompromisso(obtainDateInMillesFromFields());
             novaAgenda.setStatusAgenda(StatusAgenda.Pendente);
             novaAgenda.setStatus(Status.Pendente);
@@ -255,11 +232,11 @@ public class CadastroCompromissoActivity extends AppCompatActivity
                     mInsertCalendarIntent = new Intent(Intent.ACTION_INSERT)
                             .setData(Events.CONTENT_URI)
                             .putExtra(EXTRA_EVENT_BEGIN_TIME, novaAgenda.getDataCompromisso())
-                            .putExtra(Events.TITLE, String.format("Visita com %s", medicoSelecionado.getNome()))
+                            .putExtra(Events.TITLE, String.format("Visita com %s", mNomeMedico))
                             .putExtra(Events.DESCRIPTION, novaAgenda.getObservacao())
                             .putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY)
                             .putExtra(Events.ACCESS_LEVEL, Events.ACCESS_PRIVATE)
-                            .putExtra(Intent.EXTRA_EMAIL, medicoSelecionado.getEmail());
+                            .putExtra(Intent.EXTRA_EMAIL, mEmailMedico);
                 }
 
                 //Adiciona Agenda no Calendário do google
@@ -379,8 +356,6 @@ public class CadastroCompromissoActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == RC_ADICIONA_AGENDA) {
             if (resultCode == RESULT_OK) {
                 Dialogos.mostrarMensagemFlutuante(mRootLayout,
@@ -394,7 +369,22 @@ public class CadastroCompromissoActivity extends AppCompatActivity
             } else {
                 finish();
             }
+        } else if (requestCode == RC_SELECIONAR_MEDICO) {
+            if (resultCode == RESULT_OK) {
+                final Bundle extras = data.getExtras();
+                mCodigoMedico = extras.getInt("id_medico");
+                mNomeMedico = extras.getString("nome");
+                mEmailMedico = extras.getString("email");
+                mMedicoView.setText(mNomeMedico);
+            } else {
+                mCodigoMedico = null;
+                mNomeMedico = null;
+                mEmailMedico = null;
+                mMedicoView.setText("");
+            }
         }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void adicionarNaAgenda() {
