@@ -85,7 +85,6 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_fragment_detalhes_medico">Detalhes</string>
     <string name="title_fragment_enderecos_medico">Endereços</string>
-    <string name="action_adicionar">Adicionar</string>
     <string name="hintEndereco">Endereço</string>
     <string name="hintCep">CEP</string>
     <string name="hintNumero">Número</string>
@@ -95,5 +94,7 @@
     <string name="enderecos_adicionados">Endereços adicionados</string>
     <string name="error_invalid_phone_number">Número de telefone inválido</string>
     <string name="errorEspecialidade">Nenhuma especialidade foi selecionada</string>
+    <string name="spinner_prompt">Selecione…</string>
+    <string name="hintMedico">Toque aqui para selecionar o médico</string>
 
 </resources>

@@ -24,6 +24,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
+import com.libertsolutions.washington.apppropagandista.adapter.NothingSelectedSpinnerAdapter;
 import java.util.ArrayList;
 
 /**
@@ -103,29 +104,36 @@ public class EnderecosMedicoFragment extends Fragment {
 
         mEnderecosAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_list_item_1, new ArrayList<Endereco>());
-        mEnderecosAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        mEnderecosAdicionadosView.setAdapter(mEnderecosAdapter);
-        mEnderecosAdicionadosView.setOnItemSelectedListener(
-                new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position,
-                            long id) {
-                        final Endereco endereco = mEnderecosAdapter.getItem(position);
-                        mEnderecoView.setText(endereco.getEndereco());
-                        mCepView.setText(endereco.getCep());
-                        mNumeroView.setText(endereco.getNumero());
-                        mBairroView.setText(endereco.getBairro());
-                        mComplementoView.setText(endereco.getComplemento());
-                        mObservacaoView.setText(endereco.getObservacao());
-                        mEnderecoSelecionadoEdicao = endereco;
-                    }
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-                        clearFields();
-                        mEnderecoSelecionadoEdicao = null;
-                    }
-                });
+        mEnderecosAdapter.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item);
+
+        mEnderecosAdicionadosView.setAdapter(
+                new NothingSelectedSpinnerAdapter(mEnderecosAdapter,
+                        R.layout.spinner_row_nothing_selected, getActivity()));
+
+        mEnderecosAdicionadosView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                final Object item = mEnderecosAdicionadosView.getAdapter().getItem(position);
+
+                if (item != null) {
+                    final Endereco endereco = (Endereco)item;
+                    mEnderecoView.setText(endereco.getEndereco());
+                    mCepView.setText(endereco.getCep());
+                    mNumeroView.setText(endereco.getNumero());
+                    mBairroView.setText(endereco.getBairro());
+                    mComplementoView.setText(endereco.getComplemento());
+                    mObservacaoView.setText(endereco.getObservacao());
+                    mEnderecoSelecionadoEdicao = endereco;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                clearFields();
+            }
+        });
     }
 
     @Override
@@ -135,7 +143,7 @@ public class EnderecosMedicoFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_adicionar) {
+        if (item.getItemId() == R.id.action_salvar) {
             saveFormData();
             return true;
         } else {
@@ -200,7 +208,6 @@ public class EnderecosMedicoFragment extends Fragment {
             }
 
             mEnderecosAdapter.add(novoEndereco);
-            mEnderecosAdicionadosView.setSelection(-1);
             clearFields();
             mEnderecoView.requestFocus();
             Dialogos.mostrarMensagemFlutuante(getView(), mensagemConfirmacao, false);
@@ -211,6 +218,7 @@ public class EnderecosMedicoFragment extends Fragment {
     }
 
     private void clearFields() {
+        mEnderecoSelecionadoEdicao = null;
         mEnderecoView.setText("");
         mCepView.setText("");
         mNumeroView.setText("");

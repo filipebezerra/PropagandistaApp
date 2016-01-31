@@ -4,8 +4,8 @@
     tools:context="com.libertsolutions.washington.apppropagandista.Controller.CadastroMedicoActivity"
     >
     <item
-        android:id="@+id/action_adicionar"
-        android:title="@string/action_adicionar"
+        android:id="@+id/action_salvar"
+        android:title="@string/action_salvar"
         app:showAsAction="ifRoom|withText"
         />
 </menu>
