@@ -118,14 +118,13 @@ public class EnderecosMedicoFragment extends Fragment {
                 final Object item = mEnderecosAdicionadosView.getAdapter().getItem(position);
 
                 if (item != null) {
-                    final Endereco endereco = (Endereco)item;
-                    mEnderecoView.setText(endereco.getEndereco());
-                    mCepView.setText(endereco.getCep());
-                    mNumeroView.setText(endereco.getNumero());
-                    mBairroView.setText(endereco.getBairro());
-                    mComplementoView.setText(endereco.getComplemento());
-                    mObservacaoView.setText(endereco.getObservacao());
-                    mEnderecoSelecionadoEdicao = endereco;
+                    mEnderecoSelecionadoEdicao = (Endereco)item;
+                    mEnderecoView.setText(mEnderecoSelecionadoEdicao.getEndereco());
+                    mCepView.setText(mEnderecoSelecionadoEdicao.getCep());
+                    mNumeroView.setText(mEnderecoSelecionadoEdicao.getNumero());
+                    mBairroView.setText(mEnderecoSelecionadoEdicao.getBairro());
+                    mComplementoView.setText(mEnderecoSelecionadoEdicao.getComplemento());
+                    mObservacaoView.setText(mEnderecoSelecionadoEdicao.getObservacao());
                 }
             }
 
@@ -173,43 +172,70 @@ public class EnderecosMedicoFragment extends Fragment {
         }
 
         if (isFormValid) {
-            final Endereco novoEndereco = new Endereco()
-                    .setIdMedico(mMedico.getIdMedico())
-                    .setEndereco(mEnderecoView.getText().toString())
-                    .setBairro(mBairroView.getText().toString());
-
-            if (!TextUtils.isEmpty(mCepView.getText())) {
-                novoEndereco.setCep(mCepView.getText().toString());
-            }
-
-            if (!TextUtils.isEmpty(mNumeroView.getText())) {
-                novoEndereco.setNumero(mNumeroView.getText().toString());
-            }
-
-            if (!TextUtils.isEmpty(mComplementoView.getText())) {
-                novoEndereco.setComplemento(mComplementoView.getText().toString());
-            }
-
-            if (!TextUtils.isEmpty(mObservacaoView.getText())) {
-                novoEndereco.setObservacao(mObservacaoView.getText().toString());
-            }
-
-            novoEndereco.setStatus(Status.Pendente);
-
-            final long idNovoEndereco = mPersistenciaEndereco.incluir(novoEndereco);
-
             String mensagemConfirmacao;
+            Endereco novoEndereco = null;
+            boolean persistido = false;
 
-            if (idNovoEndereco == -1) {
-                mensagemConfirmacao = "Houve um erro ao incluir o endereço. Tente novamente!";
+            if (mEnderecoSelecionadoEdicao == null) {
+                novoEndereco = new Endereco()
+                        .setIdMedico(mMedico.getIdMedico())
+                        .setEndereco(mEnderecoView.getText().toString())
+                        .setBairro(mBairroView.getText().toString());
+
+                if (!TextUtils.isEmpty(mCepView.getText())) {
+                    novoEndereco.setCep(mCepView.getText().toString());
+                }
+
+                if (!TextUtils.isEmpty(mNumeroView.getText())) {
+                    novoEndereco.setNumero(mNumeroView.getText().toString());
+                }
+
+                if (!TextUtils.isEmpty(mComplementoView.getText())) {
+                    novoEndereco.setComplemento(mComplementoView.getText().toString());
+                }
+
+                if (!TextUtils.isEmpty(mObservacaoView.getText())) {
+                    novoEndereco.setObservacao(mObservacaoView.getText().toString());
+                }
+
+                novoEndereco.setStatus(Status.Pendente);
+
+                final long idNovoEndereco = mPersistenciaEndereco.incluir(novoEndereco);
+
+                if (idNovoEndereco == -1) {
+                    mensagemConfirmacao = "Houve um erro ao incluir o endereço. Tente novamente!";
+                } else {
+                    persistido = true;
+                    novoEndereco.setId(idNovoEndereco);
+                    mensagemConfirmacao = "Endereço cadastrado com sucesso!";
+                    mEnderecosAdapter.add(novoEndereco);
+                }
             } else {
-                novoEndereco.setId(idNovoEndereco);
-                mensagemConfirmacao = "Endereço cadastrado com sucesso!";
+                mEnderecoSelecionadoEdicao
+                        .setEndereco(mEnderecoView.getText().toString())
+                        .setBairro(mBairroView.getText().toString())
+                        .setCep(mCepView.getText().toString())
+                        .setNumero(mNumeroView.getText().toString())
+                        .setComplemento(mComplementoView.getText().toString())
+                        .setObservacao(mObservacaoView.getText().toString())
+                        .setStatus(Status.Pendente);
+
+                final int registrosAlterados = mPersistenciaEndereco
+                        .alterar(mEnderecoSelecionadoEdicao);
+
+                if (registrosAlterados == 0) {
+                    mensagemConfirmacao = "Houve um erro ao alterar o endereço. Tente novamente!";
+                } else {
+                    persistido = true;
+                    mensagemConfirmacao = "Endereço alterado com sucesso!";
+                }
             }
 
-            mEnderecosAdapter.add(novoEndereco);
-            clearFields();
-            mEnderecoView.requestFocus();
+            if (persistido) {
+                clearFields();
+                mEnderecoView.requestFocus();
+            }
+
             Dialogos.mostrarMensagemFlutuante(getView(), mensagemConfirmacao, false);
         } else {
             Dialogos.mostrarMensagemFlutuante(getView(),
@@ -219,6 +245,7 @@ public class EnderecosMedicoFragment extends Fragment {
 
     private void clearFields() {
         mEnderecoSelecionadoEdicao = null;
+        mEnderecosAdicionadosView.setSelection(0);
         mEnderecoView.setText("");
         mCepView.setText("");
         mNumeroView.setText("");
