@@ -212,6 +212,19 @@
                 android:value="com.libertsolutions.washington.apppropagandista.Controller.MedicoActivity"
                 />
         </activity>
+
+        <!-- Tela Consultar Especialidade -->
+        <activity
+            android:name=".Controller.ConsultaEspecialidadeActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
+            android:label="@string/title_consulta_especialidade"
+            android:parentActivityName=".Controller.CadastroMedicoActivity"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controller.CadastroMedicoActivity"
+                />
+        </activity>
     </application>
 
 </manifest>

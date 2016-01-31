@@ -2,6 +2,7 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
@@ -17,11 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnEditorAction;
@@ -31,15 +28,12 @@ import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialo
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
-import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.joda.time.DateTime;
 
@@ -52,6 +46,7 @@ import org.joda.time.DateTime;
  */
 public class DetalhesMedicoFragment extends Fragment
         implements CalendarDatePickerDialogFragment.OnDateSetListener {
+    private static final int RC_SELECIONAR_ESPECIALIDADE = 1001;
 
     @Bind(R.id.hintNomeMedico) protected TextInputLayout mNomeMedicoHint;
     @Bind(R.id.txtNomeMedico) protected EditText mNomeMedicoView;
@@ -61,8 +56,8 @@ public class DetalhesMedicoFragment extends Fragment
     @Bind(R.id.txtTelefone) protected EditText mTelefoneView;
     @Bind(R.id.txtEmail) protected EditText mEmailView;
     @Bind(R.id.txtCrm) protected EditText mCrmView;
-    @Bind(R.id.spinnerEspecialidade) protected Spinner mEspecialidadeView;
-    @Bind(R.id.errorEspecialidade) protected TextView mEspecialidadeHint;
+    @Bind(R.id.hintEspecialidade) protected TextInputLayout mEspecialidadeHint;
+    @Bind(R.id.txtEspecialidade) protected EditText mEspecialidadeView;
 
     private static final String FRAG_TAG_DATE_PICKER = "fragment_date_picker_name";
     private boolean mHasDialogFrame;
@@ -71,6 +66,9 @@ public class DetalhesMedicoFragment extends Fragment
     private MedicoDAO mPersistenciaMedico;
 
     private CadastroMedicoListener mListener;
+
+    private Integer mCodigoEspecialidade;
+    private String mNomeEspecialidade = null;
 
     public DetalhesMedicoFragment() {
     }
@@ -85,8 +83,9 @@ public class DetalhesMedicoFragment extends Fragment
         super.onAttach(activity);
 
         try {
-            if (mListener == null)
+            if (mListener == null) {
                 mListener = (CadastroMedicoListener) activity;
+            }
         } catch (ClassCastException ignored) {
         }
     }
@@ -96,8 +95,9 @@ public class DetalhesMedicoFragment extends Fragment
         super.onAttach(context);
 
         try {
-            if (mListener == null)
+            if (mListener == null) {
                 mListener = (CadastroMedicoListener) context;
+            }
         } catch (ClassCastException ignored) {
         }
     }
@@ -144,23 +144,24 @@ public class DetalhesMedicoFragment extends Fragment
             mTelefoneHint.setErrorEnabled(false);
         }
 
-        final Especialidade especialidadeSelecionada = obterEspecialidadeSelecionada();
-
-        if (especialidadeSelecionada == null) {
+        if (TextUtils.isEmpty(mEspecialidadeView.getText())) {
             isFormValid = false;
-            mEspecialidadeHint.setVisibility(View.VISIBLE);
+            mEspecialidadeHint.setError("Nenhuma especialidade foi selecionada");
+            mEspecialidadeHint.setErrorEnabled(true);
         } else {
-            mEspecialidadeHint.setVisibility(View.GONE);
+            mEspecialidadeHint.setError(null);
+            mEspecialidadeHint.setErrorEnabled(false);
         }
 
         if (isFormValid) {
-            if (mNovoMedico == null)
+            if (mNovoMedico == null) {
                 mNovoMedico = new Medico();
+            }
 
             mNovoMedico
                     .setNome(mNomeMedicoView.getText().toString())
                     .setTelefone(mTelefoneView.getText().toString())
-                    .setIdEspecialidade(especialidadeSelecionada.getIdEspecialidade());
+                    .setIdEspecialidade(mCodigoEspecialidade);
 
             if (!TextUtils.isEmpty(mDataAniversarioView.getText())) {
                 final String dateText = mDataAniversarioView.getText().toString();
@@ -224,11 +225,6 @@ public class DetalhesMedicoFragment extends Fragment
         }
     }
 
-    private Especialidade obterEspecialidadeSelecionada() {
-        return mEspecialidadeView.getSelectedItemPosition() == AdapterView.INVALID_POSITION ?
-                null : (Especialidade) mEspecialidadeView.getSelectedItem();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -246,25 +242,8 @@ public class DetalhesMedicoFragment extends Fragment
             mHasDialogFrame = view.findViewById(R.id.frame) != null;
         }
 
-        final EspecialidadeDAO persistenciaEspecialista = new EspecialidadeDAO(getContext());
-        persistenciaEspecialista.openDatabase();
-        final List<Especialidade> especialidades = persistenciaEspecialista.listar();
-        if (especialidades != null) {
-            ArrayAdapter<Especialidade> especialidadesAdapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_list_item_1, especialidades);
-            especialidadesAdapter.setDropDownViewResource(
-                    android.R.layout.simple_dropdown_item_1line);
-            mEspecialidadeView.setAdapter(especialidadesAdapter);
-
-            if (especialidadesAdapter.isEmpty()) {
-                mCrmView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-            }
-        }
-        persistenciaEspecialista.closeDatabase();
-
         mPersistenciaMedico = new MedicoDAO(getContext());
         mPersistenciaMedico.openDatabase();
-
     }
 
     @Override
@@ -305,17 +284,31 @@ public class DetalhesMedicoFragment extends Fragment
     @OnEditorAction(R.id.txtCrm)
     public boolean onEditorActionTxtCrm(final int actionId) {
         if (actionId == EditorInfo.IME_ACTION_NEXT) {
-            mEspecialidadeView.performClick();
+            if (!mEspecialidadeView.requestFocusFromTouch()) {
+                final long downTime = SystemClock.uptimeMillis();
+                final long eventTime = SystemClock.uptimeMillis() + 100;
+                mEspecialidadeView.dispatchTouchEvent(MotionEvent.obtain(downTime, eventTime,
+                        MotionEvent.ACTION_UP, 0.0f, 0.0f, 0));
+            }
             return true;
         }
         return false;
     }
 
-    @OnTouch(R.id.txtDtAniversario)
-    public boolean onTouchTxtDtAniversario(final MotionEvent event) {
+    @OnTouch({ R.id.txtDtAniversario, R.id.txtEspecialidade })
+    public boolean onTouchInView(final View v, final MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            showDatePicker();
-            return true;
+            switch (v.getId()) {
+                case R.id.txtDtAniversario:
+                    showDatePicker();
+                    return true;
+
+                case R.id.txtEspecialidade:
+                    startActivityForResult(
+                            new Intent(getContext(), ConsultaEspecialidadeActivity.class),
+                            RC_SELECIONAR_ESPECIALIDADE);
+                    return true;
+            }
         }
         return false;
     }
@@ -389,6 +382,24 @@ public class DetalhesMedicoFragment extends Fragment
             int monthOfYear, int dayOfMonth) {
         mDataAniversarioView.setText(DateUtil.format(year, monthOfYear, dayOfMonth));
         mSecretariaView.requestFocus();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RC_SELECIONAR_ESPECIALIDADE) {
+            if (resultCode == Activity.RESULT_OK) {
+                final Bundle extras = data.getExtras();
+                mCodigoEspecialidade = extras.getInt("id_especialidade");
+                mNomeEspecialidade = extras.getString("nome");
+                mEspecialidadeView.setText(mNomeEspecialidade);
+            } else {
+                mCodigoEspecialidade = null;
+                mNomeEspecialidade = null;
+                mEspecialidadeView.setText("");
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public interface CadastroMedicoListener {

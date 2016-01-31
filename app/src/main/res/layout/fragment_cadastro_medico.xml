@@ -126,31 +126,26 @@
                 />
         </android.support.design.widget.TextInputLayout>
 
-        <TextView
-            style="@style/TextAppearance.Design.Hint"
+        <android.support.design.widget.TextInputLayout
             android:id="@+id/hintEspecialidade"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:text="@string/hintEspecialidade"
-            />
+            >
 
-        <Spinner
-            android:id="@+id/spinnerEspecialidade"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            <EditText
+                android:id="@+id/txtEspecialidade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:singleLine="true"
+                android:focusable="false"
+                android:focusableInTouchMode="true"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:hint="@string/hintEspecialidade"
+                />
 
-        <TextView
-            style="@style/TextAppearance.Design.Error"
-            android:id="@+id/errorEspecialidade"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="@string/errorEspecialidade"
-            android:visibility="gone"
-            tools:visibility="visible"
-            />
+        </android.support.design.widget.TextInputLayout>
 
     </LinearLayout>
 

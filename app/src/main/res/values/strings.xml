@@ -96,5 +96,6 @@
     <string name="errorEspecialidade">Nenhuma especialidade foi selecionada</string>
     <string name="spinner_prompt">Selecione…</string>
     <string name="hintMedico">Toque aqui para selecionar o médico</string>
+    <string name="title_consulta_especialidade">Selecione a especialidade</string>
 
 </resources>
