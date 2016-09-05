@@ -12,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -294,8 +293,9 @@ public class CadastroCompromissoActivity extends AppCompatActivity
             dayOfMonth = now.getDayOfMonth();
         }
 
-        final CalendarDatePickerDialogFragment dialogFragment = CalendarDatePickerDialogFragment
-                .newInstance(this, year, monthOfYear - 1, dayOfMonth);
+        CalendarDatePickerDialogFragment dialogFragment = new CalendarDatePickerDialogFragment()
+                .setOnDateSetListener(this)
+                .setPreselectedDate(year, monthOfYear - 1, dayOfMonth);
 
         if (mHasDialogFrame) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -321,8 +321,10 @@ public class CadastroCompromissoActivity extends AppCompatActivity
             minuteOfHour = now.getMinuteOfHour();
         }
 
-        final RadialTimePickerDialogFragment dialogFragment = RadialTimePickerDialogFragment
-                .newInstance(this, hourOfDay, minuteOfHour, DateFormat.is24HourFormat(this));
+        RadialTimePickerDialogFragment dialogFragment = new RadialTimePickerDialogFragment()
+                .setOnTimeSetListener(this)
+                .setStartTime(hourOfDay, minuteOfHour)
+                .setForced24hFormat();
 
         if (mHasDialogFrame) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

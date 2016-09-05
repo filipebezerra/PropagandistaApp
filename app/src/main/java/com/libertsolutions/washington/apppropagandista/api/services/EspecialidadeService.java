@@ -2,7 +2,7 @@ package com.libertsolutions.washington.apppropagandista.api.services;
 
 import com.libertsolutions.washington.apppropagandista.api.models.EspecialidadeModel;
 import java.util.List;
-import retrofit.http.GET;
+import retrofit2.http.GET;
 import rx.Observable;
 
 /**

@@ -334,8 +334,9 @@ public class DetalhesMedicoActivity extends AppCompatActivity
             dayOfMonth = now.getDayOfMonth();
         }
 
-        final CalendarDatePickerDialogFragment dialogFragment = CalendarDatePickerDialogFragment
-                .newInstance(this, year, monthOfYear - 1, dayOfMonth);
+        CalendarDatePickerDialogFragment dialogFragment = new CalendarDatePickerDialogFragment()
+                .setOnDateSetListener(this)
+                .setPreselectedDate(year, monthOfYear - 1, dayOfMonth);
 
         if (mHasDialogFrame) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

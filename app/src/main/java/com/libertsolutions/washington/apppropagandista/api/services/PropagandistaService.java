@@ -1,8 +1,8 @@
 package com.libertsolutions.washington.apppropagandista.api.services;
 
 import com.libertsolutions.washington.apppropagandista.api.models.PropagandistaModel;
-import retrofit.http.GET;
-import retrofit.http.Query;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
