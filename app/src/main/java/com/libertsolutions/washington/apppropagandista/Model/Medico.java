@@ -5,7 +5,6 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.google.common.base.Preconditions;
-import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +18,6 @@ import org.joda.time.DateTime;
  * @version 0.1.0, 26/12/2015
  * @since 0.1.0
  */
-@ParcelablePlease
 public class Medico extends ModeloBase<Medico> implements Parcelable {
     // id do médico no servidor
     Integer mIdMedico;
@@ -39,6 +37,67 @@ public class Medico extends ModeloBase<Medico> implements Parcelable {
 
     // id de relacionamento com tabela Especialidade
     Integer mIdEspecialidade;
+
+    public Medico() {
+    }
+
+    protected Medico(Parcel in) {
+        boolean mIdNullHelper;
+        mIdNullHelper = (in.readByte() == 1 );
+        if (mIdNullHelper) {
+            mId = in.readLong();
+        } else {
+            mId = null;
+        }
+
+        mStatus = (Status) in.readSerializable();
+
+        boolean mIdMedicoNullHelper;
+        mIdMedicoNullHelper = (in.readByte() == 1 );
+        if (mIdMedicoNullHelper) {
+            mIdMedico = in.readInt();
+        } else {
+            mIdMedico = null;
+        }
+
+        mNome = in.readString();
+
+        boolean mDataAniversarioNullHelper;
+        mDataAniversarioNullHelper = (in.readByte() == 1 );
+        if (mDataAniversarioNullHelper) {
+            mDataAniversario = in.readLong();
+        } else {
+            mDataAniversario = null;
+        }
+
+        mSecretaria = in.readString();
+
+        mTelefone = in.readString();
+
+        mEmail = in.readString();
+
+        mCrm = in.readString();
+
+        boolean mIdEspecialidadeNullHelper;
+        mIdEspecialidadeNullHelper = (in.readByte() == 1 );
+        if (mIdEspecialidadeNullHelper) {
+            mIdEspecialidade = in.readInt();
+        } else {
+            mIdEspecialidade = null;
+        }
+    }
+
+    public static final Creator<Medico> CREATOR = new Creator<Medico>() {
+        @Override
+        public Medico createFromParcel(Parcel in) {
+            return new Medico(in);
+        }
+
+        @Override
+        public Medico[] newArray(int size) {
+            return new Medico[size];
+        }
+    };
 
     /**
      * Obtém os dados da agenda importados do webservice.
@@ -200,19 +259,37 @@ public class Medico extends ModeloBase<Medico> implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        MedicoParcelablePlease.writeToParcel(this, dest, flags);
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeByte( (byte) (mId != null ? 1 : 0) );
+        if (mId != null) {
+            out.writeLong(mId);
+        }
+
+        out.writeSerializable(mStatus);
+
+        out.writeByte( (byte) (mIdMedico != null ? 1 : 0) );
+        if (mIdMedico != null) {
+            out.writeInt(mIdMedico);
+        }
+
+        out.writeString(mNome);
+
+        out.writeByte( (byte) (mDataAniversario != null ? 1 : 0) );
+        if (mDataAniversario != null) {
+            out.writeLong(mDataAniversario);
+        }
+
+        out.writeString(mSecretaria);
+
+        out.writeString(mTelefone);
+
+        out.writeString(mEmail);
+
+        out.writeString(mCrm);
+
+        out.writeByte( (byte) (mIdEspecialidade != null ? 1 : 0) );
+        if (mIdEspecialidade != null) {
+            out.writeInt(mIdEspecialidade);
+        }
     }
-
-    public static final Creator<Medico> CREATOR = new Creator<Medico>() {
-        public Medico createFromParcel(Parcel source) {
-            Medico target = new Medico();
-            MedicoParcelablePlease.readFromParcel(target, source);
-            return target;
-        }
-
-        public Medico[] newArray(int size) {
-            return new Medico[size];
-        }
-    };
 }

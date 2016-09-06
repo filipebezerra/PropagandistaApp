@@ -66,9 +66,6 @@ dependencies {
     compile "com.code-troopers.betterpickers:library:${betterPickersVersion}"
     compile "com.googlecode.libphonenumber:libphonenumber:${libphonenumberVersion}"
 
-    compile "com.hannesdorfmann.parcelableplease:annotation:${parcelablePleaseVersion}"
-    apt "com.hannesdorfmann.parcelableplease:processor:${parcelablePleaseVersion}"
-
     testCompile 'junit:junit:4.12'
 }
 

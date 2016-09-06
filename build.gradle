@@ -35,5 +35,4 @@ ext {
     jodaTimeVersion = '2.9.1'
     betterPickersVersion = '3.0.1'
     libphonenumberVersion = '7.6.0'
-    parcelablePleaseVersion = '1.0.2'
 }
