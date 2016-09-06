@@ -96,6 +96,13 @@ public class AgendaAdapter extends RecyclerView.Adapter<AgendaViewHolder>
         return mFilter;
     }
 
+    public Agenda getAgenda(int position) {
+        if (position >= 0 && position < mListaAgendas.size()) {
+            return mListaAgendas.get(position).first;
+        }
+        return null;
+    }
+
     private class AgendaFilter extends Filter {
         @Override
         protected FilterResults performFiltering(CharSequence prefix) {

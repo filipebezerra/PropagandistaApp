@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -26,6 +27,8 @@ import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
 import com.libertsolutions.washington.apppropagandista.presentation.util.Navigator;
+import com.libertsolutions.washington.apppropagandista.presentation.view.OnItemClickListener;
+import com.libertsolutions.washington.apppropagandista.presentation.view.OnItemTouchListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -144,14 +147,29 @@ public class AgendaActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(List<Pair<Agenda, Medico>> dadosAgenda) {
-                if (!dadosAgenda.isEmpty()) {
-                    mAgendaAdapter = new AgendaAdapter(AgendaActivity.this, dadosAgenda);
-                    mRecyclerViewAgendas.setAdapter(mAgendaAdapter);
-                    invalidateOptionsMenu();
-                }
+                bindListaAgendas(dadosAgenda);
                 mProgressDialog.dismiss();
             }
         }.execute();
+    }
+
+    private void bindListaAgendas(List<Pair<Agenda, Medico>> agendas) {
+        if (!agendas.isEmpty()) {
+            mAgendaAdapter = new AgendaAdapter(AgendaActivity.this, agendas);
+            mRecyclerViewAgendas.setAdapter(mAgendaAdapter);
+            mRecyclerViewAgendas.addOnItemTouchListener(new OnItemTouchListener(this,
+                    mRecyclerViewAgendas,
+                    new OnItemClickListener() {
+                        @Override
+                        public void onSingleTapUp(View view, int position) {
+                            Agenda agenda = mAgendaAdapter.getAgenda(position);
+                            if (agenda != null) {
+                                Navigator.toDetalhesVisita(AgendaActivity.this, agenda.getId());
+                            }
+                        }
+                    }));
+            invalidateOptionsMenu();
+        }
     }
 
     @Override

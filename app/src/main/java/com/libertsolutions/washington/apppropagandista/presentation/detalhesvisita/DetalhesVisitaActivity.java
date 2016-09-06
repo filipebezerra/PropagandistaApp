@@ -1,4 +1,4 @@
-package com.libertsolutions.washington.apppropagandista.Controller;
+package com.libertsolutions.washington.apppropagandista.presentation.detalhesvisita;
 
 import android.app.Activity;
 import android.content.Context;
@@ -62,6 +62,9 @@ public class DetalhesVisitaActivity extends AppCompatActivity
         LocationListener,
         ResultCallback<LocationSettingsResult> {
 
+    public static final String EXTRA_ID
+            = DetalhesVisitaActivity.class.getSimpleName() + ".extraId";
+
     private static final String LOG = DetalhesVisitaActivity.class.getSimpleName();
 
     /**
@@ -121,34 +124,25 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     private Visita mVisita;
     private long mIdAgenda;
 
-    @BindView(R.id.root_layout)
-    CoordinatorLayout mRootLayout;
-    @BindView(R.id.status)
-    TextView mStatus;
-    @BindView(R.id.data_hora_view)
-    TextView mDataHoraView;
-    @BindView(R.id.medico_view)
-    TextView mMedicoView;
-    @BindView(R.id.obs_view)
-    TextView mObservacaoView;
-    @BindView(R.id.data_hora_ini_view)
-    TextView mDataHoraInilView;
-    @BindView(R.id.data_hora_final_view)
-    TextView mDataHoraFinalView;
-    @BindView(R.id.details_view)
-    TextView mDetalhesView;
-    @BindView(R.id.btnIniciar)
-    Button btnIniciarVisita;
+    @BindView(R.id.root_layout) protected CoordinatorLayout mRootLayout;
+    @BindView(R.id.status) protected TextView mStatus;
+    @BindView(R.id.data_hora_view) protected TextView mDataHoraView;
+    @BindView(R.id.medico_view) protected TextView mMedicoView;
+    @BindView(R.id.obs_view) protected TextView mObservacaoView;
+    @BindView(R.id.data_hora_ini_view) protected TextView mDataHoraInilView;
+    @BindView(R.id.data_hora_final_view) protected TextView mDataHoraFinalView;
+    @BindView(R.id.details_view) protected TextView mDetalhesView;
+    @BindView(R.id.btnIniciar) protected Button btnIniciarVisita;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!getIntent().hasExtra("id") ||
-                getIntent().getExtras().getString("id") == null) {
+        if (!getIntent().hasExtra(EXTRA_ID) ||
+                getIntent().getLongExtra(EXTRA_ID, 0) == 0) {
             throw new IllegalStateException("O ID da agenda deve ser passado via putExtras()");
         } else {
-            mIdAgenda = Long.parseLong(getIntent().getStringExtra("id"));
+            mIdAgenda = getIntent().getExtras().getLong(EXTRA_ID);
         }
 
         setContentView(R.layout.activity_detalhes_visita);

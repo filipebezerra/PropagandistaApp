@@ -6,12 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.IntentCompat;
 import com.libertsolutions.washington.apppropagandista.Controller.CadastroCompromissoActivity;
-import com.libertsolutions.washington.apppropagandista.presentation.agenda.AgendaActivity;
 import com.libertsolutions.washington.apppropagandista.Controller.MedicoActivity;
 import com.libertsolutions.washington.apppropagandista.Controller.SincronizarActivity;
+import com.libertsolutions.washington.apppropagandista.presentation.agenda.AgendaActivity;
 import com.libertsolutions.washington.apppropagandista.presentation.configuracao.ConfiguracaoActivity;
-import com.libertsolutions.washington.apppropagandista.presentation.main.MainActivity;
+import com.libertsolutions.washington.apppropagandista.presentation.detalhesvisita.DetalhesVisitaActivity;
 import com.libertsolutions.washington.apppropagandista.presentation.login.LoginActivity;
+import com.libertsolutions.washington.apppropagandista.presentation.main.MainActivity;
 
 /**
  * @author Filipe Bezerra
@@ -59,5 +60,11 @@ public class Navigator {
     public static void toNovoCompromisso(@NonNull Activity activity) {
         Intent compromissoIntent = new Intent(activity, CadastroCompromissoActivity.class);
         ActivityCompat.startActivity(activity, compromissoIntent, null);
+    }
+
+    public static void toDetalhesVisita(@NonNull Activity activity, long idAgenda) {
+        Intent detalhesIntent = new Intent(activity, DetalhesVisitaActivity.class)
+                .putExtra(DetalhesVisitaActivity.EXTRA_ID, idAgenda);
+        ActivityCompat.startActivity(activity, detalhesIntent, null);
     }
 }

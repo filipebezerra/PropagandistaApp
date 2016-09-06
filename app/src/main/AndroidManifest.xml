@@ -159,7 +159,7 @@
 
         <!-- Tela Detalhes Visita -->
         <activity
-            android:name=".Controller.DetalhesVisitaActivity"
+            android:name=".presentation.detalhesvisita.DetalhesVisitaActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_detalhes_visita"
             android:parentActivityName=".presentation.main.MainActivity"

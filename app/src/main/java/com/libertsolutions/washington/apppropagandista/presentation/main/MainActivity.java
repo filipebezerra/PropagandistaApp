@@ -18,7 +18,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.libertsolutions.washington.apppropagandista.Controller.DetalhesVisitaActivity;
+import com.libertsolutions.washington.apppropagandista.presentation.detalhesvisita.DetalhesVisitaActivity;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
