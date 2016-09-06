@@ -5,9 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 
 /**
  * Classe de acesso aos dados de {@link Especialidade}. Esta classe contém todas operações
@@ -84,15 +84,15 @@ public class EspecialidadeDAO extends DAOGenerico<Especialidade> {
     @Override
     public long incluir(@NonNull Especialidade especialidade) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(especialidade, "especialidade não pode ser nula");
-        Preconditions.checkNotNull(especialidade.getNome(),
+        Utils.checkNotNull(especialidade, "especialidade não pode ser nula");
+        Utils.checkNotNull(especialidade.getNome(),
                 "especialidade.getNome() não pode ser nulo");
 
         if (especialidade.getStatus() == Status.Importado ) {
-            Preconditions.checkNotNull(especialidade.getIdEspecialidade(),
+            Utils.checkNotNull(especialidade.getIdEspecialidade(),
                     "especialidade.getIdEspecialidade() não pode ser nulo");
         }
 
@@ -113,19 +113,19 @@ public class EspecialidadeDAO extends DAOGenerico<Especialidade> {
     @Override
     public int alterar(@NonNull Especialidade especialidade) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(especialidade, "especialidade não pode ser nula");
-        Preconditions.checkNotNull(especialidade.getNome(),
+        Utils.checkNotNull(especialidade, "especialidade não pode ser nula");
+        Utils.checkNotNull(especialidade.getNome(),
                 "especialidade.getNome() não pode ser nulo");
 
-        Preconditions.checkNotNull(especialidade.getStatus(),
+        Utils.checkNotNull(especialidade.getStatus(),
                 "especialidade.getStatus() não pode ser nula");
 
         if (especialidade.getStatus() == Status.Enviado ||
                 especialidade.getStatus() == Status.Importado) {
-            Preconditions.checkNotNull(especialidade.getIdEspecialidade(),
+            Utils.checkNotNull(especialidade.getIdEspecialidade(),
                     "especialidade.getIdEspecialidade() não pode ser nulo");
         }
 

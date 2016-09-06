@@ -4,12 +4,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.joda.time.DateTime;
+
+import static com.libertsolutions.washington.apppropagandista.Util.Utils.checkNotNull;
+import static com.libertsolutions.washington.apppropagandista.Util.Utils.checkState;
 
 /**
  * Classe modelo dos dados do médico.
@@ -106,11 +109,11 @@ public class Medico extends ModeloBase<Medico> implements Parcelable {
      * @return a agenda.
      */
     public static Medico fromModel(@NonNull MedicoModel model) {
-        Preconditions.checkNotNull(model, "model não pode ser nulo");
-        Preconditions.checkNotNull(model.idMedico, "model.idMedico não pode ser nulo");
-        Preconditions.checkNotNull(model.nome, "model.nome não pode ser nulo");
-        Preconditions.checkNotNull(model.telefone, "model.telefone não pode ser nulo");
-        Preconditions.checkState(model.idEspecialidade != 0, "model.idEspecialidade é inválido");
+        checkNotNull(model, "model não pode ser nulo");
+        checkNotNull(model.idMedico, "model.idMedico não pode ser nulo");
+        checkNotNull(model.nome, "model.nome não pode ser nulo");
+        checkNotNull(model.telefone, "model.telefone não pode ser nulo");
+        checkState(model.idEspecialidade != 0, "model.idEspecialidade é inválido");
 
         return new Medico()
                 .setId(model.idCliente)
@@ -126,16 +129,16 @@ public class Medico extends ModeloBase<Medico> implements Parcelable {
     }
 
     public static MedicoModel toModel(@NonNull Medico medico, @Nullable List<Endereco> enderecos) {
-        Preconditions.checkNotNull(medico, "medico não pode ser nulo");
-        Preconditions.checkNotNull(medico.getId(),
+        Utils.checkNotNull(medico, "medico não pode ser nulo");
+        Utils.checkNotNull(medico.getId(),
                 "medico.getId() não pode ser nulo");
-        Preconditions.checkNotNull(medico.getIdMedico(),
+        Utils.checkNotNull(medico.getIdMedico(),
                 "medico.getIdMedico() não pode ser nulo");
-        Preconditions.checkNotNull(medico.getNome(),
+        Utils.checkNotNull(medico.getNome(),
                 "medico.getNome() não pode ser nulo");
-        Preconditions.checkNotNull(medico.getTelefone(),
+        Utils.checkNotNull(medico.getTelefone(),
                 "medico.getTelefone() não pode ser nulo");
-        Preconditions.checkNotNull(medico.getIdEspecialidade(),
+        Utils.checkNotNull(medico.getIdEspecialidade(),
                 "medico.getIdEspecialidade() não pode ser nulo");
 
         final MedicoModel model = new MedicoModel();

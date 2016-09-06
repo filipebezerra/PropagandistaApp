@@ -1,7 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import android.support.annotation.NonNull;
-import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
 import org.joda.time.DateTime;
 
@@ -50,12 +50,12 @@ public class Visita extends ModeloBase<Visita> {
     }
 
     public static Visita fromModel(@NonNull VisitaModel model) {
-        Preconditions.checkNotNull(model, "model não pode ser nulo");
-        Preconditions.checkNotNull(model.idVisita, "model.idVisita não pode ser nulo");
-        Preconditions.checkNotNull(model.dtInicio, "model.dtInicio não pode ser nulo");
-        Preconditions.checkNotNull(model.latInicial, "model.latInicial não pode ser nulo");
-        Preconditions.checkNotNull(model.longFinal, "model.latInicial não pode ser nulo");
-        Preconditions.checkState(model.idAgenda != 0, "model.idAgenda é inválido");
+        Utils.checkNotNull(model, "model não pode ser nulo");
+        Utils.checkNotNull(model.idVisita, "model.idVisita não pode ser nulo");
+        Utils.checkNotNull(model.dtInicio, "model.dtInicio não pode ser nulo");
+        Utils.checkNotNull(model.latInicial, "model.latInicial não pode ser nulo");
+        Utils.checkNotNull(model.longFinal, "model.latInicial não pode ser nulo");
+        Utils.checkState(model.idAgenda != 0, "model.idAgenda é inválido");
 
         return new Visita()
                 .setId(model.idCliente)
@@ -73,16 +73,16 @@ public class Visita extends ModeloBase<Visita> {
     }
 
     public static VisitaModel toModel(@NonNull Visita visita) {
-        Preconditions.checkNotNull(visita, "visita não pode ser nulo");
-        Preconditions.checkNotNull(visita.getId(),
+        Utils.checkNotNull(visita, "visita não pode ser nulo");
+        Utils.checkNotNull(visita.getId(),
                 "visita.getId() não pode ser nulo");
-        Preconditions.checkNotNull(visita.getDataInicio(),
+        Utils.checkNotNull(visita.getDataInicio(),
                 "visita.getDataInicio() não pode ser nulo");
-        Preconditions.checkNotNull(visita.getLatInicial(),
+        Utils.checkNotNull(visita.getLatInicial(),
                 "visita.getLatInicial() não pode ser nulo");
-        Preconditions.checkNotNull(visita.getLongInicial(),
+        Utils.checkNotNull(visita.getLongInicial(),
                 "visita.getLongInicial() não pode ser nulo");
-        Preconditions.checkNotNull(visita.getIdAgenda(),
+        Utils.checkNotNull(visita.getIdAgenda(),
                 "visita.getIdAgenda() não pode ser nulo");
 
         final VisitaModel model = new VisitaModel();

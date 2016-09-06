@@ -23,7 +23,6 @@ import butterknife.OnTouch;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Especialidade;
@@ -33,6 +32,7 @@ import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
 import com.libertsolutions.washington.apppropagandista.api.services.MedicoService;
 import java.util.List;
@@ -396,7 +396,7 @@ public class DetalhesMedicoActivity extends AppCompatActivity
             if (model == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+                Utils.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
 
                 final Medico medicoEnviado = Medico.fromModel(model);
                 medicoEnviado.setStatus(Status.Enviado);

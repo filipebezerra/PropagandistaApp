@@ -2,7 +2,6 @@ package com.libertsolutions.washington.apppropagandista.Controller;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -13,7 +12,6 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.EnderecoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.EspecialidadeDAO;
@@ -30,6 +28,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.models.EspecialidadeModel;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel;
@@ -38,7 +37,6 @@ import com.libertsolutions.washington.apppropagandista.api.services.AgendaServic
 import com.libertsolutions.washington.apppropagandista.api.services.EspecialidadeService;
 import com.libertsolutions.washington.apppropagandista.api.services.MedicoService;
 import com.libertsolutions.washington.apppropagandista.api.services.VisitaService;
-
 import java.util.Collections;
 import java.util.List;
 import rx.Subscriber;
@@ -364,7 +362,7 @@ public class SincronizarActivity extends AppCompatActivity {
             if (model == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+                Utils.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
 
                 final Medico medicoEnviado = Medico.fromModel(model);
                 medicoEnviado.setStatus(Status.Enviado);
@@ -509,9 +507,9 @@ public class SincronizarActivity extends AppCompatActivity {
             if (model == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
-                Preconditions.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
-                Preconditions.checkNotNull(model.statusAgenda,
+                Utils.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+                Utils.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
+                Utils.checkNotNull(model.statusAgenda,
                         "model.statusAgenda não pode ser nulo");
 
                 Agenda agendaModel = Agenda.fromModel(model);
@@ -564,7 +562,7 @@ public class SincronizarActivity extends AppCompatActivity {
             if (model == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idVisita não pode ser nulo");
+                Utils.checkNotNull(model.idCliente, "model.idVisita não pode ser nulo");
 
                 final Visita visitaEnviado = Visita.fromModel(model);
                 visitaEnviado.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Enviado);

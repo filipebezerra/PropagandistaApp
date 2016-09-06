@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.ModeloBase;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,7 +141,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      */
     protected Cursor query(@Nullable final String where, @Nullable final String [] arguments,
             @Nullable String start, @Nullable String end) {
-        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Utils.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
 
         String limit = null;
         if ((start != null && !start.isEmpty()) && (end != null && !end.isEmpty())) {
@@ -177,11 +177,11 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * @return a entidade que corresponde.
      */
     public @Nullable T consultar(@NonNull Long id) {
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(id, "id não deve ser nulo");
-        Preconditions.checkState(id > 0, "id não deve ser menor que zero");
+        Utils.checkNotNull(id, "id não deve ser nulo");
+        Utils.checkState(id > 0, "id não deve ser menor que zero");
 
         final String where = COLUNA_ID +" = ?";
         final String [] whereById = new String [] { String.valueOf(id) };
@@ -196,9 +196,9 @@ public abstract class DAOGenerico<T extends ModeloBase> {
     }
 
     public @Nullable T consultar(@NonNull String filter, @NonNull String... args) {
-        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
-        Preconditions.checkNotNull(filter, "filter não pode ser nulo");
-        Preconditions.checkNotNull(args, "args não pode ser nulo");
+        Utils.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Utils.checkNotNull(filter, "filter não pode ser nulo");
+        Utils.checkNotNull(args, "args não pode ser nulo");
 
         Cursor cursor = null;
         try {
@@ -232,7 +232,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      */
     public @Nullable List<T> listar(@Nullable String start, @Nullable String end,
             @Nullable String filter, @Nullable String... args) {
-        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Utils.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
 
         Cursor cursor = null;
         try {
@@ -250,7 +250,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * @return o conjunto de entidades.
      */
     public @Nullable List<T> listar(@NonNull Status status) {
-        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Utils.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
 
         final String where = COLUNA_STATUS + " = ?";
         final String [] whereById = new String [] { String.valueOf(status.ordinal()) };
@@ -270,7 +270,7 @@ public abstract class DAOGenerico<T extends ModeloBase> {
      * @return o conjunto de entidades.
      */
     public @Nullable List<T> listar() {
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
         return listar(null, null,null);

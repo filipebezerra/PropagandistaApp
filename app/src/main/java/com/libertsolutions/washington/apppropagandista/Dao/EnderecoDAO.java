@@ -5,10 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.Endereco;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import java.util.List;
 
 /**
@@ -129,19 +129,19 @@ public class EnderecoDAO extends DAOGenerico<Endereco> {
     @Override
     public long incluir(@NonNull Endereco endereco) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(endereco, "endereco não pode ser nula");
-        Preconditions.checkNotNull(endereco.getEndereco(),
+        Utils.checkNotNull(endereco, "endereco não pode ser nula");
+        Utils.checkNotNull(endereco.getEndereco(),
                 "endereco.getEndereco() não pode ser nulo");
-        Preconditions.checkNotNull(endereco.getBairro(),
+        Utils.checkNotNull(endereco.getBairro(),
                 "endereco.getBairro() não pode ser nula");
-        Preconditions.checkNotNull(endereco.getIdMedico(),
+        Utils.checkNotNull(endereco.getIdMedico(),
                 "endereco.getIdMedico() não pode ser nula");
 
         if (endereco.getStatus() == Status.Importado ) {
-            Preconditions.checkNotNull(endereco.getIdEndereco(),
+            Utils.checkNotNull(endereco.getIdEndereco(),
                     "endereco.getIdEndereco() não pode ser nulo");
         }
 
@@ -171,23 +171,23 @@ public class EnderecoDAO extends DAOGenerico<Endereco> {
     @Override
     public int alterar(@NonNull Endereco endereco) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(endereco, "endereco não pode ser nula");
-        Preconditions.checkNotNull(endereco.getEndereco(),
+        Utils.checkNotNull(endereco, "endereco não pode ser nula");
+        Utils.checkNotNull(endereco.getEndereco(),
                 "endereco.getEndereco() não pode ser nulo");
-        Preconditions.checkNotNull(endereco.getBairro(),
+        Utils.checkNotNull(endereco.getBairro(),
                 "endereco.getBairro() não pode ser nula");
-        Preconditions.checkNotNull(endereco.getIdMedico(),
+        Utils.checkNotNull(endereco.getIdMedico(),
                 "endereco.getIdMedico() não pode ser nula");
 
-        Preconditions.checkNotNull(endereco.getStatus(),
+        Utils.checkNotNull(endereco.getStatus(),
                 "endereco.getStatus() não pode ser nula");
 
         if (endereco.getStatus() == Status.Enviado ||
                 endereco.getStatus() == Status.Importado) {
-            Preconditions.checkNotNull(endereco.getIdEndereco(),
+            Utils.checkNotNull(endereco.getIdEndereco(),
                     "endereco.getIdEndereco() não pode ser nulo");
         }
 
@@ -230,13 +230,13 @@ public class EnderecoDAO extends DAOGenerico<Endereco> {
      * @return o conjunto de entidades que correspondem.
      */
     public @Nullable List<Endereco> listar(@NonNull Medico medico) {
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(medico, "medico não deve ser nulo");
-        Preconditions.checkNotNull(medico.getIdMedico(),
+        Utils.checkNotNull(medico, "medico não deve ser nulo");
+        Utils.checkNotNull(medico.getIdMedico(),
                 "medico.getIdMedico() não deve ser nulo");
-        Preconditions.checkState(medico.getIdMedico() > 0,
+        Utils.checkState(medico.getIdMedico() > 0,
                 "medico.getIdMedico() não deve ser menor que zero");
 
         final String where = COLUNA_RELACAO_MEDICO +" = ?";

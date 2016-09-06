@@ -60,7 +60,6 @@ dependencies {
 
     compile "com.google.android.gms:play-services-location:${playServicesVersion}"
 
-    compile "com.google.guava:guava:${guavaVersion}"
     compile "joda-time:joda-time:${jodaTimeVersion}"
 
     compile "com.code-troopers.betterpickers:library:${betterPickersVersion}"

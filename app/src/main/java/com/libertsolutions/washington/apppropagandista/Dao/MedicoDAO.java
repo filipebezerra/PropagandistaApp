@@ -5,9 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import java.util.List;
 
 /**
@@ -122,19 +122,19 @@ public class MedicoDAO extends DAOGenerico<Medico> {
     @Override
     public long incluir(@NonNull Medico medico) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(medico, "medico não pode ser nula");
-        Preconditions.checkNotNull(medico.getNome(),
+        Utils.checkNotNull(medico, "medico não pode ser nula");
+        Utils.checkNotNull(medico.getNome(),
                 "medico.getNome() não pode ser nulo");
-        Preconditions.checkNotNull(medico.getTelefone(),
+        Utils.checkNotNull(medico.getTelefone(),
                 "medico.getTelefone() não pode ser nula");
-        Preconditions.checkNotNull(medico.getIdEspecialidade(),
+        Utils.checkNotNull(medico.getIdEspecialidade(),
                 "medico.getIdEspecialidade() não pode ser nula");
 
         if (medico.getStatus() == Status.Importado ) {
-            Preconditions.checkNotNull(medico.getIdMedico(),
+            Utils.checkNotNull(medico.getIdMedico(),
                     "medico.getIdMedico() não pode ser nulo");
         }
 
@@ -163,23 +163,23 @@ public class MedicoDAO extends DAOGenerico<Medico> {
     @Override
     public int alterar(@NonNull Medico medico) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(medico, "medico não pode ser nula");
-        Preconditions.checkNotNull(medico.getNome(),
+        Utils.checkNotNull(medico, "medico não pode ser nula");
+        Utils.checkNotNull(medico.getNome(),
                 "medico.getNome() não pode ser nulo");
-        Preconditions.checkNotNull(medico.getTelefone(),
+        Utils.checkNotNull(medico.getTelefone(),
                 "medico.getTelefone() não pode ser nula");
-        Preconditions.checkNotNull(medico.getIdEspecialidade(),
+        Utils.checkNotNull(medico.getIdEspecialidade(),
                 "medico.getIdEspecialidade() não pode ser nula");
 
-        Preconditions.checkNotNull(medico.getStatus(),
+        Utils.checkNotNull(medico.getStatus(),
                 "medico.getStatus() não pode ser nula");
 
         if (medico.getStatus() == Status.Enviado ||
                 medico.getStatus() == Status.Importado) {
-            Preconditions.checkNotNull(medico.getIdMedico(),
+            Utils.checkNotNull(medico.getIdMedico(),
                     "medico.getIdVisita() não pode ser nulo");
         }
 
@@ -212,7 +212,7 @@ public class MedicoDAO extends DAOGenerico<Medico> {
     }
 
     public @Nullable List<Medico> listar() {
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
         return listar(null, null,null);

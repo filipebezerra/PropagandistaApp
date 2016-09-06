@@ -31,7 +31,6 @@ ext {
     okHttpVersion = '3.4.1'
     rxAndroidVersion = '1.2.1'
     playServicesVersion = '9.4.0'
-    guavaVersion = '19.0'
     jodaTimeVersion = '2.9.1'
     betterPickersVersion = '3.0.1'
     libphonenumberVersion = '7.6.0'

@@ -1,7 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import android.support.annotation.NonNull;
-import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.EspecialidadeModel;
 
 /**
@@ -24,10 +24,10 @@ public class Especialidade extends ModeloBase<Especialidade> {
      * @return a especialidade.
      */
     public static Especialidade fromModel(@NonNull EspecialidadeModel model) {
-        Preconditions.checkNotNull(model, "model não pode ser nulo");
-        Preconditions.checkNotNull(model.idEspecialidade,
+        Utils.checkNotNull(model, "model não pode ser nulo");
+        Utils.checkNotNull(model.idEspecialidade,
                 "model.idEspecialidade não pode ser nulo");
-        Preconditions.checkNotNull(model.nome, "model.nome não pode ser nulo");
+        Utils.checkNotNull(model.nome, "model.nome não pode ser nulo");
 
         return new Especialidade()
                 .setIdEspecialidade(model.idEspecialidade)
@@ -41,10 +41,10 @@ public class Especialidade extends ModeloBase<Especialidade> {
      * @return o modelo de dados da API.
      */
     public static EspecialidadeModel toModel(@NonNull Especialidade especialidade) {
-        Preconditions.checkNotNull(especialidade, "model não pode ser nulo");
-        Preconditions.checkNotNull(especialidade.getIdEspecialidade(),
+        Utils.checkNotNull(especialidade, "model não pode ser nulo");
+        Utils.checkNotNull(especialidade.getIdEspecialidade(),
                 "especialidade.getIdEspecialidade() não pode ser nulo");
-        Preconditions.checkNotNull(especialidade.getNome(),
+        Utils.checkNotNull(especialidade.getNome(),
                 "especialidade.getEndereco() não pode ser nulo");
 
         final EspecialidadeModel model = new EspecialidadeModel();

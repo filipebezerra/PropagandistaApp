@@ -5,10 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
 import com.libertsolutions.washington.apppropagandista.Model.Visita;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 
 /**
  * Classe de acesso aos dados de {@link Visita}. Esta classe contém todas operações
@@ -133,21 +133,21 @@ public class VisitaDAO extends DAOGenerico<Visita> {
     @Override
     public long incluir(@NonNull Visita visita) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(visita, "visita não pode ser nula");
-        Preconditions.checkNotNull(visita.getDataInicio(),
+        Utils.checkNotNull(visita, "visita não pode ser nula");
+        Utils.checkNotNull(visita.getDataInicio(),
                 "visita.getDataInicio() não pode ser nulo");
-        Preconditions.checkNotNull(visita.getLatInicial(),
+        Utils.checkNotNull(visita.getLatInicial(),
                 "visita.getLatInicial() não pode ser nula");
-        Preconditions.checkNotNull(visita.getLongInicial(),
+        Utils.checkNotNull(visita.getLongInicial(),
                 "visita.getLongInicial() não pode ser nula");
-        Preconditions.checkNotNull(visita.getIdAgenda(),
+        Utils.checkNotNull(visita.getIdAgenda(),
                 "visita.getIdAgenda() não pode ser nula");
 
         if (visita.getStatus() == Status.Importado ) {
-            Preconditions.checkNotNull(visita.getIdVisita(),
+            Utils.checkNotNull(visita.getIdVisita(),
                     "visita.getIdVisita() não pode ser nulo");
         }
 
@@ -181,20 +181,20 @@ public class VisitaDAO extends DAOGenerico<Visita> {
     @Override
     public int alterar(@NonNull Visita visita) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Utils.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
 
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkNotNull(visita, "visita não pode ser nula");
-        Preconditions.checkNotNull(visita.getId(), "visita.getId() não pode ser nulo");
-        Preconditions.checkNotNull(visita.getDataInicio(), "visita.getDataInicio() não pode ser nulo");
-        Preconditions.checkNotNull(visita.getLatInicial(), "visita.getLatInicial() não pode ser nula");
-        Preconditions.checkNotNull(visita.getLongInicial(), "visita.getLongInicial() não pode ser nula");
+        Utils.checkNotNull(visita, "visita não pode ser nula");
+        Utils.checkNotNull(visita.getId(), "visita.getId() não pode ser nulo");
+        Utils.checkNotNull(visita.getDataInicio(), "visita.getDataInicio() não pode ser nulo");
+        Utils.checkNotNull(visita.getLatInicial(), "visita.getLatInicial() não pode ser nula");
+        Utils.checkNotNull(visita.getLongInicial(), "visita.getLongInicial() não pode ser nula");
 
-        Preconditions.checkNotNull(visita.getIdAgenda(), "visita.getIdAgenda() não pode ser nulo");
+        Utils.checkNotNull(visita.getIdAgenda(), "visita.getIdAgenda() não pode ser nulo");
 
         if (visita.getStatus() == Status.Enviado ||
                 visita.getStatus() == Status.Importado) {
-            Preconditions.checkNotNull(visita.getIdVisita(),
+            Utils.checkNotNull(visita.getIdVisita(),
                     "visita.getIdVisita() não pode ser nulo");
         }
 

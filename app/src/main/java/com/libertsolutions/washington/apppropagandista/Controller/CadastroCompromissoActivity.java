@@ -23,7 +23,6 @@ import butterknife.ButterKnife;
 import butterknife.OnTouch;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.codetroopers.betterpickers.radialtimepicker.RadialTimePickerDialogFragment;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Propagandista;
@@ -34,6 +33,7 @@ import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.DrawableUtil;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
 import org.joda.time.DateTime;
@@ -450,9 +450,9 @@ public class CadastroCompromissoActivity extends AppCompatActivity
             if (model == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
-                Preconditions.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
-                Preconditions.checkNotNull(model.statusAgenda,
+                Utils.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+                Utils.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
+                Utils.checkNotNull(model.statusAgenda,
                         "model.statusAgenda não pode ser nulo");
 
                 Agenda agenda = Agenda.fromModel(model);

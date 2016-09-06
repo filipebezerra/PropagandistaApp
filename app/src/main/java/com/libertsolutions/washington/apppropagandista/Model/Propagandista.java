@@ -1,7 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import android.support.annotation.NonNull;
-import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.PropagandistaModel;
 
 /**
@@ -25,10 +25,10 @@ public class Propagandista {
      * @return o propagandista.
      */
     public static Propagandista fromModel(@NonNull PropagandistaModel model) {
-        Preconditions.checkNotNull(model, "model não pode ser nulo");
-        Preconditions.checkNotNull(model.nome, "model.nome não pode ser nulo");
-        Preconditions.checkNotNull(model.cpf, "model.cpf não pode ser nulo");
-        Preconditions.checkNotNull(model.usuario, "model.usuario não pode ser nulo");
+        Utils.checkNotNull(model, "model não pode ser nulo");
+        Utils.checkNotNull(model.nome, "model.nome não pode ser nulo");
+        Utils.checkNotNull(model.cpf, "model.cpf não pode ser nulo");
+        Utils.checkNotNull(model.usuario, "model.usuario não pode ser nulo");
 
         return new Propagandista()
                 .setNome(model.nome)

@@ -6,9 +6,9 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.Model.Usuario;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 
 public class UsuarioDAO extends DAOGenerico<Usuario> {
     private static final String LOG = UsuarioDAO.class.getSimpleName();
@@ -96,21 +96,21 @@ public class UsuarioDAO extends DAOGenerico<Usuario> {
     @Override
     public long incluir(@NonNull Usuario usuario) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(usuario, "usuario não pode ser nula");
-        Preconditions.checkNotNull(usuario.getNome(),
+        Utils.checkNotNull(usuario, "usuario não pode ser nula");
+        Utils.checkNotNull(usuario.getNome(),
                 "usuario.getNome() não pode ser nulo");
-        Preconditions.checkNotNull(usuario.getCpf(),
+        Utils.checkNotNull(usuario.getCpf(),
                 "usuario.getCpf() não pode ser nulo");
-        Preconditions.checkNotNull(usuario.getEmail(),
+        Utils.checkNotNull(usuario.getEmail(),
                 "usuario.getEmail() não pode ser nulo");
-        Preconditions.checkNotNull(usuario.getSenha(),
+        Utils.checkNotNull(usuario.getSenha(),
                 "usuario.getSenha() não pode ser nulo");
 
         if (usuario.getStatus() == Status.Importado ) {
-            Preconditions.checkNotNull(usuario.getIdUsuario(),
+            Utils.checkNotNull(usuario.getIdUsuario(),
                     "usuario.getIdUsuario() não pode ser nulo");
         }
 
@@ -138,10 +138,10 @@ public class UsuarioDAO extends DAOGenerico<Usuario> {
     }
 
     public @Nullable Usuario consultar(@NonNull String email) {
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(email, "email não deve ser nulo");
+        Utils.checkNotNull(email, "email não deve ser nulo");
 
         final String where = COLUNA_EMAIL +" = ?";
         final String [] whereById = new String [] { email };

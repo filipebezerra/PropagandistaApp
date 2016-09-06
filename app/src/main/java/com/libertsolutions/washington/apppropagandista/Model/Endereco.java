@@ -2,7 +2,7 @@ package com.libertsolutions.washington.apppropagandista.Model;
 
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.MedicoModel.EnderecoModel;
 
 /**
@@ -42,11 +42,11 @@ public class Endereco extends ModeloBase<Endereco> {
      * @return a agenda.
      */
     public static Endereco fromModel(@NonNull EnderecoModel model) {
-        Preconditions.checkNotNull(model, "model não pode ser nulo");
-        Preconditions.checkNotNull(model.idEndereco, "model.idEndereco não pode ser nulo");
-        Preconditions.checkNotNull(model.endereco, "model.endereco não pode ser nulo");
-        Preconditions.checkNotNull(model.bairro, "model.bairro não pode ser nulo");
-        Preconditions.checkNotNull(model.idMedico, "model.idMedico não pode ser nulo");
+        Utils.checkNotNull(model, "model não pode ser nulo");
+        Utils.checkNotNull(model.idEndereco, "model.idEndereco não pode ser nulo");
+        Utils.checkNotNull(model.endereco, "model.endereco não pode ser nulo");
+        Utils.checkNotNull(model.bairro, "model.bairro não pode ser nulo");
+        Utils.checkNotNull(model.idMedico, "model.idMedico não pode ser nulo");
 
         return new Endereco()
                 .setId(model.idCliente)
@@ -69,14 +69,14 @@ public class Endereco extends ModeloBase<Endereco> {
      * @return o modelo de dados da API.
      */
     public static EnderecoModel toModel(@NonNull Endereco endereco) {
-        Preconditions.checkNotNull(endereco, "model não pode ser nulo");
-        Preconditions.checkNotNull(endereco.getId(), "endereco.getId() não pode ser nulo");
-        Preconditions.checkNotNull(endereco.getIdEndereco(),
+        Utils.checkNotNull(endereco, "model não pode ser nulo");
+        Utils.checkNotNull(endereco.getId(), "endereco.getId() não pode ser nulo");
+        Utils.checkNotNull(endereco.getIdEndereco(),
                 "endereco.getIdEndereco() não pode ser nulo");
-        Preconditions.checkNotNull(endereco.getEndereco(),
+        Utils.checkNotNull(endereco.getEndereco(),
                 "endereco.getEndereco() não pode ser nulo");
-        Preconditions.checkNotNull(endereco.getBairro(), "endereco.getBairro() não pode ser nulo");
-        Preconditions.checkNotNull(endereco.getIdMedico(),
+        Utils.checkNotNull(endereco.getBairro(), "endereco.getBairro() não pode ser nulo");
+        Utils.checkNotNull(endereco.getIdMedico(),
                 "endereco.getIdMedico() não pode ser nulo");
 
         final EnderecoModel model = new EnderecoModel();

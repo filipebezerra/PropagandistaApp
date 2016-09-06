@@ -1,7 +1,7 @@
 package com.libertsolutions.washington.apppropagandista.Model;
 
 import android.support.annotation.NonNull;
-import com.google.common.base.Preconditions;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import org.joda.time.DateTime;
 
@@ -37,11 +37,11 @@ public class Agenda extends ModeloBase<Agenda> {
      * @return a agenda.
      */
     public static Agenda fromModel(@NonNull AgendaModel model) {
-        Preconditions.checkNotNull(model, "model não pode ser nulo");
-        Preconditions.checkNotNull(model.idAgenda, "idAgenda não pode ser nulo");
-        Preconditions.checkNotNull(model.dtCompromisso, "dtCompromisso não pode ser nulo");
-        Preconditions.checkNotNull(model.idMedico, "idMedico não pode ser nulo");
-        Preconditions.checkState(
+        Utils.checkNotNull(model, "model não pode ser nulo");
+        Utils.checkNotNull(model.idAgenda, "idAgenda não pode ser nulo");
+        Utils.checkNotNull(model.dtCompromisso, "dtCompromisso não pode ser nulo");
+        Utils.checkNotNull(model.idMedico, "idMedico não pode ser nulo");
+        Utils.checkState(
                 (model.statusAgenda >= Pendente.ordinal())
                         && (model.statusAgenda <= Finalizado.ordinal()),
                 String.format("statusAgenda %d é inválido", model.statusAgenda));
@@ -57,14 +57,14 @@ public class Agenda extends ModeloBase<Agenda> {
     }
 
     public static AgendaModel toModel(@NonNull Agenda agenda) {
-        Preconditions.checkNotNull(agenda, "agenda não pode ser nulo");
-        Preconditions.checkNotNull(agenda.getId(),
+        Utils.checkNotNull(agenda, "agenda não pode ser nulo");
+        Utils.checkNotNull(agenda.getId(),
                 "agenda.getId() não pode ser nulo");
-        Preconditions.checkNotNull(agenda.getIdMedico(),
+        Utils.checkNotNull(agenda.getIdMedico(),
                 "agenda.getIdMedico() não pode ser nulo");
-        Preconditions.checkNotNull(agenda.getStatusAgenda(),
+        Utils.checkNotNull(agenda.getStatusAgenda(),
                 "agenda.getStatusAgenda() não pode ser nulo");
-        Preconditions.checkNotNull(agenda.getDataCompromisso(),
+        Utils.checkNotNull(agenda.getDataCompromisso(),
                 "agenda.getDataCompromisso() não pode ser nulo");
 
         final AgendaModel model = new AgendaModel();

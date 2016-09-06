@@ -5,10 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
 import com.libertsolutions.washington.apppropagandista.Model.Status;
 import com.libertsolutions.washington.apppropagandista.Model.StatusAgenda;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 
 /**
  * Classe de acesso aos dados de {@link Agenda}. Esta classe contém todas operações
@@ -107,21 +107,21 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
     @Override
     public long incluir(@NonNull Agenda agenda) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null,
+        Utils.checkState(mDatabase != null,
                 "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(agenda, "agenda não pode ser nula");
-        Preconditions.checkNotNull(agenda.getDataCompromisso(),
+        Utils.checkNotNull(agenda, "agenda não pode ser nula");
+        Utils.checkNotNull(agenda.getDataCompromisso(),
                 "agenda.getDataCompromisso() não pode ser nulo");
-        Preconditions.checkNotNull(agenda.getIdMedico(),
+        Utils.checkNotNull(agenda.getIdMedico(),
                 "agenda.getIdMedico() não pode ser nulo");
-        Preconditions.checkNotNull(agenda.getStatus(),
+        Utils.checkNotNull(agenda.getStatus(),
                 "agenda.getStatus() não pode ser nulo");
-        Preconditions.checkNotNull(agenda.getStatusAgenda(),
+        Utils.checkNotNull(agenda.getStatusAgenda(),
                 "agenda.getStatusAgenda() não pode ser nulo");
 
         if (agenda.getStatus() == Status.Importado ) {
-            Preconditions.checkNotNull(agenda.getIdAgenda(),
+            Utils.checkNotNull(agenda.getIdAgenda(),
                     "agenda.getIdAgenda() não pode ser nulo");
         }
 
@@ -148,23 +148,23 @@ public class AgendaDAO extends DAOGenerico<Agenda> {
     @Override
     public int alterar(@NonNull Agenda agenda) {
         // Pré-condições para realizar a transação na tabela destino
-        Preconditions.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
+        Utils.checkState(mDatabase != null, "é preciso chamar o método openDatabase() antes");
 
-        Preconditions.checkNotNull(agenda, "agenda não pode ser nula");
-        Preconditions.checkNotNull(agenda.getId(),
+        Utils.checkNotNull(agenda, "agenda não pode ser nula");
+        Utils.checkNotNull(agenda.getId(),
                 "agenda.getId() não pode ser nulo");
-        Preconditions.checkNotNull(agenda.getDataCompromisso(),
+        Utils.checkNotNull(agenda.getDataCompromisso(),
                 "agenda.getDataCompromisso() não pode ser nulo");
-        Preconditions.checkNotNull(agenda.getIdMedico(),
+        Utils.checkNotNull(agenda.getIdMedico(),
                 "agenda.getIdMedico() não pode ser nula");
-        Preconditions.checkNotNull(agenda.getStatusAgenda(),
+        Utils.checkNotNull(agenda.getStatusAgenda(),
                 "agenda.getStatusAgenda() não pode ser nula");
-        Preconditions.checkNotNull(agenda.getStatus(),
+        Utils.checkNotNull(agenda.getStatus(),
                 "agenda.getStatus() não pode ser nula");
 
         if (agenda.getStatus() == Status.Enviado ||
                 agenda.getStatus() == Status.Importado) {
-            Preconditions.checkNotNull(agenda.getIdAgenda(),
+            Utils.checkNotNull(agenda.getIdAgenda(),
                     "agenda.getIdAgenda() não pode ser nulo");
         }
 

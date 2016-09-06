@@ -33,7 +33,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.common.base.Preconditions;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.VisitaDAO;
@@ -43,6 +42,7 @@ import com.libertsolutions.washington.apppropagandista.Model.Visita;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
+import com.libertsolutions.washington.apppropagandista.Util.Utils;
 import com.libertsolutions.washington.apppropagandista.api.models.AgendaModel;
 import com.libertsolutions.washington.apppropagandista.api.models.VisitaModel;
 import com.libertsolutions.washington.apppropagandista.api.services.AgendaService;
@@ -770,9 +770,9 @@ public class DetalhesVisitaActivity extends AppCompatActivity
             if (model == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
-                Preconditions.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
-                Preconditions.checkNotNull(model.statusAgenda,
+                Utils.checkNotNull(model.idCliente, "model.idCliente não pode ser nulo");
+                Utils.checkNotNull(model.idAgenda, "model.idAgenda não pode ser nulo");
+                Utils.checkNotNull(model.statusAgenda,
                         "model.statusAgenda não pode ser nulo");
 
                 Agenda agendaModel =
@@ -826,7 +826,7 @@ public class DetalhesVisitaActivity extends AppCompatActivity
             if (model == null) {
                 onError(new Exception("O servidor não respondeu corretamente à solicitação!"));
             } else {
-                Preconditions.checkNotNull(model.idCliente, "model.idVisita não pode ser nulo");
+                Utils.checkNotNull(model.idCliente, "model.idVisita não pode ser nulo");
 
                 final Visita visitaEnviado = Visita.fromModel(model);
                 visitaEnviado.setStatus(com.libertsolutions.washington.apppropagandista.Model.Status.Enviado);
