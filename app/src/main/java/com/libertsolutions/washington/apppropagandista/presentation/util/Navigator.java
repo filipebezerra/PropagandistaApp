@@ -5,7 +5,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.IntentCompat;
-import com.libertsolutions.washington.apppropagandista.Controller.AgendaActivity;
+import com.libertsolutions.washington.apppropagandista.Controller.CadastroCompromissoActivity;
+import com.libertsolutions.washington.apppropagandista.presentation.agenda.AgendaActivity;
 import com.libertsolutions.washington.apppropagandista.Controller.MedicoActivity;
 import com.libertsolutions.washington.apppropagandista.Controller.SincronizarActivity;
 import com.libertsolutions.washington.apppropagandista.presentation.configuracao.ConfiguracaoActivity;
@@ -53,5 +54,10 @@ public class Navigator {
     public static void toSincronizacao(@NonNull Activity activity) {
         Intent sincronizacaoIntent = new Intent(activity, SincronizarActivity.class);
         ActivityCompat.startActivity(activity, sincronizacaoIntent, null);
+    }
+
+    public static void toNovoCompromisso(@NonNull Activity activity) {
+        Intent compromissoIntent = new Intent(activity, CadastroCompromissoActivity.class);
+        ActivityCompat.startActivity(activity, compromissoIntent, null);
     }
 }

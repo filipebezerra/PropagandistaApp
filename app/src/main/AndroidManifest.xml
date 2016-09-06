@@ -51,16 +51,17 @@
         <!-- Tela Inicial -->
         <activity
             android:name=".presentation.main.MainActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             />
 
         <!-- Tela Agenda -->
         <activity
-            android:name=".Controller.AgendaActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
+            android:name=".presentation.agenda.AgendaActivity"
             android:label="@string/title_activity_agenda"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:parentActivityName=".presentation.main.MainActivity"
             >
             <meta-data
@@ -133,13 +134,13 @@
             android:name=".Controller.CadastroCompromissoActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_agenda_cadastrar"
-            android:parentActivityName=".Controller.AgendaActivity"
+            android:parentActivityName=".presentation.agenda.AgendaActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Controller.AgendaActivity"
+                android:value=".presentation.agenda.AgendaActivity"
                 />
         </activity>
 
