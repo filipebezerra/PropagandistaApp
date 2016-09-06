@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
 import com.libertsolutions.washington.apppropagandista.R;
@@ -19,7 +19,7 @@ import java.util.List;
 public class CadastroMedicoActivity extends AppCompatActivity
     implements DetalhesMedicoFragment.CadastroMedicoListener {
 
-    @Bind(R.id.tabs) protected TabLayout mTabLayout;
+    @BindView(R.id.tabs) protected TabLayout mTabLayout;
 
     private FragmentAdapter mFragmentAdapter;
 

@@ -15,7 +15,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
@@ -45,9 +45,9 @@ public class MainActivity extends AppCompatActivity
     private static final int RC_SETTINGS = 100;
     private static final int RC_LOGIN = 101;
 
-    @Bind(R.id.lstPrincipal) ListView mListView;
-    @Bind(R.id.drawer_layout) DrawerLayout mDrawerLayout;
-    @Bind(R.id.nav_view) NavigationView mNavigationView;
+    @BindView(R.id.lstPrincipal) ListView mListView;
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.nav_view) NavigationView mNavigationView;
 
     private ArrayList<HashMap<String, String>> mListaAgenda = new ArrayList<>();
     private PersonalAdapter mPersonalAdapter;

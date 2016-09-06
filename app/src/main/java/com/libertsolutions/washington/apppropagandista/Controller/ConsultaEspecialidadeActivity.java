@@ -10,7 +10,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -35,7 +35,7 @@ public class ConsultaEspecialidadeActivity extends AppCompatActivity {
     private static final int LIMIT_LOADING = 20;
     private boolean mLoadingMore = false;
 
-    @Bind(android.R.id.list) protected ListView mListView;
+    @BindView(android.R.id.list) protected ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

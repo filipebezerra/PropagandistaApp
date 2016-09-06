@@ -16,8 +16,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import com.libertsolutions.washington.apppropagandista.Dao.EnderecoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Endereco;
 import com.libertsolutions.washington.apppropagandista.Model.Medico;
@@ -37,20 +38,20 @@ import java.util.ArrayList;
 public class EnderecosMedicoFragment extends Fragment {
     private static final String EXTRA_MEDICO = "IdMedico";
 
-    @Bind(R.id.hintEndereco) protected TextInputLayout mEnderecoHint;
-    @Bind(R.id.txtEndereco) protected EditText mEnderecoView;
+    @BindView(R.id.hintEndereco) protected TextInputLayout mEnderecoHint;
+    @BindView(R.id.txtEndereco) protected EditText mEnderecoView;
 
-    @Bind(R.id.txtCep) protected EditText mCepView;
+    @BindView(R.id.txtCep) protected EditText mCepView;
 
-    @Bind(R.id.txtNumero) protected EditText mNumeroView;
+    @BindView(R.id.txtNumero) protected EditText mNumeroView;
 
-    @Bind(R.id.hintBairro) protected TextInputLayout mBairroHint;
-    @Bind(R.id.txtBairro) protected EditText mBairroView;
+    @BindView(R.id.hintBairro) protected TextInputLayout mBairroHint;
+    @BindView(R.id.txtBairro) protected EditText mBairroView;
 
-    @Bind(R.id.txtComplemento) protected EditText mComplementoView;
-    @Bind(R.id.txtObservacao) protected EditText mObservacaoView;
+    @BindView(R.id.txtComplemento) protected EditText mComplementoView;
+    @BindView(R.id.txtObservacao) protected EditText mObservacaoView;
 
-    @Bind(R.id.spinnerEnderecos) protected Spinner mEnderecosAdicionadosView;
+    @BindView(R.id.spinnerEnderecos) protected Spinner mEnderecosAdicionadosView;
 
     private ArrayAdapter<Endereco> mEnderecosAdapter;
 
@@ -58,6 +59,8 @@ public class EnderecosMedicoFragment extends Fragment {
     private EnderecoDAO mPersistenciaEndereco;
 
     private Endereco mEnderecoSelecionadoEdicao;
+
+    private Unbinder mUnbinder;
 
     public EnderecosMedicoFragment() {
     }
@@ -92,7 +95,7 @@ public class EnderecosMedicoFragment extends Fragment {
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_cadastro_enderecos_medico,
                 container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -258,6 +261,6 @@ public class EnderecosMedicoFragment extends Fragment {
     public void onDestroyView() {
         mPersistenciaEndereco.closeDatabase();
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        mUnbinder.unbind();
     }
 }

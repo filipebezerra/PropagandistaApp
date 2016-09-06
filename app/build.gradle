@@ -46,6 +46,7 @@ dependencies {
     compile "com.android.support:support-v4:${supportLibraryVersion}"
     
     compile "com.jakewharton:butterknife:${butterKnifeVersion}"
+    apt "com.jakewharton:butterknife-compiler:${butterKnifeVersion}"
 
     compile("com.afollestad.material-dialogs:core:${materialDialogsVersion}") {
         transitive = true

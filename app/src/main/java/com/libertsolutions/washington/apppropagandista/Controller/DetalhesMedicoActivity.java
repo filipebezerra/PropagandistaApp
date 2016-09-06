@@ -17,7 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTouch;
 import com.afollestad.materialdialogs.DialogAction;
@@ -50,16 +50,16 @@ public class DetalhesMedicoActivity extends AppCompatActivity
 
     private static final String FRAG_TAG_DATE_PICKER = "fragment_date_picker_name";
 
-    @Bind(R.id.root_layout) ViewGroup mRootView;
-    @Bind(R.id.hintNomeMedico) TextInputLayout mNomeMedicoHint;
-    @Bind(R.id.txtNomeMedico) EditText mNomeMedicoView;
-    @Bind(R.id.txtDtAniversario) EditText mDataAniversarioView;
-    @Bind(R.id.txtSecretaria) EditText mNomeSecretariaView;
-    @Bind(R.id.txtTelefone) EditText mTelefoneView;
-    @Bind(R.id.txtEmail) EditText mEmailView;
-    @Bind(R.id.txtCrm) EditText mCrmView;
-    @Bind(R.id.hintEspecialidade) TextInputLayout mEspecialidadeHint;
-    @Bind(R.id.txtEspecialidade) AutoCompleteTextView mEspecialidadeView;
+    @BindView(R.id.root_layout) ViewGroup mRootView;
+    @BindView(R.id.hintNomeMedico) TextInputLayout mNomeMedicoHint;
+    @BindView(R.id.txtNomeMedico) EditText mNomeMedicoView;
+    @BindView(R.id.txtDtAniversario) EditText mDataAniversarioView;
+    @BindView(R.id.txtSecretaria) EditText mNomeSecretariaView;
+    @BindView(R.id.txtTelefone) EditText mTelefoneView;
+    @BindView(R.id.txtEmail) EditText mEmailView;
+    @BindView(R.id.txtCrm) EditText mCrmView;
+    @BindView(R.id.hintEspecialidade) TextInputLayout mEspecialidadeHint;
+    @BindView(R.id.txtEspecialidade) AutoCompleteTextView mEspecialidadeView;
 
     private EspecialidadeDAO mEspecialidadeDAO;
     private ArrayAdapter<Especialidade> mEspecialidadesAdapter;

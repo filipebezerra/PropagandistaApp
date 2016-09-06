@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.CheckBox;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
@@ -63,8 +63,8 @@ public class SincronizarActivity extends AppCompatActivity {
 
     private MaterialDialog mProgressDialog;
 
-    @Bind(R.id.chkMedicos) protected CheckBox mChkSincMedicos;
-    @Bind(R.id.chkAgendas) protected CheckBox mChkSincAgendas;
+    @BindView(R.id.chkMedicos) protected CheckBox mChkSincMedicos;
+    @BindView(R.id.chkAgendas) protected CheckBox mChkSincAgendas;
 
     private Propagandista mUsuarioLogado;
 

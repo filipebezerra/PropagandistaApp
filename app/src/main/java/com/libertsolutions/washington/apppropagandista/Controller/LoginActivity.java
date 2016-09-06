@@ -11,7 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
 
     // UI references.
-    @Bind(R.id.cpf)
+    @BindView(R.id.cpf)
     EditText mCpfView;
 
     private MaterialDialog mProgressDialog;

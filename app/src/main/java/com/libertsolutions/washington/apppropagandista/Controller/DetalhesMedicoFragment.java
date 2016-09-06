@@ -19,11 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnEditorAction;
 import butterknife.OnFocusChange;
 import butterknife.OnTouch;
+import butterknife.Unbinder;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -48,16 +49,16 @@ public class DetalhesMedicoFragment extends Fragment
         implements CalendarDatePickerDialogFragment.OnDateSetListener {
     private static final int RC_SELECIONAR_ESPECIALIDADE = 1001;
 
-    @Bind(R.id.hintNomeMedico) protected TextInputLayout mNomeMedicoHint;
-    @Bind(R.id.txtNomeMedico) protected EditText mNomeMedicoView;
-    @Bind(R.id.txtDtAniversario) protected EditText mDataAniversarioView;
-    @Bind(R.id.txtSecretaria) protected EditText mSecretariaView;
-    @Bind(R.id.hintTelefone) protected TextInputLayout mTelefoneHint;
-    @Bind(R.id.txtTelefone) protected EditText mTelefoneView;
-    @Bind(R.id.txtEmail) protected EditText mEmailView;
-    @Bind(R.id.txtCrm) protected EditText mCrmView;
-    @Bind(R.id.hintEspecialidade) protected TextInputLayout mEspecialidadeHint;
-    @Bind(R.id.txtEspecialidade) protected EditText mEspecialidadeView;
+    @BindView(R.id.hintNomeMedico) protected TextInputLayout mNomeMedicoHint;
+    @BindView(R.id.txtNomeMedico) protected EditText mNomeMedicoView;
+    @BindView(R.id.txtDtAniversario) protected EditText mDataAniversarioView;
+    @BindView(R.id.txtSecretaria) protected EditText mSecretariaView;
+    @BindView(R.id.hintTelefone) protected TextInputLayout mTelefoneHint;
+    @BindView(R.id.txtTelefone) protected EditText mTelefoneView;
+    @BindView(R.id.txtEmail) protected EditText mEmailView;
+    @BindView(R.id.txtCrm) protected EditText mCrmView;
+    @BindView(R.id.hintEspecialidade) protected TextInputLayout mEspecialidadeHint;
+    @BindView(R.id.txtEspecialidade) protected EditText mEspecialidadeView;
 
     private static final String FRAG_TAG_DATE_PICKER = "fragment_date_picker_name";
     private boolean mHasDialogFrame;
@@ -69,6 +70,8 @@ public class DetalhesMedicoFragment extends Fragment
 
     private Integer mCodigoEspecialidade;
     private String mNomeEspecialidade = null;
+
+    private Unbinder mUnbinder;
 
     public DetalhesMedicoFragment() {
     }
@@ -230,7 +233,7 @@ public class DetalhesMedicoFragment extends Fragment
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_cadastro_medico,
                 container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         return view;
     }
 
@@ -261,7 +264,7 @@ public class DetalhesMedicoFragment extends Fragment
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        mUnbinder.unbind();
         if (mPersistenciaMedico != null) {
             mPersistenciaMedico.closeDatabase();
         }

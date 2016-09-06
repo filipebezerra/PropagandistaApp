@@ -18,7 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTouch;
 import com.codetroopers.betterpickers.calendardatepicker.CalendarDatePickerDialogFragment;
@@ -55,17 +55,17 @@ public class CadastroCompromissoActivity extends AppCompatActivity
     private static final int RC_ADICIONA_AGENDA = 1001;
     private static final int RC_SELECIONAR_MEDICO = 1002;
 
-    @Bind(R.id.root_layout) protected CoordinatorLayout mRootLayout;
-    @Bind(R.id.toolbar) protected Toolbar mToolbar;
+    @BindView(R.id.root_layout) protected CoordinatorLayout mRootLayout;
+    @BindView(R.id.toolbar) protected Toolbar mToolbar;
 
-    @Bind(R.id.hintMedico) protected TextInputLayout mMedicoHint;
-    @Bind(R.id.txtMedico) protected EditText mMedicoView;
-    @Bind(R.id.hintDataCompromisso) protected TextInputLayout mDataCompromissoHint;
-    @Bind(R.id.txtDataCompromisso) protected EditText mDataCompromissoView;
-    @Bind(R.id.hintHorarioCompromisso) protected TextInputLayout mHorarioCompromissoHint;
-    @Bind(R.id.txtHorarioCompromisso) protected EditText mHorarioCompromissoView;
-    @Bind(R.id.hintObservacao) protected TextInputLayout mObservacaoHint;
-    @Bind(R.id.txtObservacao) protected EditText mObservacaoView;
+    @BindView(R.id.hintMedico) protected TextInputLayout mMedicoHint;
+    @BindView(R.id.txtMedico) protected EditText mMedicoView;
+    @BindView(R.id.hintDataCompromisso) protected TextInputLayout mDataCompromissoHint;
+    @BindView(R.id.txtDataCompromisso) protected EditText mDataCompromissoView;
+    @BindView(R.id.hintHorarioCompromisso) protected TextInputLayout mHorarioCompromissoHint;
+    @BindView(R.id.txtHorarioCompromisso) protected EditText mHorarioCompromissoView;
+    @BindView(R.id.hintObservacao) protected TextInputLayout mObservacaoHint;
+    @BindView(R.id.txtObservacao) protected EditText mObservacaoView;
 
     private static final String FRAG_TAG_TIME_PICKER = "timePickerDialogFragment";
     private static final String FRAG_TAG_DATE_PICKER = "fragment_date_picker_name";

@@ -17,7 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -121,23 +121,23 @@ public class DetalhesVisitaActivity extends AppCompatActivity
     private Visita mVisita;
     private long mIdAgenda;
 
-    @Bind(R.id.root_layout)
+    @BindView(R.id.root_layout)
     CoordinatorLayout mRootLayout;
-    @Bind(R.id.status)
+    @BindView(R.id.status)
     TextView mStatus;
-    @Bind(R.id.data_hora_view)
+    @BindView(R.id.data_hora_view)
     TextView mDataHoraView;
-    @Bind(R.id.medico_view)
+    @BindView(R.id.medico_view)
     TextView mMedicoView;
-    @Bind(R.id.obs_view)
+    @BindView(R.id.obs_view)
     TextView mObservacaoView;
-    @Bind(R.id.data_hora_ini_view)
+    @BindView(R.id.data_hora_ini_view)
     TextView mDataHoraInilView;
-    @Bind(R.id.data_hora_final_view)
+    @BindView(R.id.data_hora_final_view)
     TextView mDataHoraFinalView;
-    @Bind(R.id.details_view)
+    @BindView(R.id.details_view)
     TextView mDetalhesView;
-    @Bind(R.id.btnIniciar)
+    @BindView(R.id.btnIniciar)
     Button btnIniciarVisita;
 
     @Override
