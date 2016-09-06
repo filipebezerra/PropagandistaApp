@@ -36,6 +36,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:imeOptions="actionGo"
+                android:maxLength="11"
                 />
 
         </android.support.design.widget.TextInputLayout>
