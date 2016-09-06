@@ -50,7 +50,7 @@
 
         <!-- Tela Inicial -->
         <activity
-            android:name=".Controller.MainActivity"
+            android:name=".presentation.main.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar"
@@ -61,11 +61,11 @@
             android:name=".Controller.AgendaActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_agenda"
-            android:parentActivityName=".Controller.MainActivity"
+            android:parentActivityName=".presentation.main.MainActivity"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Controller.MainActivity"
+                android:value=".presentation.main.MainActivity"
                 />
         </activity>
 
@@ -74,7 +74,7 @@
             android:name=".Controller.MedicoActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_medico"
-            android:parentActivityName=".Controller.MainActivity"
+            android:parentActivityName=".presentation.main.MainActivity"
             >
             <meta-data
                 android:name="android.app.default_searchable"
@@ -82,7 +82,7 @@
                 />
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Controller.MainActivity"
+                android:value=".presentation.main.MainActivity"
                 />
         </activity>
 
@@ -90,7 +90,7 @@
         <activity
             android:name=".presentation.configuracao.ConfiguracaoActivity"
             android:label="@string/title_activity_configuracao"
-            android:parentActivityName=".Controller.MainActivity"
+            android:parentActivityName=".presentation.main.MainActivity"
             android:screenOrientation="portrait"
             >
             <meta-data
@@ -161,12 +161,12 @@
             android:name=".Controller.DetalhesVisitaActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_detalhes_visita"
-            android:parentActivityName=".Controller.MainActivity"
+            android:parentActivityName=".presentation.main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Controller.MainActivity"
+                android:value=".presentation.main.MainActivity"
                 />
         </activity>
 
@@ -188,11 +188,11 @@
             android:name=".Controller.SincronizarActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_sincronizar"
-            android:parentActivityName=".Controller.MainActivity"
+            android:parentActivityName=".presentation.main.MainActivity"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Controller.MainActivity"
+                android:value=".presentation.main.MainActivity"
                 />
         </activity>
 

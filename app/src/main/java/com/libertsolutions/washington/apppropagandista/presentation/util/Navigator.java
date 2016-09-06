@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.IntentCompat;
+import com.libertsolutions.washington.apppropagandista.Controller.AgendaActivity;
+import com.libertsolutions.washington.apppropagandista.Controller.MedicoActivity;
+import com.libertsolutions.washington.apppropagandista.Controller.SincronizarActivity;
 import com.libertsolutions.washington.apppropagandista.presentation.configuracao.ConfiguracaoActivity;
-import com.libertsolutions.washington.apppropagandista.Controller.MainActivity;
+import com.libertsolutions.washington.apppropagandista.presentation.main.MainActivity;
 import com.libertsolutions.washington.apppropagandista.presentation.login.LoginActivity;
 
 /**
@@ -35,5 +38,20 @@ public class Navigator {
     public static void toConfiguracao(@NonNull Activity activity) {
         Intent loginIntent = new Intent(activity, ConfiguracaoActivity.class);
         ActivityCompat.startActivityForResult(activity, loginIntent, REQUEST_SETTINGS, null);
+    }
+
+    public static void toAgenda(@NonNull Activity activity) {
+        Intent agendaIntent = new Intent(activity, AgendaActivity.class);
+        ActivityCompat.startActivity(activity, agendaIntent, null);
+    }
+
+    public static void toMedico(@NonNull Activity activity) {
+        Intent medicoIntent = new Intent(activity, MedicoActivity.class);
+        ActivityCompat.startActivity(activity, medicoIntent, null);
+    }
+
+    public static void toSincronizacao(@NonNull Activity activity) {
+        Intent sincronizacaoIntent = new Intent(activity, SincronizarActivity.class);
+        ActivityCompat.startActivity(activity, sincronizacaoIntent, null);
     }
 }

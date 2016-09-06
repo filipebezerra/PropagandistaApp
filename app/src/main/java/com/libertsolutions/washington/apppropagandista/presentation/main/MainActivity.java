@@ -1,4 +1,4 @@
-package com.libertsolutions.washington.apppropagandista.Controller;
+package com.libertsolutions.washington.apppropagandista.presentation.main;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -18,6 +18,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.libertsolutions.washington.apppropagandista.Controller.DetalhesVisitaActivity;
 import com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO;
 import com.libertsolutions.washington.apppropagandista.Dao.MedicoDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Agenda;
@@ -30,8 +31,6 @@ import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
 import com.libertsolutions.washington.apppropagandista.Util.PersonalAdapter;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
-import com.libertsolutions.washington.apppropagandista.Util.Tela;
-import com.libertsolutions.washington.apppropagandista.presentation.configuracao.ConfiguracaoActivity;
 import com.libertsolutions.washington.apppropagandista.presentation.util.Navigator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -145,19 +144,16 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        //Menu Agenda
         if (id == R.id.nav_agenda) {
-            Tela.AbrirTela(MainActivity.this, AgendaActivity.class);
-            //Menu Médicos
+            Navigator.toAgenda(this);
         } else if (id == R.id.nav_medico) {
-            Tela.AbrirTela(MainActivity.this, MedicoActivity.class);
+            Navigator.toMedico(this);
         } else if (id == R.id.nav_config) {
-            Tela.AbrirTela(MainActivity.this, ConfiguracaoActivity.class);
+            Navigator.toConfiguracao(this);
         } else if (id == R.id.nav_sincronizar) {
-            Tela.AbrirTela(MainActivity.this, SincronizarActivity.class);
+            Navigator.toSincronizacao(this);
         } else if (id == R.id.nav_sair) {
             PreferencesUtils.logoutUser(this);
             this.finish();
