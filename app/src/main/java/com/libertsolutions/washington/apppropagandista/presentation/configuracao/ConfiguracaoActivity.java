@@ -1,9 +1,6 @@
-package com.libertsolutions.washington.apppropagandista.Controller;
+package com.libertsolutions.washington.apppropagandista.presentation.configuracao;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import com.libertsolutions.washington.apppropagandista.R;
@@ -30,9 +27,5 @@ public class ConfiguracaoActivity extends AppCompatActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
-    }
-
-    public static Intent getLauncherIntent(@NonNull Context context) {
-        return new Intent(context, ConfiguracaoActivity.class);
     }
 }

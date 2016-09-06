@@ -11,6 +11,7 @@ import com.libertsolutions.washington.apppropagandista.Dao.UsuarioDAO;
 import com.libertsolutions.washington.apppropagandista.Model.Usuario;
 import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
+import com.libertsolutions.washington.apppropagandista.presentation.login.LoginActivity;
 
 public class UsuarioActivity extends AppCompatActivity {
     private UsuarioDAO mUsuarioDAO;

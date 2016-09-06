@@ -27,9 +27,10 @@
 
         <!-- Splash Screen -->
         <activity
-            android:name=".Controller.SplashActivity"
+            android:name=".presentation.splashscreen.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Fullscreen"
+            android:noHistory="true"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +41,7 @@
 
         <!-- Tela de Login -->
         <activity
-            android:name=".Controller.LoginActivity"
+            android:name=".presentation.login.LoginActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/app_login"
             android:noHistory="true"
@@ -87,7 +88,7 @@
 
         <!-- Tela Configurações -->
         <activity
-            android:name=".Controller.ConfiguracaoActivity"
+            android:name=".presentation.configuracao.ConfiguracaoActivity"
             android:label="@string/title_activity_configuracao"
             android:parentActivityName=".Controller.MainActivity"
             android:screenOrientation="portrait"
@@ -103,11 +104,11 @@
             android:name=".Controller.UsuarioActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout"
             android:label="@string/title_activity_usuario"
-            android:parentActivityName=".Controller.LoginActivity"
+            android:parentActivityName=".presentation.login.LoginActivity"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Controller.LoginActivity"
+                android:value=".presentation.login.LoginActivity"
                 />
         </activity>
 

@@ -1,4 +1,4 @@
-package com.libertsolutions.washington.apppropagandista.Controller;
+package com.libertsolutions.washington.apppropagandista.presentation.configuracao;
 
 import android.os.Bundle;
 import android.support.v7.preference.ListPreference;

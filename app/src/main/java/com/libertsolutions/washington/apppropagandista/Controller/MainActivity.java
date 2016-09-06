@@ -28,22 +28,22 @@ import com.libertsolutions.washington.apppropagandista.R;
 import com.libertsolutions.washington.apppropagandista.Util.DateUtil;
 import com.libertsolutions.washington.apppropagandista.Util.Dialogos;
 import com.libertsolutions.washington.apppropagandista.Util.EndlessScrollListener;
-import com.libertsolutions.washington.apppropagandista.Util.Navigator;
 import com.libertsolutions.washington.apppropagandista.Util.PersonalAdapter;
 import com.libertsolutions.washington.apppropagandista.Util.PreferencesUtils;
 import com.libertsolutions.washington.apppropagandista.Util.Tela;
+import com.libertsolutions.washington.apppropagandista.presentation.configuracao.ConfiguracaoActivity;
+import com.libertsolutions.washington.apppropagandista.presentation.util.Navigator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import static com.libertsolutions.washington.apppropagandista.Dao.AgendaDAO.COLUNA_STATUS_AGENDA;
 import static com.libertsolutions.washington.apppropagandista.Util.DateUtil.FormatType.DATE_AND_TIME;
+import static com.libertsolutions.washington.apppropagandista.presentation.util.Navigator.REQUEST_LOGIN;
+import static com.libertsolutions.washington.apppropagandista.presentation.util.Navigator.REQUEST_SETTINGS;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
-    private static final int RC_SETTINGS = 100;
-    private static final int RC_LOGIN = 101;
 
     @BindView(R.id.lstPrincipal) ListView mListView;
     @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
@@ -71,16 +71,16 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, mDrawerLayout, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
-        mDrawerLayout.setDrawerListener(toggle);
+        mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
         if (PreferencesUtils.getSyncUrlSettings(this) == null ||
                 PreferencesUtils.getSyncAuthKeySettings(this) == null) {
-            Navigator.navigateToSettings(this, RC_SETTINGS);
+            Navigator.toConfiguracao(this);
         } else if (!PreferencesUtils.isUserLogged(this)) {
-            Navigator.navigateToLogin(this, RC_LOGIN);
+            Navigator.toLogin(this);
         }
     }
 
@@ -118,15 +118,15 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case RC_SETTINGS:
+            case REQUEST_SETTINGS:
                 if (PreferencesUtils.getSyncUrlSettings(this) == null ||
                         PreferencesUtils.getSyncAuthKeySettings(this) == null) {
                     finish();
                 } else if (!PreferencesUtils.isUserLogged(this)) {
-                    Navigator.navigateToLogin(this, RC_LOGIN);
+                    Navigator.toLogin(this);
                 }
                 break;
-            case RC_LOGIN:
+            case REQUEST_LOGIN:
                 final Propagandista userLogged = PreferencesUtils.getUserLogged(this);
                 if (userLogged != null) {
                     ButterKnife.<TextView>

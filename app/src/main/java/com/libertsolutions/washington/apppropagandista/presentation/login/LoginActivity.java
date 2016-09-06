@@ -1,9 +1,6 @@
-package com.libertsolutions.washington.apppropagandista.Controller;
+package com.libertsolutions.washington.apppropagandista.presentation.login;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -138,10 +135,6 @@ public class LoginActivity extends AppCompatActivity {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
-    }
-
-    public static Intent getLauncherIntent(@NonNull Context context) {
-        return new Intent(context, LoginActivity.class);
     }
 }
 
