@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'android-apt'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 24
@@ -12,7 +14,7 @@ android {
         targetSdkVersion 24
         versionCode 1
         versionName "0.1.0"
-        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         debug {
@@ -30,6 +32,10 @@ android {
         exclude 'META-INF/services/javax.annotation.processing.Processor'
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -74,4 +80,10 @@ dexcount {
     format = "json"
     includeTotalMethodCount = true
     orderByMethodCount = true
+}
+
+retrolambda {
+    jdk System.getenv("JAVA_HOME")
+    oldJdk System.getenv("JAVA7_HOME")
+    javaVersion JavaVersion.VERSION_1_7
 }
